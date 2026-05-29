@@ -95,7 +95,7 @@ async function loadOpportunities() {
 
 loadOpportunities();
 
-async function requestOpportunity(opportunityID) {
+function requestOpportunity(opportunityID) {
   const personID = prompt("Enter your PersonID for testing:");
 
   if (!personID) {
@@ -103,20 +103,19 @@ async function requestOpportunity(opportunityID) {
     return;
   }
 
-  const requestData = {
-    opportunityID: opportunityID,
-    personID: personID
-  };
+  const formData = new FormData();
+  formData.append("opportunityID", opportunityID);
+  formData.append("personID", personID);
 
-  try {
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(requestData)
-    });
+  fetch(API_URL, {
+    method: "POST",
+    body: formData,
+    mode: "no-cors"
+  });
 
-    alert("Request submitted for manager approval!");
-  } catch (error) {
-    alert("Something went wrong submitting the request.");
-    console.error(error);
-  }
+  alert("Request submitted for manager approval!");
+
+  setTimeout(() => {
+    loadOpportunities();
+  }, 1000);
 }
