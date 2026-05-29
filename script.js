@@ -56,7 +56,9 @@ async function loadOpportunities() {
       div.innerHTML = `
         <div class="opportunity-header">
           <h3>${school}</h3>
-          <button>Request Opportunity</button>
+         <button onclick="requestOpportunity('${opportunity.OpportunityID}')">
+          Request Opportunity
+          </button>
         </div>
 
         <div class="opportunity-details">
@@ -92,3 +94,29 @@ async function loadOpportunities() {
 }
 
 loadOpportunities();
+
+async function requestOpportunity(opportunityID) {
+  const personID = prompt("Enter your PersonID for testing:");
+
+  if (!personID) {
+    alert("Request cancelled.");
+    return;
+  }
+
+  const requestData = {
+    opportunityID: opportunityID,
+    personID: personID
+  };
+
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(requestData)
+    });
+
+    alert("Request submitted for manager approval!");
+  } catch (error) {
+    alert("Something went wrong submitting the request.");
+    console.error(error);
+  }
+}
