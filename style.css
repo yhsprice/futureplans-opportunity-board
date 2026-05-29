@@ -1,1 +1,18 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
 
+.opportunity {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+button {
+    padding: 8px 12px;
+    cursor: pointer;
+}
