@@ -103,12 +103,14 @@ function requestOpportunity(opportunityID) {
     return;
   }
 
-  const url = `${API_URL}?opportunityID=${encodeURIComponent(opportunityID)}&personID=${encodeURIComponent(personID)}`;
+  const url = `${API_URL}?action=request&opportunityID=${encodeURIComponent(opportunityID)}&personID=${encodeURIComponent(personID)}`;
 
-  fetch(url, {
-    method: "POST",
-    mode: "no-cors"
-  });
+  const img = new Image();
+  img.src = url;
 
   alert("Request submitted for manager approval!");
+
+  setTimeout(() => {
+    loadOpportunities();
+  }, 1500);
 }
