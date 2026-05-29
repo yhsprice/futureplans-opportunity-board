@@ -4,7 +4,6 @@ const container = document.getElementById("opportunityList");
 
 function formatDate(value) {
   const date = new Date(value);
-
   if (isNaN(date)) return value || "";
 
   return date.toLocaleDateString("en-US", {
@@ -18,7 +17,6 @@ function formatDate(value) {
 
 function formatTime(value) {
   const time = new Date(value);
-
   if (isNaN(time)) return value || "";
 
   return time.toLocaleTimeString("en-US", {
@@ -38,18 +36,13 @@ async function loadOpportunities() {
     container.innerHTML = "";
     let displayedCount = 0;
 
-    if (opportunities.length === 0) {
-      container.innerHTML = "<p>No opportunities available right now.</p>";
-      return;
-    }
-
     opportunities.forEach(opportunity => {
+      const openings = Number(opportunity.RemainingOpenings || 0);
 
-  const openings = Number(opportunity.RemainingOpenings || 0);
+      if (openings <= 0) {
+        return;
+      }
 
-  if (openings <= 0) {
-    return;
-  }
       const school = opportunity.School || "School Not Listed";
       const date = formatDate(opportunity.Date);
       const startTime = formatTime(opportunity.StartTime);
@@ -62,8 +55,8 @@ async function loadOpportunities() {
       div.innerHTML = `
         <div class="opportunity-header">
           <h3>${school}</h3>
-         <button onclick="requestOpportunity('${opportunity.OpportunityID}')">
-          Request Opportunity
+          <button onclick="requestOpportunity('${opportunity.OpportunityID}')">
+            Request Opportunity
           </button>
         </div>
 
@@ -90,17 +83,25 @@ async function loadOpportunities() {
         </div>
       `;
 
-     container.appendChild(div);
-displayedCount++;
+      container.appendChild(div);
+      displayedCount++;
     });
+
+    if (displayedCount === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <h2>🎯 You're All Caught Up!</h2>
+          <p>There are currently no open coaching opportunities available.</p>
+          <p>Keep an eye out—new opportunities are posted throughout the week.</p>
+        </div>
+      `;
+    }
 
   } catch (error) {
     container.innerHTML = "<p>Something went wrong loading opportunities.</p>";
     console.error(error);
   }
 }
-
-loadOpportunities();
 
 function requestOpportunity(opportunityID) {
   const personID = prompt("Enter your PersonID for testing:");
@@ -122,12 +123,4 @@ function requestOpportunity(opportunityID) {
   }, 1500);
 }
 
-if (displayedCount === 0) {
-  container.innerHTML = `
-    <div class="empty-state">
-      <h2>🎯 You're All Caught Up!</h2>
-      <p>There are currently no open coaching opportunities available.</p>
-      <p>Keep an eye out—new opportunities are posted throughout the week.</p>
-    </div>
-  `;
-}
+loadOpportunities();
