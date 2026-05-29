@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Opportunity</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <p><a href="manager.html">Back to Manager Dashboard</a></p>
+
+  <h1>Add Opportunity</h1>
+
+  <div class="opportunity">
+    <p><strong>School</strong></p>
+    <input id="school" placeholder="School name">
+
+    <p><strong>Date</strong></p>
+    <input id="date" type="date">
+
+    <p><strong>Start Time</strong></p>
+    <input id="startTime" type="time">
+
+    <p><strong>End Time</strong></p>
+    <input id="endTime" type="time">
+
+    <p><strong>Coaches Needed</strong></p>
+    <input id="coachesNeeded" type="number" min="1">
+
+    <p><strong>Program Type</strong></p>
+    <input id="programType" placeholder="Youth, Adult, Summer, etc.">
+
+    <p><strong>Notes</strong></p>
+    <textarea id="notes" placeholder="Optional notes"></textarea>
+
+    <br><br>
+    <button onclick="addOpportunity()">Add Opportunity</button>
+  </div>
+
+  <script src="add-opportunity.js"></script>
+
+</body>
+</html>
