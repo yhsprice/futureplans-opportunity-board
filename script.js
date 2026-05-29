@@ -100,16 +100,6 @@ displayedCount++;
   }
 }
 
-if (displayedCount === 0) {
-  container.innerHTML = `
-    <div class="empty-state">
-      <h2>🎯 You're All Caught Up!</h2>
-      <p>There are currently no open coaching opportunities available.</p>
-      <p>Keep an eye out—new opportunities are posted throughout the week.</p>
-    </div>
-  `;
-}
-
 loadOpportunities();
 
 function requestOpportunity(opportunityID) {
@@ -130,4 +120,14 @@ function requestOpportunity(opportunityID) {
   setTimeout(() => {
     loadOpportunities();
   }, 1500);
+}
+
+if (displayedCount === 0) {
+  container.innerHTML = `
+    <div class="empty-state">
+      <h2>🎯 You're All Caught Up!</h2>
+      <p>There are currently no open coaching opportunities available.</p>
+      <p>Keep an eye out—new opportunities are posted throughout the week.</p>
+    </div>
+  `;
 }
