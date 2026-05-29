@@ -35,7 +35,9 @@ async function loadMyRequests() {
       div.className = "opportunity";
 
       div.innerHTML = `
-        <h3>Opportunity #${request.OpportunityID}</h3>
+        <h3>${request.School}</h3>
+        <p><strong>Date:</strong> ${request.Date}</p>
+        <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
         <p><strong>Status:</strong> ${request.Status}</p>
         <p><strong>Requested At:</strong> ${request.RequestedAt}</p>
       `;
