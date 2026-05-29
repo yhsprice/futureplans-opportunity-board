@@ -55,9 +55,9 @@ async function loadOpportunities() {
       div.innerHTML = `
         <div class="opportunity-header">
           <h3>${school}</h3>
-          <button onclick="requestOpportunity('${opportunity.OpportunityID}')">
-            Request Opportunity
-          </button>
+         <button onclick="requestOpportunity('${opportunity.OpportunityID || ""}')">
+  Request Opportunity
+</button>
         </div>
 
         <div class="opportunity-details">
@@ -104,7 +104,12 @@ async function loadOpportunities() {
 }
 
 function requestOpportunity(opportunityID) {
-  const personID = prompt("Enter your PersonID for testing:");
+  if (!opportunityID || opportunityID === "null" || opportunityID === "undefined") {
+    alert("This opportunity is missing an ID. Please refresh the page or contact the manager.");
+    return;
+  }
+
+  const personID = prompt("Enter your assigned staff number:");
 
   if (!personID) {
     alert("Request cancelled.");
@@ -122,5 +127,4 @@ function requestOpportunity(opportunityID) {
     loadOpportunities();
   }, 1500);
 }
-
 loadOpportunities();
