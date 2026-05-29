@@ -36,6 +36,7 @@ async function loadOpportunities() {
     const opportunities = await response.json();
 
     container.innerHTML = "";
+    let displayedCount = 0;
 
     if (opportunities.length === 0) {
       container.innerHTML = "<p>No opportunities available right now.</p>";
@@ -89,13 +90,24 @@ async function loadOpportunities() {
         </div>
       `;
 
-      container.appendChild(div);
+     container.appendChild(div);
+displayedCount++;
     });
 
   } catch (error) {
     container.innerHTML = "<p>Something went wrong loading opportunities.</p>";
     console.error(error);
   }
+}
+
+if (displayedCount === 0) {
+  container.innerHTML = `
+    <div class="empty-state">
+      <h2>🎯 You're All Caught Up!</h2>
+      <p>There are currently no open coaching opportunities available.</p>
+      <p>Keep an eye out—new opportunities are posted throughout the week.</p>
+    </div>
+  `;
 }
 
 loadOpportunities();
