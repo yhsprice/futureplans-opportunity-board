@@ -43,6 +43,12 @@ async function loadOpportunities() {
     }
 
     opportunities.forEach(opportunity => {
+
+  const openings = Number(opportunity.RemainingOpenings || 0);
+
+  if (openings <= 0) {
+    return;
+  }
       const school = opportunity.School || "School Not Listed";
       const date = formatDate(opportunity.Date);
       const startTime = formatTime(opportunity.StartTime);
