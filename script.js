@@ -53,7 +53,6 @@ async function loadOpportunities() {
       const date = formatDate(opportunity.Date);
       const startTime = formatTime(opportunity.StartTime);
       const endTime = formatTime(opportunity.EndTime);
-      const openings = opportunity.RemainingOpenings ?? opportunity.CoachesNeeded ?? 0;
       const program = opportunity.ProgramType || "Not listed";
 
       const div = document.createElement("div");
