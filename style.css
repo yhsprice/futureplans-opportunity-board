@@ -43,3 +43,21 @@ button {
 button:hover {
     opacity: .9;
 }
+
+.empty-state {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    margin-top: 30px;
+}
+
+.empty-state h2 {
+    color: #0a2a66;
+}
+
+.empty-state p {
+    color: #555;
+    font-size: 18px;
+}
