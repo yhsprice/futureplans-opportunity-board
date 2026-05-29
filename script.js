@@ -103,19 +103,12 @@ function requestOpportunity(opportunityID) {
     return;
   }
 
-  const formData = new FormData();
-  formData.append("opportunityID", opportunityID);
-  formData.append("personID", personID);
+  const url = `${API_URL}?opportunityID=${encodeURIComponent(opportunityID)}&personID=${encodeURIComponent(personID)}`;
 
-  fetch(API_URL, {
+  fetch(url, {
     method: "POST",
-    body: formData,
     mode: "no-cors"
   });
 
   alert("Request submitted for manager approval!");
-
-  setTimeout(() => {
-    loadOpportunities();
-  }, 1000);
 }
