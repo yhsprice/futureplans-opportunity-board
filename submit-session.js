@@ -8,6 +8,8 @@ function submitSession() {
   const endTime = document.getElementById("endTime").value;
   const programType = document.getElementById("programType").value.trim();
   const notes = document.getElementById("notes").value.trim();
+  const payRule = document.getElementById("payRule").value;
+  const revolutionTier = document.getElementById("revolutionTier").value;
 
   if (!personID || !school || !date || !startTime || !endTime) {
     alert("Please complete staff number, school, date, start time, and end time.");
@@ -21,6 +23,8 @@ function submitSession() {
     + `&startTime=${encodeURIComponent(startTime)}`
     + `&endTime=${encodeURIComponent(endTime)}`
     + `&programType=${encodeURIComponent(programType)}`
+    + `&payRule=${encodeURIComponent(payRule)}`
+    + `&revolutionTier=${encodeURIComponent(revolutionTier)}`
     + `&notes=${encodeURIComponent(notes)}`;
 
   fetch(url)
