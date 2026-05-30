@@ -103,7 +103,7 @@ async function loadOpportunities() {
   }
 }
 
-function requestOpportunity(opportunityID) {
+async function requestOpportunity(opportunityID) {
   if (!opportunityID || opportunityID === "null" || opportunityID === "undefined") {
     alert("This opportunity is missing an ID. Please refresh the page or contact the manager.");
     return;
@@ -118,13 +118,25 @@ function requestOpportunity(opportunityID) {
 
   const url = `${API_URL}?action=request&opportunityID=${encodeURIComponent(opportunityID)}&personID=${encodeURIComponent(personID)}`;
 
-  const img = new Image();
-  img.src = url;
+  try {
+    const response = await fetch(url);
+    const result = await response.json();
 
-  alert("Request submitted for manager approval!");
+    if (!result.success) {
+      alert(result.message);
+      return;
+    }
 
-  setTimeout(() => {
-    loadOpportunities();
-  }, 1500);
+    alert("Request submitted for manager approval!");
+
+    setTimeout(() => {
+      loadOpportunities();
+    }, 1500);
+
+  } catch (error) {
+    alert("Something went wrong submitting the request.");
+    console.error(error);
+  }
+}
 }
 loadOpportunities();
