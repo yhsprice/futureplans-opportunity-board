@@ -40,8 +40,11 @@ async function loadSchedule() {
       ${request.StartTime} - ${request.EndTime}</p>
 
       <p><strong>Status:</strong>
-      ${request.Status}</p>
-    `;
+${request.Status}</p>
+
+<button onclick="cancelRequest('${request.RequestID}')">
+  Cancel Request
+</button>
 
     container.appendChild(div);
   });
