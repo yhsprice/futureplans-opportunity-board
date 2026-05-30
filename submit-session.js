@@ -18,8 +18,6 @@ if (!personID || !school || !date) {
     + `&personID=${encodeURIComponent(personID)}`
     + `&school=${encodeURIComponent(school)}`
     + `&date=${encodeURIComponent(date)}`
-    + `&startTime=${encodeURIComponent(startTime)}`
-    + `&endTime=${encodeURIComponent(endTime)}`
     + `&programType=${encodeURIComponent(programType)}`
     + `&payRule=${encodeURIComponent(payRule)}`
     + `&revolutionTier=${encodeURIComponent(revolutionTier)}`
