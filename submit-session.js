@@ -4,8 +4,6 @@ function submitSession() {
   const personID = document.getElementById("personID").value.trim();
   const school = document.getElementById("school").value.trim();
   const date = document.getElementById("date").value;
-  const startTime = document.getElementById("startTime").value;
-  const endTime = document.getElementById("endTime").value;
   const programType = document.getElementById("programType").value.trim();
   const notes = document.getElementById("notes").value.trim();
   const payRule = document.getElementById("payRule").value;
