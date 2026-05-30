@@ -138,5 +138,4 @@ async function requestOpportunity(opportunityID) {
     console.error(error);
   }
 }
-}
 loadOpportunities();
