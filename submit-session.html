@@ -1,1 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Submit Completed Session</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+  <p><a href="index.html">Back to Opportunity Board</a></p>
+
+  <h1>Submit Completed Session</h1>
+
+  <div class="opportunity">
+    <p><strong>Staff Number</strong></p>
+    <input id="personID" placeholder="Enter your staff number">
+
+    <p><strong>School</strong></p>
+    <input id="school" placeholder="School name">
+
+    <p><strong>Date</strong></p>
+    <input id="date" type="date">
+
+    <p><strong>Start Time</strong></p>
+    <input id="startTime" type="time">
+
+    <p><strong>End Time</strong></p>
+    <input id="endTime" type="time">
+
+    <p><strong>Program Type</strong></p>
+    <input id="programType" placeholder="Youth, Adult, Summer, etc.">
+
+    <p><strong>Notes</strong></p>
+    <textarea id="notes" placeholder="Optional notes"></textarea>
+
+    <br><br>
+    <button onclick="submitSession()">Submit Session</button>
+  </div>
+
+  <script src="submit-session.js"></script>
+
+</body>
+</html>
