@@ -2,6 +2,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_
 
 const requestList = document.getElementById("requestList");
 
+const payApprovalList = document.getElementById("payApprovalList");
+
 async function loadRequests() {
   requestList.innerHTML = "<p>Loading requests...</p>";
 
