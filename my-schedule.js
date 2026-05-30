@@ -1,4 +1,4 @@
-const API_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_MyzkaTIo-m87TZcIvG9sVOcWoeanaVJbcDnanhr9g_-0mA/exec";
 
 const container = document.getElementById("scheduleList");
 
