@@ -9,10 +9,10 @@ function submitSession() {
   const payRule = document.getElementById("payRule").value;
   const revolutionTier = document.getElementById("revolutionTier").value;
 
-  if (!personID || !school || !date || !startTime || !endTime) {
-    alert("Please complete staff number, school, date, start time, and end time.");
-    return;
-  }
+if (!personID || !school || !date) {
+  alert("Please complete staff number, school, and date.");
+  return;
+}
 
   const url = `${API_URL}?action=submitSession`
     + `&personID=${encodeURIComponent(personID)}`
