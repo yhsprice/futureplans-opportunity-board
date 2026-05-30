@@ -51,3 +51,28 @@ ${request.Status}</p>
 }
 
 loadSchedule();
+
+function cancelRequest(requestID) {
+  const confirmCancel = confirm("Are you sure you want to cancel this request?");
+
+  if (!confirmCancel) {
+    return;
+  }
+
+  const url = `${API_URL}?action=updateRequest&requestID=${encodeURIComponent(requestID)}&status=Coach Cancelled`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert("Request cancelled.");
+        loadSchedule();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    })
+    .catch(error => {
+      alert("Something went wrong cancelling the request.");
+      console.error(error);
+    });
+}
