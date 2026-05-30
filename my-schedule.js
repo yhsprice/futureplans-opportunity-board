@@ -15,14 +15,14 @@ async function loadSchedule() {
   const requests = await response.json();
 
   const myRequests = requests.filter(r =>
-    String(r.PersonID) === String(personID) &&
-    r.Status === "Approved"
-  );
+  String(r.PersonID) === String(personID) &&
+  (r.Status === "Approved" || r.Status === "Pending Approval")
+);
 
   if (myRequests.length === 0) {
-    container.innerHTML = "<p>No approved opportunities found.</p>";
-    return;
-  }
+  container.innerHTML = "<p>No approved or pending opportunities found.</p>";
+  return;
+}
 
   container.innerHTML = "";
 
