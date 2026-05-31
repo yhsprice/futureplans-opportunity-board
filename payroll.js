@@ -1,14 +1,41 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_MyzkaTIo-m87TZcIvG9sVOcWoeanaVJbcDnanhr9g_-0mA/exec";
 
 const container = document.getElementById("payrollSummary");
+const payPeriodSelect = document.getElementById("payPeriodSelect");
+
+async function loadPayPeriods() {
+  const response = await fetch(`${API_URL}?action=getPayPeriods`);
+  const payPeriods = await response.json();
+
+  payPeriodSelect.innerHTML = "";
+
+  payPeriods.forEach(period => {
+    const option = document.createElement("option");
+    option.value = period.PayPeriodID;
+    option.textContent = `${period.PayPeriodID} | ${formatDate(period.StartDate)} - ${formatDate(period.EndDate)} | ${period.Status}`;
+    payPeriodSelect.appendChild(option);
+  });
+
+  loadPayroll();
+}
 
 async function loadPayroll() {
+  const selectedPayPeriod = payPeriodSelect.value;
+
+  if (!selectedPayPeriod) {
+    container.innerHTML = "<p>Select a pay period to view payroll.</p>";
+    return;
+  }
+
   container.innerHTML = "<p>Loading payroll...</p>";
 
   const response = await fetch(`${API_URL}?action=getCompletedSessions`);
   const sessions = await response.json();
 
-  const approved = sessions.filter(s => s.Status === "Approved for Pay");
+  const approved = sessions.filter(s =>
+    s.Status === "Approved for Pay" &&
+    s.PayPeriodID === selectedPayPeriod
+  );
 
   const summary = {};
 
@@ -31,7 +58,7 @@ async function loadPayroll() {
   const coaches = Object.keys(summary);
 
   if (coaches.length === 0) {
-    container.innerHTML = "<p>No approved payroll items found.</p>";
+    container.innerHTML = `<p>No approved payroll items found for ${selectedPayPeriod}.</p>`;
     return;
   }
 
@@ -40,7 +67,7 @@ async function loadPayroll() {
 
   let html = `
     <div class="opportunity">
-      <h2>Approved Payroll Summary</h2>
+      <h2>Payroll Summary: ${selectedPayPeriod}</h2>
       <table>
         <thead>
           <tr>
@@ -79,4 +106,16 @@ async function loadPayroll() {
   container.innerHTML = html;
 }
 
-loadPayroll();
+function formatDate(value) {
+  const date = new Date(value);
+  if (isNaN(date)) return value || "";
+
+  return date.toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  });
+}
+
+loadPayPeriods();
