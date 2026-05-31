@@ -1,1 +1,82 @@
+const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_MyzkaTIo-m87TZcIvG9sVOcWoeanaVJbcDnanhr9g_-0mA/exec";
 
+const container = document.getElementById("payrollSummary");
+
+async function loadPayroll() {
+  container.innerHTML = "<p>Loading payroll...</p>";
+
+  const response = await fetch(`${API_URL}?action=getCompletedSessions`);
+  const sessions = await response.json();
+
+  const approved = sessions.filter(s => s.Status === "Approved for Pay");
+
+  const summary = {};
+
+  approved.forEach(session => {
+    const coach = session.CoachName || "Unknown Coach";
+
+    if (!summary[coach]) {
+      summary[coach] = {
+        hours: 0,
+        pay: 0,
+        sessions: 0
+      };
+    }
+
+    summary[coach].hours += Number(session.PayHours || 0);
+    summary[coach].pay += Number(session.PayAmount || 0);
+    summary[coach].sessions += 1;
+  });
+
+  const coaches = Object.keys(summary);
+
+  if (coaches.length === 0) {
+    container.innerHTML = "<p>No approved payroll items found.</p>";
+    return;
+  }
+
+  let totalHours = 0;
+  let totalPay = 0;
+
+  let html = `
+    <div class="opportunity">
+      <h2>Approved Payroll Summary</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Coach</th>
+            <th>Sessions</th>
+            <th>Pay Hours</th>
+            <th>Pay Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  coaches.forEach(coach => {
+    totalHours += summary[coach].hours;
+    totalPay += summary[coach].pay;
+
+    html += `
+      <tr>
+        <td>${coach}</td>
+        <td>${summary[coach].sessions}</td>
+        <td>${summary[coach].hours.toFixed(2)}</td>
+        <td>$${summary[coach].pay.toFixed(2)}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+        </tbody>
+      </table>
+
+      <h3>Total Hours: ${totalHours.toFixed(2)}</h3>
+      <h3>Total Payroll: $${totalPay.toFixed(2)}</h3>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+loadPayroll();
