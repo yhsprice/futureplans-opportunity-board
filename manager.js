@@ -103,6 +103,13 @@ async function loadPayApprovals() {
         <p><strong>Pay Hours:</strong> ${session.PayHours}</p>
         <p><strong>Pay Amount:</strong> $${session.PayAmount}</p>
         <p><strong>Notes:</strong> ${session.Notes || ""}</p>
+        <button onclick="updatePayApproval('${session.SessionID}', 'Approved for Pay')">
+          Approve for Pay
+        </button>
+
+<button onclick="updatePayApproval('${session.SessionID}', 'Denied')">
+  Deny
+</button>
       `;
 
       payApprovalList.appendChild(div);
