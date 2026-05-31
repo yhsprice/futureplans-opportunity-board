@@ -121,5 +121,24 @@ async function loadPayApprovals() {
   }
 }
 
+function updatePayApproval(sessionID, newStatus) {
+  const url = `${API_URL}?action=updateCompletedSession&sessionID=${encodeURIComponent(sessionID)}&status=${encodeURIComponent(newStatus)}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert(`Session marked as ${newStatus}.`);
+        loadPayApprovals();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    })
+    .catch(error => {
+      alert("Something went wrong updating the session.");
+      console.error(error);
+    });
+}
+
 loadRequests();
 loadPayApprovals();
