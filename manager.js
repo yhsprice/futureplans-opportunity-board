@@ -140,5 +140,28 @@ function updatePayApproval(sessionID, newStatus) {
     });
 }
 
+function generateScheduledPayroll() {
+  const confirmRun = confirm("Generate payroll items from approved scheduled opportunities that have already passed?");
+
+  if (!confirmRun) {
+    return;
+  }
+
+  fetch(`${API_URL}?action=generateScheduledPayroll`)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert(`${result.created} scheduled payroll item(s) created.`);
+        loadPayApprovals();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    })
+    .catch(error => {
+      alert("Something went wrong generating scheduled payroll.");
+      console.error(error);
+    });
+}
+
 loadRequests();
 loadPayApprovals();
