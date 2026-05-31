@@ -10,9 +10,16 @@
 
   <h1>Payroll Dashboard</h1>
 
-  <div id="payrollSummary">
-    <p>Loading payroll...</p>
-  </div>
+  <div class="opportunity">
+  <p><strong>Select Pay Period</strong></p>
+  <select id="payPeriodSelect" onchange="loadPayroll()">
+    <option value="">Loading pay periods...</option>
+  </select>
+</div>
+
+<div id="payrollSummary">
+  <p>Select a pay period to view payroll.</p>
+</div>
 
   <script src="payroll.js"></script>
 
