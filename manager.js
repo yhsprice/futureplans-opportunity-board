@@ -36,6 +36,14 @@ async function loadRequests() {
         <p><strong>Coach:</strong> ${request.CoachName}</p>
         <p><strong>Requested At:</strong> ${request.RequestedAt}</p>
         <p><strong>Status:</strong> ${request.Status}</p>
+        ${request.AttendanceVerified === "Yes"
+            ? `<p><strong>Attendance:</strong> Verified</p>`
+            : `
+            <button onclick="verifyAttendance('${request.RequestID}')">
+              Verify Worked
+            </button>
+            `
+        }
 
         <button onclick="updateRequest('${request.RequestID}', 'Approved')">
           Approve
@@ -160,6 +168,36 @@ function generateScheduledPayroll() {
     .catch(error => {
       alert("Something went wrong generating scheduled payroll.");
       console.error(error);
+    });
+}
+
+function verifyAttendance(requestID) {
+
+  const confirmVerify = confirm(
+    "Verify that this coach completed the session?"
+  );
+
+  if (!confirmVerify) {
+    return;
+  }
+
+  fetch(
+    `${API_URL}?action=verifyAttendance&requestID=${encodeURIComponent(requestID)}`
+  )
+    .then(response => response.json())
+    .then(result => {
+
+      if (result.success) {
+        alert("Attendance verified.");
+        loadRequests();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Something went wrong.");
     });
 }
 
