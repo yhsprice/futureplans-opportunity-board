@@ -5,10 +5,27 @@ const container = document.getElementById("utilizationReport");
 async function loadUtilization() {
   container.innerHTML = "<p>Loading utilization...</p>";
 
-  const response = await fetch(`${API_URL}?action=getCompletedSessions`);
-  const sessions = await response.json();
+  const sessionsResponse = await fetch(`${API_URL}?action=getCompletedSessions`);
+  const sessions = await sessionsResponse.json();
 
-  const approved = sessions.filter(s => s.Status === "Approved for Pay");
+  const payPeriodsResponse = await fetch(`${API_URL}?action=getPayPeriods`);
+  const payPeriods = await payPeriodsResponse.json();
+
+  const currentPayPeriod = payPeriods.find(period =>
+    String(period.Status).trim() === "Current"
+  );
+
+  if (!currentPayPeriod) {
+    container.innerHTML = "<p>No current pay period found.</p>";
+    return;
+  }
+
+  const currentPayPeriodID = currentPayPeriod.PayPeriodID;
+
+  const approved = sessions.filter(s =>
+    s.Status === "Approved for Pay" &&
+    s.PayPeriodID === currentPayPeriodID
+  );
 
   const summary = {};
 
@@ -31,12 +48,13 @@ async function loadUtilization() {
   const coaches = Object.keys(summary).sort();
 
   if (coaches.length === 0) {
-    container.innerHTML = "<p>No approved payroll records found.</p>";
+    container.innerHTML = `<p>No approved payroll records found for ${currentPayPeriodID}.</p>`;
     return;
   }
 
   let html = `
     <div class="opportunity">
+      <h2>Coach Utilization: ${currentPayPeriodID}</h2>
       <table>
         <thead>
           <tr>
