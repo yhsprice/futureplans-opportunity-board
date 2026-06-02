@@ -16,9 +16,13 @@ async function loadMyRequests() {
     const response = await fetch(`${API_URL}?action=getRequests`);
     const requests = await response.json();
 
-    const mine = requests.filter(request =>
-      String(request.PersonID) === String(personID)
-    );
+    const mine = requests
+      .filter(request => String(request.PersonID) === String(personID))
+      .sort((a, b) => {
+        const dateA = new Date(`${a.Date} ${a.StartTime}`);
+        const dateB = new Date(`${b.Date} ${b.StartTime}`);
+        return dateA - dateB;
+      });
 
     if (mine.length === 0) {
       myRequestList.innerHTML = `
@@ -69,32 +73,57 @@ function renderSection(title, requests, showCompleteButton) {
 
   if (requests.length === 0) {
     html += `<p>Nothing here right now.</p>`;
-  } else {
-    requests.forEach(request => {
-      html += `
-        <div class="opportunity">
-          <h3>${request.School}</h3>
-          <p><strong>Date:</strong> ${request.Date}</p>
-          <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
-          <p><strong>Status:</strong> ${request.Status}</p>
-          <p><strong>Requested At:</strong> ${request.RequestedAt}</p>
-
-          ${request.PayrollGenerated === "Yes"
-            ? `<p><strong>Already submitted for pay approval.</strong><br>
-                Submitted: ${request.PayrollGeneratedAt || ""}</p>`
-            : ""
-          }
-
-          ${showCompleteButton
-            ? `<button onclick="completeRequest('${request.RequestID}')">
-                Complete
-              </button>`
-            : ""
-          }
-        </div>
-      `;
-    });
+    section.innerHTML = html;
+    myRequestList.appendChild(section);
+    return;
   }
+
+  html += `
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:left; padding:8px;">Date</th>
+          <th style="text-align:left; padding:8px;">Start</th>
+          <th style="text-align:left; padding:8px;">End</th>
+          <th style="text-align:left; padding:8px; min-width:180px;">School</th>
+          <th style="text-align:left; padding:8px;">Program</th>
+          <th style="text-align:left; padding:8px;">Status</th>
+          <th style="text-align:left; padding:8px;">Submitted</th>
+          <th style="text-align:left; padding:8px;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  requests.forEach(request => {
+    const submittedText = request.PayrollGenerated === "Yes"
+      ? `Yes<br><small>${request.PayrollGeneratedAt || ""}</small>`
+      : "No";
+
+    const action = showCompleteButton
+      ? `<button onclick="completeRequest('${request.RequestID}')">Complete</button>`
+      : request.PayrollGenerated === "Yes"
+        ? `<strong>Already submitted</strong>`
+        : "";
+
+    html += `
+      <tr>
+        <td style="padding:8px; white-space:nowrap;">${request.Date}</td>
+        <td style="padding:8px; white-space:nowrap;">${request.StartTime}</td>
+        <td style="padding:8px; white-space:nowrap;">${request.EndTime}</td>
+        <td style="padding:8px; min-width:180px;">${request.School}</td>
+        <td style="padding:8px;">${request.ProgramType || ""}</td>
+        <td style="padding:8px;">${request.Status}</td>
+        <td style="padding:8px;">${submittedText}</td>
+        <td style="padding:8px;">${action}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+  `;
 
   section.innerHTML = html;
   myRequestList.appendChild(section);
