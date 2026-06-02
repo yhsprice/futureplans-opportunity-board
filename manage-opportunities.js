@@ -8,60 +8,123 @@ async function loadOpportunities() {
   const response = await fetch(API_URL);
   const opportunities = await response.json();
 
-  container.innerHTML = "";
+  opportunities.sort((a, b) => {
+    const statusA = String(a.OpportunityStatus || "Open").trim();
+    const statusB = String(b.OpportunityStatus || "Open").trim();
+
+    const openA = statusA === "Open" ? 0 : 1;
+    const openB = statusB === "Open" ? 0 : 1;
+
+    if (openA !== openB) return openA - openB;
+
+    const dateA = new Date(`${a.Date} ${a.StartTime}`);
+    const dateB = new Date(`${b.Date} ${b.StartTime}`);
+
+    return dateA - dateB;
+  });
+
+  let html = `
+    <div class="opportunity">
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>School</th>
+            <th>Needed</th>
+            <th>Open</th>
+            <th>Program</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
 
   opportunities.forEach(opportunity => {
-    const div = document.createElement("div");
-    div.className = "opportunity";
+    const status = String(opportunity.OpportunityStatus || "Open").trim();
 
-    div.innerHTML = `
-      <h3>${opportunity.School}</h3>
+    html += `
+      <tr>
+        <td>${status || "Open"}</td>
+        <td>${opportunity.Date}</td>
+        <td>${opportunity.StartTime}</td>
+        <td>${opportunity.EndTime}</td>
+        <td>${opportunity.School}</td>
+        <td>${opportunity.CoachesNeeded}</td>
+        <td>${opportunity.RemainingOpenings}</td>
+        <td>${opportunity.ProgramType}</td>
+        <td>
+          <button onclick="showEditForm('${opportunity.OpportunityID}')">
+            Edit
+          </button>
+          <button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Closed')">
+            Close
+          </button>
+          <button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Cancelled')">
+            Cancel
+          </button>
+        </td>
+      </tr>
 
-      <p><strong>Opportunity ID:</strong> ${opportunity.OpportunityID}</p>
+      <tr id="edit-row-${opportunity.OpportunityID}" style="display:none;">
+        <td colspan="9">
+          <div class="opportunity">
+            <p><strong>School</strong></p>
+            <input id="school-${opportunity.OpportunityID}" value="${opportunity.School || ""}">
 
-      <p><strong>School</strong></p>
-      <input id="school-${opportunity.OpportunityID}" value="${opportunity.School || ""}">
+            <p><strong>Date</strong></p>
+            <input id="date-${opportunity.OpportunityID}" type="date" value="${toInputDate(opportunity.Date)}">
 
-      <p><strong>Date</strong></p>
-      <input id="date-${opportunity.OpportunityID}" type="date" value="${toInputDate(opportunity.Date)}">
+            <p><strong>Start Time</strong></p>
+            <input id="start-${opportunity.OpportunityID}" type="time" value="${toInputTime(opportunity.StartTime)}">
 
-      <p><strong>Start Time</strong></p>
-      <input id="start-${opportunity.OpportunityID}" type="time" value="${toInputTime(opportunity.StartTime)}">
+            <p><strong>End Time</strong></p>
+            <input id="end-${opportunity.OpportunityID}" type="time" value="${toInputTime(opportunity.EndTime)}">
 
-      <p><strong>End Time</strong></p>
-      <input id="end-${opportunity.OpportunityID}" type="time" value="${toInputTime(opportunity.EndTime)}">
+            <p><strong>Coaches Needed</strong></p>
+            <input id="coaches-${opportunity.OpportunityID}" type="number" value="${opportunity.CoachesNeeded || 1}">
 
-      <p><strong>Coaches Needed</strong></p>
-      <input id="coaches-${opportunity.OpportunityID}" type="number" value="${opportunity.CoachesNeeded || 1}">
+            <p><strong>Program Type</strong></p>
+            <input id="program-${opportunity.OpportunityID}" value="${opportunity.ProgramType || ""}">
 
-      <p><strong>Program Type</strong></p>
-      <input id="program-${opportunity.OpportunityID}" value="${opportunity.ProgramType || ""}">
+            <p><strong>Notes</strong></p>
+            <textarea id="notes-${opportunity.OpportunityID}">${opportunity.Notes || ""}</textarea>
 
-      <p><strong>Notes</strong></p>
-      <textarea id="notes-${opportunity.OpportunityID}">${opportunity.Notes || ""}</textarea>
+            <p><strong>Contact</strong></p>
+            <input id="contact-${opportunity.OpportunityID}" value="${opportunity.Contact || ""}">
 
-      <p><strong>Contact</strong></p>
-      <input id="contact-${opportunity.OpportunityID}" value="${opportunity.Contact || ""}">
+            <br><br>
 
-      <br><br>
-      
-<button onclick="updateOpportunity('${opportunity.OpportunityID}')">
-  Save Changes
-</button>
+            <button onclick="updateOpportunity('${opportunity.OpportunityID}')">
+              Save Changes
+            </button>
 
-<br><br>
-
-<button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Closed')">
-  Close Opportunity
-</button>
-
-<button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Cancelled')">
-  Cancel Opportunity
-</button>
+            <button onclick="hideEditForm('${opportunity.OpportunityID}')">
+              Hide
+            </button>
+          </div>
+        </td>
+      </tr>
     `;
-
-    container.appendChild(div);
   });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+function showEditForm(opportunityID) {
+  document.getElementById(`edit-row-${opportunityID}`).style.display = "table-row";
+}
+
+function hideEditForm(opportunityID) {
+  document.getElementById(`edit-row-${opportunityID}`).style.display = "none";
 }
 
 function updateOpportunity(opportunityID) {
@@ -101,23 +164,6 @@ function updateOpportunity(opportunityID) {
     });
 }
 
-function toInputDate(value) {
-  const date = new Date(value);
-  if (isNaN(date)) return "";
-  return date.toISOString().split("T")[0];
-}
-
-function toInputTime(value) {
-  if (!value) return "";
-
-  const date = new Date(`1970-01-01 ${value}`);
-  if (isNaN(date)) return "";
-
-  return date.toTimeString().slice(0, 5);
-}
-
-loadOpportunities();
-
 function setOpportunityStatus(opportunityID, status) {
   const confirmChange = confirm(`Mark this opportunity as ${status}?`);
 
@@ -140,3 +186,20 @@ function setOpportunityStatus(opportunityID, status) {
       console.error(error);
     });
 }
+
+function toInputDate(value) {
+  const date = new Date(value);
+  if (isNaN(date)) return "";
+  return date.toISOString().split("T")[0];
+}
+
+function toInputTime(value) {
+  if (!value) return "";
+
+  const date = new Date(`1970-01-01 ${value}`);
+  if (isNaN(date)) return "";
+
+  return date.toTimeString().slice(0, 5);
+}
+
+loadOpportunities();
