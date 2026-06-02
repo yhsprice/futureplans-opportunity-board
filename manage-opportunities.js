@@ -25,19 +25,19 @@ async function loadOpportunities() {
 
   let html = `
     <div class="opportunity">
-      <table>
+      <table style="width:100%; border-collapse:collapse;">
         <thead>
           <tr>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>School</th>
-            <th>Needed</th>
-            <th>Open</th>
-            <th>Program</th>
-            <th>Actions</th>
-          </tr>
+  <th style="text-align:left; padding:8px;">Status</th>
+  <th style="text-align:left; padding:8px;">Date</th>
+  <th style="text-align:left; padding:8px;">Start</th>
+  <th style="text-align:left; padding:8px;">End</th>
+  <th style="text-align:left; padding:8px; min-width:180px;">School</th>
+  <th style="text-align:left; padding:8px;">Needed</th>
+  <th style="text-align:left; padding:8px;">Open</th>
+  <th style="text-align:left; padding:8px;">Program</th>
+  <th style="text-align:left; padding:8px; min-width:180px;">Actions</th>
+</tr>
         </thead>
         <tbody>
   `;
@@ -47,14 +47,15 @@ async function loadOpportunities() {
 
     html += `
       <tr>
-        <td>${status || "Open"}</td>
-        <td>${opportunity.Date}</td>
-        <td>${opportunity.StartTime}</td>
-        <td>${opportunity.EndTime}</td>
-        <td>${opportunity.School}</td>
-        <td>${opportunity.CoachesNeeded}</td>
-        <td>${opportunity.RemainingOpenings}</td>
-        <td>${opportunity.ProgramType}</td>
+        <td style="padding:8px;">${status || "Open"}</td>
+<td style="padding:8px;">${opportunity.Date}</td>
+<td style="padding:8px;">${opportunity.StartTime}</td>
+<td style="padding:8px;">${opportunity.EndTime}</td>
+<td style="padding:8px; min-width:180px;">${opportunity.School}</td>
+<td style="padding:8px;">${opportunity.CoachesNeeded}</td>
+<td style="padding:8px;">${opportunity.RemainingOpenings}</td>
+<td style="padding:8px;">${opportunity.ProgramType}</td>
+<td style="padding:8px; min-width:180px;">
         <td>
           <button onclick="showEditForm('${opportunity.OpportunityID}')">
             Edit
