@@ -28,16 +28,17 @@ async function loadOpportunities() {
       <table style="width:100%; border-collapse:collapse;">
         <thead>
           <tr>
-  <th style="text-align:left; padding:8px;">Status</th>
-  <th style="text-align:left; padding:8px;">Date</th>
-  <th style="text-align:left; padding:8px;">Start</th>
-  <th style="text-align:left; padding:8px;">End</th>
-  <th style="text-align:left; padding:8px; min-width:180px;">School</th>
-  <th style="text-align:left; padding:8px;">Needed</th>
-  <th style="text-align:left; padding:8px;">Open</th>
-  <th style="text-align:left; padding:8px;">Program</th>
-  <th style="text-align:left; padding:8px; min-width:180px;">Actions</th>
-</tr>
+            <th style="text-align:left; padding:8px;">Status</th>
+            <th style="text-align:left; padding:8px;">Date</th>
+            <th style="text-align:left; padding:8px;">Start</th>
+            <th style="text-align:left; padding:8px;">End</th>
+            <th style="text-align:left; padding:8px; min-width:180px;">School</th>
+            <th style="text-align:left; padding:8px;">Needed</th>
+            <th style="text-align:left; padding:8px;">Approved</th>
+            <th style="text-align:left; padding:8px;">Open</th>
+            <th style="text-align:left; padding:8px;">Program</th>
+            <th style="text-align:left; padding:8px; min-width:220px;">Actions</th>
+          </tr>
         </thead>
         <tbody>
   `;
@@ -45,32 +46,41 @@ async function loadOpportunities() {
   opportunities.forEach(opportunity => {
     const status = String(opportunity.OpportunityStatus || "Open").trim();
 
+    let statusColor = "#28a745";
+    let rowBackground = "";
+
+    if (status === "Closed") {
+      statusColor = "#f0ad4e";
+      rowBackground = "background:#fff8e1;";
+    }
+
+    if (status === "Cancelled") {
+      statusColor = "#dc3545";
+      rowBackground = "background:#f2f2f2;";
+    }
+
     html += `
-      <tr>
-        <td style="padding:8px;">${status || "Open"}</td>
-<td style="padding:8px;">${opportunity.Date}</td>
-<td style="padding:8px;">${opportunity.StartTime}</td>
-<td style="padding:8px;">${opportunity.EndTime}</td>
-<td style="padding:8px; min-width:180px;">${opportunity.School}</td>
-<td style="padding:8px;">${opportunity.CoachesNeeded}</td>
-<td style="padding:8px;">${opportunity.RemainingOpenings}</td>
-<td style="padding:8px;">${opportunity.ProgramType}</td>
-<td style="padding:8px; min-width:180px;">
-        <td>
-          <button onclick="showEditForm('${opportunity.OpportunityID}')">
-            Edit
-          </button>
-          <button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Closed')">
-            Close
-          </button>
-          <button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Cancelled')">
-            Cancel
-          </button>
+      <tr style="${rowBackground}">
+        <td style="padding:8px; color:${statusColor}; font-weight:bold;">${status || "Open"}</td>
+        <td style="padding:8px; white-space:nowrap;">${opportunity.Date}</td>
+        <td style="padding:8px; white-space:nowrap;">${opportunity.StartTime}</td>
+        <td style="padding:8px; white-space:nowrap;">${opportunity.EndTime}</td>
+        <td style="padding:8px; min-width:180px;">${opportunity.School}</td>
+        <td style="padding:8px;">${opportunity.CoachesNeeded}</td>
+        <td style="padding:8px;">${opportunity.ApprovedCount || 0}</td>
+        <td style="padding:8px;">${opportunity.RemainingOpenings}</td>
+        <td style="padding:8px;">${opportunity.ProgramType}</td>
+        <td style="padding:8px; min-width:220px;">
+          <div style="display:flex; gap:4px; flex-wrap:nowrap;">
+            <button onclick="showEditForm('${opportunity.OpportunityID}')">Edit</button>
+            <button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Closed')">Close</button>
+            <button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Cancelled')">Cancel</button>
+          </div>
         </td>
       </tr>
 
       <tr id="edit-row-${opportunity.OpportunityID}" style="display:none;">
-        <td colspan="9">
+        <td colspan="10">
           <div class="opportunity">
             <p><strong>School</strong></p>
             <input id="school-${opportunity.OpportunityID}" value="${opportunity.School || ""}">
