@@ -13,41 +13,75 @@ async function loadSchedule() {
     return;
   }
 
-  const response = await fetch(API_URL + "?action=getRequests");
-  const requests = await response.json();
+  container.innerHTML = "<p>Loading schedule...</p>";
 
-  const myRequests = requests.filter(r =>
-    String(r.PersonID) === String(currentPersonID) &&
-    (r.Status === "Approved" || r.Status === "Pending Approval")
-  );
+  try {
+    const response = await fetch(API_URL + "?action=getRequests");
+    const requests = await response.json();
 
-  if (myRequests.length === 0) {
-    container.innerHTML = "<p>No approved or pending opportunities found.</p>";
-    return;
-  }
+    const myRequests = requests
+      .filter(r =>
+        String(r.PersonID) === String(currentPersonID) &&
+        (r.Status === "Approved" || r.Status === "Pending Approval")
+      )
+      .sort((a, b) => {
+        const dateA = new Date(`${a.Date} ${a.StartTime}`);
+        const dateB = new Date(`${b.Date} ${b.StartTime}`);
+        return dateA - dateB;
+      });
 
-  container.innerHTML = "";
+    if (myRequests.length === 0) {
+      container.innerHTML = "<p>No approved or pending opportunities found.</p>";
+      return;
+    }
 
-  myRequests.forEach(request => {
-    const div = document.createElement("div");
-    div.className = "opportunity";
-
-    div.innerHTML = `
-      <h3>${request.School}</h3>
-
-      <p><strong>Date:</strong> ${request.Date}</p>
-
-      <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
-
-      <p><strong>Status:</strong> ${request.Status}</p>
-
-      <button onclick="cancelRequest('${request.RequestID}')">
-        Cancel Request
-      </button>
+    let html = `
+      <div class="opportunity">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding:8px;">Date</th>
+              <th style="text-align:left; padding:8px;">Start</th>
+              <th style="text-align:left; padding:8px;">End</th>
+              <th style="text-align:left; padding:8px; min-width:180px;">School</th>
+              <th style="text-align:left; padding:8px;">Program</th>
+              <th style="text-align:left; padding:8px;">Status</th>
+              <th style="text-align:left; padding:8px;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
     `;
 
-    container.appendChild(div);
-  });
+    myRequests.forEach(request => {
+      html += `
+        <tr>
+          <td style="padding:8px; white-space:nowrap;">${request.Date}</td>
+          <td style="padding:8px; white-space:nowrap;">${request.StartTime}</td>
+          <td style="padding:8px; white-space:nowrap;">${request.EndTime}</td>
+          <td style="padding:8px; min-width:180px;">${request.School}</td>
+          <td style="padding:8px;">${request.ProgramType || ""}</td>
+          <td style="padding:8px;">${request.Status}</td>
+          <td style="padding:8px;">
+            <button onclick="cancelRequest('${request.RequestID}')">
+              Cancel
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    container.innerHTML = html;
+
+  } catch (error) {
+    container.innerHTML = "<p>Something went wrong loading your schedule.</p>";
+    console.error(error);
+  }
 }
 
 function cancelRequest(requestID) {
