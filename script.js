@@ -38,10 +38,15 @@ async function loadOpportunities() {
 
     opportunities.forEach(opportunity => {
       const openings = Number(opportunity.RemainingOpenings || 0);
+const opportunityStatus = opportunity.OpportunityStatus || "Open";
 
-      if (openings <= 0) {
-        return;
-      }
+if (opportunityStatus === "Closed" || opportunityStatus === "Cancelled") {
+  return;
+}
+
+if (openings <= 0) {
+  return;
+}
 
       const school = opportunity.School || "School Not Listed";
       const date = formatDate(opportunity.Date);
