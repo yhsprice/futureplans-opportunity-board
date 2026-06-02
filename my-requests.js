@@ -40,6 +40,13 @@ async function loadMyRequests() {
         <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
         <p><strong>Status:</strong> ${request.Status}</p>
         <p><strong>Requested At:</strong> ${request.RequestedAt}</p>
+
+${request.Status === "Approved"
+  ? `<button onclick="completeRequest('${request.RequestID}')">
+      Complete
+    </button>`
+  : ""
+}
       `;
 
       myRequestList.appendChild(div);
@@ -49,4 +56,27 @@ async function loadMyRequests() {
     myRequestList.innerHTML = "<p>Something went wrong loading your requests.</p>";
     console.error(error);
   }
+}
+
+function completeRequest(requestID) {
+  const confirmComplete = confirm("Mark this approved opportunity as completed and submit it for pay approval?");
+
+  if (!confirmComplete) {
+    return;
+  }
+
+  fetch(`${API_URL}?action=completeRequest&requestID=${encodeURIComponent(requestID)}`)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert("Completed session submitted for pay approval.");
+        loadMyRequests();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    })
+    .catch(error => {
+      alert("Something went wrong submitting the completed session.");
+      console.error(error);
+    });
 }
