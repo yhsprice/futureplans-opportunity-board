@@ -116,12 +116,7 @@ async function requestOpportunity(opportunityID) {
     return;
   }
 
-  const personID = prompt("Enter your assigned staff number:");
-
-  if (!personID) {
-    alert("Request cancelled.");
-    return;
-  }
+ const personID = currentUser.PersonID;
 
   const url = `${API_URL}?action=request&opportunityID=${encodeURIComponent(opportunityID)}&personID=${encodeURIComponent(personID)}`;
 
