@@ -41,12 +41,12 @@ async function loadMyRequests() {
         <p><strong>Status:</strong> ${request.Status}</p>
         <p><strong>Requested At:</strong> ${request.RequestedAt}</p>
 
-${request.Status === "Approved" && request.PayrollGenerated !== "Yes"
-  ? `<button onclick="completeRequest('${request.RequestID}')">
-      Complete
-    </button>`
-  : request.PayrollGenerated === "Yes"
-    ? `<p><strong>Completed:</strong> Submitted for pay approval</p>`
+${request.PayrollGenerated === "Yes"
+  ? `<p><strong>Already submitted for pay approval.</strong></p>`
+  : request.Status === "Approved"
+    ? `<button onclick="completeRequest('${request.RequestID}')">
+        Complete
+      </button>`
     : ""
 }
       `;
