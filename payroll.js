@@ -3,6 +3,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_
 const totalsContainer = document.getElementById("payrollTotals");
 const container = document.getElementById("payrollSummary");
 const payPeriodSelect = document.getElementById("payPeriodSelect");
+const sortBy = document.getElementById("sortBy");
 
 async function loadPayPeriods() {
   const response = await fetch(`${API_URL}?action=getPayPeriods`);
@@ -56,9 +57,31 @@ async function loadPayroll() {
     summary[coach].sessions += 1;
   });
 
- const coaches = Object.keys(summary).sort((a, b) => {
-  return summary[b].hours - summary[a].hours;
-});
+let coaches = Object.keys(summary);
+
+switch (sortBy.value) {
+
+  case "pay":
+    coaches.sort((a, b) =>
+      summary[b].pay - summary[a].pay
+    );
+    break;
+
+  case "sessions":
+    coaches.sort((a, b) =>
+      summary[b].sessions - summary[a].sessions
+    );
+    break;
+
+  case "name":
+    coaches.sort();
+    break;
+
+  default:
+    coaches.sort((a, b) =>
+      summary[b].hours - summary[a].hours
+    );
+}
 
   if (coaches.length === 0) {
     container.innerHTML = `<p>No approved payroll items found for ${selectedPayPeriod}.</p>`;
