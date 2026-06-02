@@ -6,7 +6,7 @@ async function loadMyRequests() {
   const personID = document.getElementById("personIDInput").value.trim();
 
   if (!personID) {
-    alert("Please enter your PersonID.");
+    alert("Please enter your assigned staff number.");
     return;
   }
 
@@ -16,7 +16,9 @@ async function loadMyRequests() {
     const response = await fetch(`${API_URL}?action=getRequests`);
     const requests = await response.json();
 
-    const mine = requests.filter(request => String(request.PersonID) === String(personID));
+    const mine = requests.filter(request =>
+      String(request.PersonID) === String(personID)
+    );
 
     if (mine.length === 0) {
       myRequestList.innerHTML = `
@@ -28,31 +30,30 @@ async function loadMyRequests() {
       return;
     }
 
+    const needsAction = mine.filter(request =>
+      request.Status === "Approved" &&
+      request.PayrollGenerated !== "Yes"
+    );
+
+    const submittedForPay = mine.filter(request =>
+      request.PayrollGenerated === "Yes"
+    );
+
+    const waitingApproval = mine.filter(request =>
+      request.Status === "Pending Approval"
+    );
+
+    const closed = mine.filter(request =>
+      request.Status === "Denied" ||
+      request.Status === "Coach Cancelled"
+    );
+
     myRequestList.innerHTML = "";
 
-    mine.forEach(request => {
-      const div = document.createElement("div");
-      div.className = "opportunity";
-
-      div.innerHTML = `
-        <h3>${request.School}</h3>
-        <p><strong>Date:</strong> ${request.Date}</p>
-        <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
-        <p><strong>Status:</strong> ${request.Status}</p>
-        <p><strong>Requested At:</strong> ${request.RequestedAt}</p>
-
-${request.PayrollGenerated === "Yes"
-  ? `<p><strong>Already submitted for pay approval.</strong></p>`
-  : request.Status === "Approved"
-    ? `<button onclick="completeRequest('${request.RequestID}')">
-        Complete
-      </button>`
-    : ""
-}
-      `;
-
-      myRequestList.appendChild(div);
-    });
+    renderSection("Needs Action", needsAction, true);
+    renderSection("Submitted for Pay", submittedForPay, false);
+    renderSection("Waiting for Approval", waitingApproval, false);
+    renderSection("Closed", closed, false);
 
   } catch (error) {
     myRequestList.innerHTML = "<p>Something went wrong loading your requests.</p>";
@@ -60,8 +61,49 @@ ${request.PayrollGenerated === "Yes"
   }
 }
 
+function renderSection(title, requests, showCompleteButton) {
+  const section = document.createElement("div");
+  section.className = "opportunity";
+
+  let html = `<h2>${title} (${requests.length})</h2>`;
+
+  if (requests.length === 0) {
+    html += `<p>Nothing here right now.</p>`;
+  } else {
+    requests.forEach(request => {
+      html += `
+        <div class="opportunity">
+          <h3>${request.School}</h3>
+          <p><strong>Date:</strong> ${request.Date}</p>
+          <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
+          <p><strong>Status:</strong> ${request.Status}</p>
+          <p><strong>Requested At:</strong> ${request.RequestedAt}</p>
+
+          ${request.PayrollGenerated === "Yes"
+            ? `<p><strong>Already submitted for pay approval.</strong><br>
+                Submitted: ${request.PayrollGeneratedAt || ""}</p>`
+            : ""
+          }
+
+          ${showCompleteButton
+            ? `<button onclick="completeRequest('${request.RequestID}')">
+                Complete
+              </button>`
+            : ""
+          }
+        </div>
+      `;
+    });
+  }
+
+  section.innerHTML = html;
+  myRequestList.appendChild(section);
+}
+
 function completeRequest(requestID) {
-  const confirmComplete = confirm("Mark this approved opportunity as completed and submit it for pay approval?");
+  const confirmComplete = confirm(
+    "Mark this approved opportunity as completed and submit it for pay approval?"
+  );
 
   if (!confirmComplete) {
     return;
