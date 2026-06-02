@@ -65,6 +65,7 @@ async function loadPayroll() {
 
   let totalHours = 0;
   let totalPay = 0;
+  let totalSessions = 0;
 
   let html = `
     <div class="opportunity">
@@ -84,6 +85,7 @@ async function loadPayroll() {
   coaches.forEach(coach => {
     totalHours += summary[coach].hours;
     totalPay += summary[coach].pay;
+    totalSessions += summary[coach].sessions;
 
     html += `
       <tr>
@@ -103,7 +105,25 @@ async function loadPayroll() {
       <h3>Total Payroll: $${totalPay.toFixed(2)}</h3>
     </div>
   `;
+  
+totalsContainer.innerHTML = `
+<div class="opportunity">
+  <h2>${selectedPayPeriod} Summary</h2>
 
+  <p><strong>Total Coaches:</strong>
+  ${coaches.length}</p>
+
+  <p><strong>Total Sessions:</strong>
+  ${totalSessions}</p>
+
+  <p><strong>Total Hours:</strong>
+  ${totalHours.toFixed(2)}</p>
+
+  <p><strong>Total Payroll:</strong>
+  $${totalPay.toFixed(2)}</p>
+</div>
+`;
+  
   container.innerHTML = html;
 }
 
