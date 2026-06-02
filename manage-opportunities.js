@@ -44,10 +44,20 @@ async function loadOpportunities() {
       <input id="contact-${opportunity.OpportunityID}" value="${opportunity.Contact || ""}">
 
       <br><br>
+      
+<button onclick="updateOpportunity('${opportunity.OpportunityID}')">
+  Save Changes
+</button>
 
-      <button onclick="updateOpportunity('${opportunity.OpportunityID}')">
-        Save Changes
-      </button>
+<br><br>
+
+<button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Closed')">
+  Close Opportunity
+</button>
+
+<button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Cancelled')">
+  Cancel Opportunity
+</button>
     `;
 
     container.appendChild(div);
@@ -107,3 +117,26 @@ function toInputTime(value) {
 }
 
 loadOpportunities();
+
+function setOpportunityStatus(opportunityID, status) {
+  const confirmChange = confirm(`Mark this opportunity as ${status}?`);
+
+  if (!confirmChange) {
+    return;
+  }
+
+  fetch(`${API_URL}?action=setOpportunityStatus&opportunityID=${encodeURIComponent(opportunityID)}&status=${encodeURIComponent(status)}`)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert(`Opportunity marked as ${status}.`);
+        loadOpportunities();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    })
+    .catch(error => {
+      alert("Something went wrong updating the opportunity status.");
+      console.error(error);
+    });
+}
