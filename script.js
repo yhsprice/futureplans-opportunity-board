@@ -37,10 +37,10 @@ async function loadOpportunities() {
     let displayedCount = 0;
 
     opportunities.forEach(opportunity => {
-      const openings = Number(opportunity.RemainingOpenings || 0);
-const opportunityStatus = opportunity.OpportunityStatus || "Open";
+ const openings = Number(opportunity.RemainingOpenings || 0);
+const opportunityStatus = String(opportunity.OpportunityStatus || "Open").trim();
 
-if (opportunityStatus === "Closed" || opportunityStatus === "Cancelled") {
+if (opportunityStatus !== "Open") {
   return;
 }
 
