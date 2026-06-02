@@ -7,10 +7,10 @@ function formatDate(value) {
   if (isNaN(date)) return value || "";
 
   return date.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
+    weekday: "short",
+    month: "numeric",
     day: "numeric",
+    year: "numeric",
     timeZone: "UTC"
   });
 }
@@ -33,66 +33,20 @@ async function loadOpportunities() {
     const response = await fetch(API_URL);
     const opportunities = await response.json();
 
-    container.innerHTML = "";
-    let displayedCount = 0;
+    const openOpportunities = opportunities
+      .filter(opportunity => {
+        const openings = Number(opportunity.RemainingOpenings || 0);
+        const status = String(opportunity.OpportunityStatus || "Open").trim();
 
-    opportunities.forEach(opportunity => {
- const openings = Number(opportunity.RemainingOpenings || 0);
-const opportunityStatus = String(opportunity.OpportunityStatus || "Open").trim();
+        return status === "Open" && openings > 0;
+      })
+      .sort((a, b) => {
+        const dateA = new Date(`${a.Date} ${a.StartTime}`);
+        const dateB = new Date(`${b.Date} ${b.StartTime}`);
+        return dateA - dateB;
+      });
 
-if (opportunityStatus !== "Open") {
-  return;
-}
-
-if (openings <= 0) {
-  return;
-}
-
-      const school = opportunity.School || "School Not Listed";
-      const date = formatDate(opportunity.Date);
-      const startTime = formatTime(opportunity.StartTime);
-      const endTime = formatTime(opportunity.EndTime);
-      const program = opportunity.ProgramType || "Not listed";
-
-      const div = document.createElement("div");
-      div.className = "opportunity";
-
-      div.innerHTML = `
-        <div class="opportunity-header">
-          <h3>${school}</h3>
-         <button onclick="requestOpportunity('${opportunity.OpportunityID || ""}')">
-  Request Opportunity
-</button>
-        </div>
-
-        <div class="opportunity-details">
-          <div>
-            <strong>Date</strong>
-            <p>${date}</p>
-          </div>
-
-          <div>
-            <strong>Time</strong>
-            <p>${startTime} - ${endTime}</p>
-          </div>
-
-          <div>
-            <strong>Openings Available</strong>
-            <p>${openings}</p>
-          </div>
-
-          <div>
-            <strong>Program</strong>
-            <p>${program}</p>
-          </div>
-        </div>
-      `;
-
-      container.appendChild(div);
-      displayedCount++;
-    });
-
-    if (displayedCount === 0) {
+    if (openOpportunities.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
           <h2>🎯 You're All Caught Up!</h2>
@@ -100,7 +54,53 @@ if (openings <= 0) {
           <p>Keep an eye out—new opportunities are posted throughout the week.</p>
         </div>
       `;
+      return;
     }
+
+    let html = `
+      <div class="opportunity">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding:8px;">Date</th>
+              <th style="text-align:left; padding:8px;">Start</th>
+              <th style="text-align:left; padding:8px;">End</th>
+              <th style="text-align:left; padding:8px; min-width:180px;">School</th>
+              <th style="text-align:left; padding:8px;">Open</th>
+              <th style="text-align:left; padding:8px;">Program</th>
+              <th style="text-align:left; padding:8px;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    openOpportunities.forEach(opportunity => {
+      const openings = Number(opportunity.RemainingOpenings || 0);
+
+      html += `
+        <tr>
+          <td style="padding:8px; white-space:nowrap;">${formatDate(opportunity.Date)}</td>
+          <td style="padding:8px; white-space:nowrap;">${formatTime(opportunity.StartTime)}</td>
+          <td style="padding:8px; white-space:nowrap;">${formatTime(opportunity.EndTime)}</td>
+          <td style="padding:8px; min-width:180px;">${opportunity.School || "School Not Listed"}</td>
+          <td style="padding:8px;">${openings}</td>
+          <td style="padding:8px;">${opportunity.ProgramType || "Not listed"}</td>
+          <td style="padding:8px;">
+            <button onclick="requestOpportunity('${opportunity.OpportunityID || ""}')">
+              Request
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    container.innerHTML = html;
 
   } catch (error) {
     container.innerHTML = "<p>Something went wrong loading opportunities.</p>";
@@ -143,4 +143,5 @@ async function requestOpportunity(opportunityID) {
     console.error(error);
   }
 }
+
 loadOpportunities();
