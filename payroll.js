@@ -56,7 +56,9 @@ async function loadPayroll() {
     summary[coach].sessions += 1;
   });
 
-  const coaches = Object.keys(summary);
+ const coaches = Object.keys(summary).sort((a, b) => {
+  return summary[b].hours - summary[a].hours;
+});
 
   if (coaches.length === 0) {
     container.innerHTML = `<p>No approved payroll items found for ${selectedPayPeriod}.</p>`;
