@@ -154,3 +154,6 @@ function completeRequest(requestID) {
       console.error(error);
     });
 }
+
+showUserBanner();
+loadMyRequests();
