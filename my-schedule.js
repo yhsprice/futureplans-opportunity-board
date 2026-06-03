@@ -1,18 +1,11 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_MyzkaTIo-m87TZcIvG9sVOcWoeanaVJbcDnanhr9g_-0mA/exec";
 
 const container = document.getElementById("scheduleList");
-let currentPersonID = "";
+const currentUser = getCurrentUser();
+let currentPersonID = currentUser.PersonID;
 
 async function loadSchedule() {
-  if (!currentPersonID) {
-    currentPersonID = prompt("Enter your assigned staff number:");
-  }
-
-  if (!currentPersonID) {
-    container.innerHTML = "<p>No staff number entered.</p>";
-    return;
-  }
-
+ 
   container.innerHTML = "<p>Loading schedule...</p>";
 
   try {
