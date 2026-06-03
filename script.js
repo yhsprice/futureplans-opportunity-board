@@ -147,18 +147,7 @@ async function loadOpportunities() {
     </tr>
   `;
 });
-          <td style="padding:8px;">${openings}</td>
-          <td style="padding:8px;">${opportunity.ProgramType || "Not listed"}</td>
-
-          <td style="padding:8px;">
-            <button onclick="requestOpportunity('${opportunity.OpportunityID || ""}')">
-              Request
-            </button>
-          </td>
-        </tr>
-      `;
-    });
-
+         
     html += `
           </tbody>
         </table>
