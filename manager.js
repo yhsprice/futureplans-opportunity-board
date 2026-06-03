@@ -254,12 +254,12 @@ async function loadReleaseRequests() {
 
       <td style="padding:8px;">
         <button onclick="approveRelease('${request.RequestID}')">
-          Approve
-        </button>
+  Approve Release
+</button>
 
-        <button onclick="denyRelease('${request.RequestID}')">
-          Deny
-        </button>
+<button onclick="recordCallOff('${request.RequestID}')">
+  Record Call-Off
+</button>
       </td>
     </tr>
   `;
@@ -297,17 +297,17 @@ function approveRelease(requestID) {
     });
 }
 
-function denyRelease(requestID) {
+function recordCallOff(requestID) {
 
-  if (!confirm("Deny this release request?")) {
+  if (!confirm("Record this as a call-off and open the opportunity for replacement?")) {
     return;
   }
 
-  fetch(`${API_URL}?action=denyRelease&requestID=${encodeURIComponent(requestID)}`)
+  fetch(`${API_URL}?action=recordCallOff&requestID=${encodeURIComponent(requestID)}`)
     .then(response => response.json())
     .then(result => {
       if (result.success) {
-        alert("Release denied.");
+        alert("Call-off recorded and replacement opened.");
         loadReleaseRequests();
       } else {
         alert(result.message || "Something went wrong.");
