@@ -57,33 +57,27 @@ async function loadPayroll() {
     summary[coach].sessions += 1;
   });
 
-let coaches = Object.keys(summary);
+  let coaches = Object.keys(summary);
 
-switch (sortBy.value) {
+  switch (sortBy.value) {
+    case "pay":
+      coaches.sort((a, b) => summary[b].pay - summary[a].pay);
+      break;
 
-  case "pay":
-    coaches.sort((a, b) =>
-      summary[b].pay - summary[a].pay
-    );
-    break;
+    case "sessions":
+      coaches.sort((a, b) => summary[b].sessions - summary[a].sessions);
+      break;
 
-  case "sessions":
-    coaches.sort((a, b) =>
-      summary[b].sessions - summary[a].sessions
-    );
-    break;
+    case "name":
+      coaches.sort();
+      break;
 
-  case "name":
-    coaches.sort();
-    break;
-
-  default:
-    coaches.sort((a, b) =>
-      summary[b].hours - summary[a].hours
-    );
-}
+    default:
+      coaches.sort((a, b) => summary[b].hours - summary[a].hours);
+  }
 
   if (coaches.length === 0) {
+    totalsContainer.innerHTML = "";
     container.innerHTML = `<p>No approved payroll items found for ${selectedPayPeriod}.</p>`;
     return;
   }
@@ -95,15 +89,14 @@ switch (sortBy.value) {
   let html = `
     <div class="opportunity">
       <h2>Payroll Summary: ${selectedPayPeriod}</h2>
+
       <table style="width:100%; border-collapse:collapse;">
         <thead>
           <tr>
-            <tr>
-  <td style="padding:10px;">${coach}</td>
-  <td style="padding:10px;">${sessions}</td>
-  <td style="padding:10px;">${hours}</td>
-  <td style="padding:10px;">$${pay}</td>
-</tr>
+            <th style="text-align:left; padding:10px;">Coach</th>
+            <th style="text-align:left; padding:10px;">Sessions</th>
+            <th style="text-align:left; padding:10px;">Pay Hours</th>
+            <th style="text-align:left; padding:10px;">Pay Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -116,10 +109,10 @@ switch (sortBy.value) {
 
     html += `
       <tr>
-        <td>${coach}</td>
-        <td>${summary[coach].sessions}</td>
-        <td>${summary[coach].hours.toFixed(2)}</td>
-        <td>$${summary[coach].pay.toFixed(2)}</td>
+        <td style="padding:10px; border-bottom:1px solid #ddd;">${coach}</td>
+        <td style="padding:10px; border-bottom:1px solid #ddd;">${summary[coach].sessions}</td>
+        <td style="padding:10px; border-bottom:1px solid #ddd;">${summary[coach].hours.toFixed(2)}</td>
+        <td style="padding:10px; border-bottom:1px solid #ddd;">$${summary[coach].pay.toFixed(2)}</td>
       </tr>
     `;
   });
@@ -132,25 +125,17 @@ switch (sortBy.value) {
       <h3>Total Payroll: $${totalPay.toFixed(2)}</h3>
     </div>
   `;
-  
-totalsContainer.innerHTML = `
-<div class="opportunity">
-  <h2>${selectedPayPeriod} Summary</h2>
 
-  <p><strong>Total Coaches:</strong>
-  ${coaches.length}</p>
+  totalsContainer.innerHTML = `
+    <div class="opportunity">
+      <h2>${selectedPayPeriod} Summary</h2>
+      <p><strong>Total Coaches:</strong> ${coaches.length}</p>
+      <p><strong>Total Sessions:</strong> ${totalSessions}</p>
+      <p><strong>Total Hours:</strong> ${totalHours.toFixed(2)}</p>
+      <p><strong>Total Payroll:</strong> $${totalPay.toFixed(2)}</p>
+    </div>
+  `;
 
-  <p><strong>Total Sessions:</strong>
-  ${totalSessions}</p>
-
-  <p><strong>Total Hours:</strong>
-  ${totalHours.toFixed(2)}</p>
-
-  <p><strong>Total Payroll:</strong>
-  $${totalPay.toFixed(2)}</p>
-</div>
-`;
-  
   container.innerHTML = html;
 }
 
