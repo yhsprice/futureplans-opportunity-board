@@ -203,5 +203,71 @@ function verifyAttendance(requestID) {
     });
 }
 
+async function loadReleaseRequests() {
+  releaseRequestList.innerHTML = "<p>Loading release requests...</p>";
+
+  try {
+    const response = await fetch(`${API_URL}?action=getRequests`);
+    const requests = await response.json();
+
+    const releaseRequests = requests.filter(request =>
+      request.ReleaseRequested === "Yes" &&
+      request.ReleaseStatus === "Pending Review"
+    );
+
+    if (releaseRequests.length === 0) {
+      releaseRequestList.innerHTML = `
+        <div class="empty-state">
+          <h2>No Release Requests</h2>
+          <p>No coaches are currently requesting release.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let html = `
+      <div class="opportunity">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding:8px;">Coach</th>
+              <th style="text-align:left; padding:8px;">School</th>
+              <th style="text-align:left; padding:8px;">Date</th>
+              <th style="text-align:left; padding:8px;">Time</th>
+              <th style="text-align:left; padding:8px;">Reason</th>
+              <th style="text-align:left; padding:8px;">Requested At</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    releaseRequests.forEach(request => {
+      html += `
+        <tr>
+          <td style="padding:8px;">${request.CoachName}</td>
+          <td style="padding:8px;">${request.School}</td>
+          <td style="padding:8px;">${request.Date}</td>
+          <td style="padding:8px;">${request.StartTime} - ${request.EndTime}</td>
+          <td style="padding:8px;">${request.ReleaseReason || ""}</td>
+          <td style="padding:8px;">${request.ReleaseRequestedAt || ""}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    releaseRequestList.innerHTML = html;
+
+  } catch (error) {
+    releaseRequestList.innerHTML = "<p>Something went wrong loading release requests.</p>";
+    console.error(error);
+  }
+}
+
 loadRequests();
 loadPayApprovals();
+loadReleaseRequests();
