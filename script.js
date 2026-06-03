@@ -34,8 +34,7 @@ function formatTime(value) {
 function canUserSeeOpportunity(opportunity) {
   const openings = Number(opportunity.RemainingOpenings || 0);
   const status = String(opportunity.OpportunityStatus || "Open").trim();
-  const replacementNeeded = String(opportunity.ReplacementNeeded || "").trim();
-
+ 
   if (status !== "Open") {
     return false;
   }
@@ -111,25 +110,43 @@ async function loadOpportunities() {
           <tbody>
     `;
 
-    openOpportunities.forEach(opportunity => {
-      const openings = Number(opportunity.RemainingOpenings || 0);
-      const replacementNeeded = String(opportunity.ReplacementNeeded || "").trim() === "Yes";
+  openOpportunities.forEach(opportunity => {
+  const openings = Number(opportunity.RemainingOpenings || 0);
 
-      html += `
-        <tr>
-          <td style="padding:8px; white-space:nowrap;">${formatDate(opportunity.Date)}</td>
-          <td style="padding:8px; white-space:nowrap;">${formatTime(opportunity.StartTime)}</td>
-          <td style="padding:8px; white-space:nowrap;">${formatTime(opportunity.EndTime)}</td>
+  html += `
+    <tr>
+      <td style="padding:8px; white-space:nowrap;">
+        ${formatDate(opportunity.Date)}
+      </td>
 
-          <td style="padding:8px; min-width:220px;">
-            ${replacementNeeded
-              ? `<strong>⚠️ Replacement Needed</strong><br>
-                 ${opportunity.ReplacementForCoach || "A coach"} needs this covered:<br>
-                 ${opportunity.School || "School Not Listed"}`
-              : `${opportunity.School || "School Not Listed"}`
-            }
-          </td>
+      <td style="padding:8px; white-space:nowrap;">
+        ${formatTime(opportunity.StartTime)}
+      </td>
 
+      <td style="padding:8px; white-space:nowrap;">
+        ${formatTime(opportunity.EndTime)}
+      </td>
+
+      <td style="padding:8px; min-width:220px;">
+        ${opportunity.School || "School Not Listed"}
+      </td>
+
+      <td style="padding:8px;">
+        ${openings}
+      </td>
+
+      <td style="padding:8px;">
+        ${opportunity.ProgramType || "Not listed"}
+      </td>
+
+      <td style="padding:8px;">
+        <button onclick="requestOpportunity('${opportunity.OpportunityID || ""}')">
+          Request
+        </button>
+      </td>
+    </tr>
+  `;
+});
           <td style="padding:8px;">${openings}</td>
           <td style="padding:8px;">${opportunity.ProgramType || "Not listed"}</td>
 
