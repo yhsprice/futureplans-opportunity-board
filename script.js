@@ -43,11 +43,16 @@ function canUserSeeOpportunity(opportunity) {
     return false;
   }
 
-  const userTier = Number(currentUser.Tier || 2);
+  const userRole = String(currentUser.Role || "").trim();
+const userTier = Number(currentUser.Tier || 2);
 
-  if (userTier === 0 || userTier === 1) {
-    return true;
-  }
+if (userRole === "Manager" || userTier === 0) {
+  return true;
+}
+
+if (userTier === 1) {
+  return true;
+}
 
   if (userTier === 2) {
     const postedDate = new Date(opportunity.DatePosted);
