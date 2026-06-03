@@ -3,7 +3,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_
 const currentUser = getCurrentUser();
 
 showUserBanner();
-
 showManagerLinksOnly();
 
 const container = document.getElementById("opportunityList");
@@ -32,6 +31,36 @@ function formatTime(value) {
   });
 }
 
+function canUserSeeOpportunity(opportunity) {
+  const openings = Number(opportunity.RemainingOpenings || 0);
+  const status = String(opportunity.OpportunityStatus || "Open").trim();
+  const replacementNeeded = String(opportunity.ReplacementNeeded || "").trim();
+
+  if (status !== "Open") {
+    return false;
+  }
+
+  if (!(openings > 0 || replacementNeeded === "Yes")) {
+    return false;
+  }
+
+  const userTier = Number(currentUser.Tier || 2);
+
+  if (userTier === 0 || userTier === 1) {
+    return true;
+  }
+
+  if (userTier === 2) {
+    const postedDate = new Date(opportunity.DatePosted);
+    const now = new Date();
+    const hoursSincePosted = (now - postedDate) / (1000 * 60 * 60);
+
+    return hoursSincePosted >= 8;
+  }
+
+  return false;
+}
+
 async function loadOpportunities() {
   container.innerHTML = "<p>Loading opportunities...</p>";
 
@@ -40,13 +69,15 @@ async function loadOpportunities() {
     const opportunities = await response.json();
 
     const openOpportunities = opportunities
-      .filter(opportunity => {
-        const openings = Number(opportunity.RemainingOpenings || 0);
-        const status = String(opportunity.OpportunityStatus || "Open").trim();
-
-        return status === "Open" && openings > 0;
-      })
+      .filter(canUserSeeOpportunity)
       .sort((a, b) => {
+        const replacementA = String(a.ReplacementNeeded || "").trim() === "Yes" ? 0 : 1;
+        const replacementB = String(b.ReplacementNeeded || "").trim() === "Yes" ? 0 : 1;
+
+        if (replacementA !== replacementB) {
+          return replacementA - replacementB;
+        }
+
         const dateA = new Date(`${a.Date} ${a.StartTime}`);
         const dateB = new Date(`${b.Date} ${b.StartTime}`);
         return dateA - dateB;
@@ -71,7 +102,7 @@ async function loadOpportunities() {
               <th style="text-align:left; padding:8px;">Date</th>
               <th style="text-align:left; padding:8px;">Start</th>
               <th style="text-align:left; padding:8px;">End</th>
-              <th style="text-align:left; padding:8px; min-width:180px;">School</th>
+              <th style="text-align:left; padding:8px; min-width:220px;">School</th>
               <th style="text-align:left; padding:8px;">Open</th>
               <th style="text-align:left; padding:8px;">Program</th>
               <th style="text-align:left; padding:8px;">Action</th>
@@ -82,15 +113,26 @@ async function loadOpportunities() {
 
     openOpportunities.forEach(opportunity => {
       const openings = Number(opportunity.RemainingOpenings || 0);
+      const replacementNeeded = String(opportunity.ReplacementNeeded || "").trim() === "Yes";
 
       html += `
         <tr>
           <td style="padding:8px; white-space:nowrap;">${formatDate(opportunity.Date)}</td>
           <td style="padding:8px; white-space:nowrap;">${formatTime(opportunity.StartTime)}</td>
           <td style="padding:8px; white-space:nowrap;">${formatTime(opportunity.EndTime)}</td>
-          <td style="padding:8px; min-width:180px;">${opportunity.School || "School Not Listed"}</td>
+
+          <td style="padding:8px; min-width:220px;">
+            ${replacementNeeded
+              ? `<strong>⚠️ Replacement Needed</strong><br>
+                 ${opportunity.ReplacementForCoach || "A coach"} needs this covered:<br>
+                 ${opportunity.School || "School Not Listed"}`
+              : `${opportunity.School || "School Not Listed"}`
+            }
+          </td>
+
           <td style="padding:8px;">${openings}</td>
           <td style="padding:8px;">${opportunity.ProgramType || "Not listed"}</td>
+
           <td style="padding:8px;">
             <button onclick="requestOpportunity('${opportunity.OpportunityID || ""}')">
               Request
@@ -120,7 +162,15 @@ async function requestOpportunity(opportunityID) {
     return;
   }
 
- const personID = currentUser.PersonID;
+  const confirmRequest = confirm(
+    "By requesting this opportunity, you are accepting responsibility for this assignment. If you later cannot attend, you are responsible for notifying management and helping find a replacement. Continue?"
+  );
+
+  if (!confirmRequest) {
+    return;
+  }
+
+  const personID = currentUser.PersonID;
 
   const url = `${API_URL}?action=request&opportunityID=${encodeURIComponent(opportunityID)}&personID=${encodeURIComponent(personID)}`;
 
