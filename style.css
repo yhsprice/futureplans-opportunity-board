@@ -136,8 +136,8 @@ tr:hover {
 }
 
 #payPeriodSelect,
-#sortSelect {
+#sortBy {
   font-size: 18px;
   padding: 8px;
-  min-width: 300px;
+  min-width: 320px;
 }
