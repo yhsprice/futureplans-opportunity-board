@@ -236,23 +236,34 @@ async function loadReleaseRequests() {
               <th style="text-align:left; padding:8px;">Time</th>
               <th style="text-align:left; padding:8px;">Reason</th>
               <th style="text-align:left; padding:8px;">Requested At</th>
+              <th style="text-align:left; padding:8px;">Actions</th>
             </tr>
           </thead>
           <tbody>
     `;
 
     releaseRequests.forEach(request => {
-      html += `
-        <tr>
-          <td style="padding:8px;">${request.CoachName}</td>
-          <td style="padding:8px;">${request.School}</td>
-          <td style="padding:8px;">${request.Date}</td>
-          <td style="padding:8px;">${request.StartTime} - ${request.EndTime}</td>
-          <td style="padding:8px;">${request.ReleaseReason || ""}</td>
-          <td style="padding:8px;">${request.ReleaseRequestedAt || ""}</td>
-        </tr>
-      `;
-    });
+  html += `
+    <tr>
+      <td style="padding:8px;">${request.CoachName}</td>
+      <td style="padding:8px;">${request.School}</td>
+      <td style="padding:8px;">${request.Date}</td>
+      <td style="padding:8px;">${request.StartTime} - ${request.EndTime}</td>
+      <td style="padding:8px;">${request.ReleaseReason || ""}</td>
+      <td style="padding:8px;">${request.ReleaseRequestedAt || ""}</td>
+
+      <td style="padding:8px;">
+        <button onclick="approveRelease('${request.RequestID}')">
+          Approve
+        </button>
+
+        <button onclick="denyRelease('${request.RequestID}')">
+          Deny
+        </button>
+      </td>
+    </tr>
+  `;
+});
 
     html += `
           </tbody>
@@ -266,6 +277,42 @@ async function loadReleaseRequests() {
     releaseRequestList.innerHTML = "<p>Something went wrong loading release requests.</p>";
     console.error(error);
   }
+}
+
+function approveRelease(requestID) {
+
+  if (!confirm("Approve this release request?")) {
+    return;
+  }
+
+  fetch(`${API_URL}?action=approveRelease&requestID=${encodeURIComponent(requestID)}`)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert("Release approved.");
+        loadReleaseRequests();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    });
+}
+
+function denyRelease(requestID) {
+
+  if (!confirm("Deny this release request?")) {
+    return;
+  }
+
+  fetch(`${API_URL}?action=denyRelease&requestID=${encodeURIComponent(requestID)}`)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert("Release denied.");
+        loadReleaseRequests();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    });
 }
 
 loadRequests();
