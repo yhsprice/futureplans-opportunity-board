@@ -2,6 +2,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_
 
 const currentUser = getCurrentUser();
 
+showUserBanner();
+
 const container = document.getElementById("opportunityList");
 
 function formatDate(value) {
