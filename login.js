@@ -37,11 +37,12 @@ function login() {
   }
 
   localStorage.setItem("loggedInUser", JSON.stringify({
-    PersonID: person.PersonID,
-    Name: person.Name,
-    Email: person.Email,
-    Role: person.Role
-  }));
+  PersonID: person.PersonID,
+  Name: person.Name,
+  Email: person.Email,
+  Role: person.Role,
+  Tier: person.Tiers
+}));
 
   alert(`Logged in as ${person.Name}.`);
 
