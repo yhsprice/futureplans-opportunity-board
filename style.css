@@ -107,3 +107,30 @@ button:hover {
   padding: 12px 24px;
 }
 
+select,
+input,
+textarea {
+  font-size: 18px;
+  padding: 8px;
+}
+
+table {
+  font-size: 16px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #ccc;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+  background: #f3f6fb;
+}
