@@ -95,13 +95,15 @@ switch (sortBy.value) {
   let html = `
     <div class="opportunity">
       <h2>Payroll Summary: ${selectedPayPeriod}</h2>
-      <table>
+      <table style="width:100%; border-collapse:collapse;">
         <thead>
           <tr>
-            <th>Coach</th>
-            <th>Sessions</th>
-            <th>Pay Hours</th>
-            <th>Pay Amount</th>
+            <tr>
+  <td style="padding:10px;">${coach}</td>
+  <td style="padding:10px;">${sessions}</td>
+  <td style="padding:10px;">${hours}</td>
+  <td style="padding:10px;">$${pay}</td>
+</tr>
           </tr>
         </thead>
         <tbody>
