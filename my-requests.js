@@ -3,7 +3,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwP9QdngM5iBsdCXWi8_p1_
 const myRequestList = document.getElementById("myRequestList");
 
 async function loadMyRequests() {
-  const personID = document.getElementById("personIDInput").value.trim();
+  const currentUser = getCurrentUser();
+  const personID = currentUser.PersonID;
 
   if (!personID) {
     alert("Please enter your assigned staff number.");
