@@ -27,3 +27,13 @@ function logout() {
   localStorage.removeItem("loggedInUser");
   window.location.href = "login.html";
 }
+
+function showManagerLinksOnly() {
+  const user = getCurrentUser();
+
+  document.querySelectorAll(".manager-only").forEach(element => {
+    if (user.Role !== "Manager") {
+      element.style.display = "none";
+    }
+  });
+}
