@@ -94,3 +94,16 @@ button:hover {
   color: #0b2e6f;
   margin-bottom: 30px;
 }
+
+#personSelect,
+#passwordInput {
+  font-size: 20px;
+  padding: 12px;
+  width: 350px;
+}
+
+.login-button {
+  font-size: 20px;
+  padding: 12px 24px;
+}
+
