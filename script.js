@@ -34,7 +34,8 @@ function formatTime(value) {
 function canUserSeeOpportunity(opportunity) {
   const openings = Number(opportunity.RemainingOpenings || 0);
   const status = String(opportunity.OpportunityStatus || "Open").trim();
- 
+  const replacementNeeded = String(opportunity.ReplacementNeeded || "").trim();
+
   if (status !== "Open") {
     return false;
   }
@@ -44,15 +45,15 @@ function canUserSeeOpportunity(opportunity) {
   }
 
   const userRole = String(currentUser.Role || "").trim();
-const userTier = Number(currentUser.Tier || 2);
+  const userTier = Number(currentUser.Tier || 2);
 
-if (userRole === "Manager" || userTier === 0) {
-  return true;
-}
+  if (userRole === "Manager" || userTier === 0) {
+    return true;
+  }
 
-if (userTier === 1) {
-  return true;
-}
+  if (userTier === 1) {
+    return true;
+  }
 
   if (userTier === 2) {
     const postedDate = new Date(opportunity.DatePosted);
