@@ -4,6 +4,8 @@ const currentUser = getCurrentUser();
 
 showUserBanner();
 
+showManagerLinksOnly();
+
 const container = document.getElementById("opportunityList");
 
 function formatDate(value) {
