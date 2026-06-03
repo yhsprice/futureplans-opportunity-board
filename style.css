@@ -134,3 +134,10 @@ td {
 tr:hover {
   background: #f3f6fb;
 }
+
+#payPeriodSelect,
+#sortSelect {
+  font-size: 18px;
+  padding: 8px;
+  min-width: 300px;
+}
