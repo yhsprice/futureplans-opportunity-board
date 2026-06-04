@@ -316,7 +316,7 @@ function recordCallOff(requestID) {
 }
 function submitManualCompletedSession() {
 
-  const personID = document.getElementById("manualPersonID").value.trim();
+  const userName = document.getElementById("manualUserName").value.trim();
   const school = document.getElementById("manualSchool").value.trim();
   const date = document.getElementById("manualDate").value;
   const startTime = document.getElementById("manualStartTime").value;
@@ -330,7 +330,7 @@ function submitManualCompletedSession() {
 
   const params = new URLSearchParams({
     action: "addManualCompletedSession",
-    personID,
+    userName,
     school,
     date,
     startTime,
@@ -352,7 +352,7 @@ function submitManualCompletedSession() {
 
         message.textContent = "Manual time added successfully.";
 
-        document.getElementById("manualPersonID").value = "";
+        document.getElementById("manualUserName").value = "";
         document.getElementById("manualSchool").value = "";
         document.getElementById("manualDate").value = "";
         document.getElementById("manualStartTime").value = "";
