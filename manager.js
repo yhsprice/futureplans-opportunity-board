@@ -314,6 +314,68 @@ function recordCallOff(requestID) {
       }
     });
 }
+function submitManualCompletedSession() {
+
+  const personID = document.getElementById("manualPersonID").value.trim();
+  const school = document.getElementById("manualSchool").value.trim();
+  const date = document.getElementById("manualDate").value;
+  const startTime = document.getElementById("manualStartTime").value;
+  const endTime = document.getElementById("manualEndTime").value;
+  const programType = document.getElementById("manualProgramType").value.trim();
+  const serviceType = document.getElementById("manualServiceType").value.trim();
+  const hours = document.getElementById("manualHours").value;
+  const notes = document.getElementById("manualNotes").value.trim();
+
+  const message = document.getElementById("manualSessionMessage");
+
+  const params = new URLSearchParams({
+    action: "addManualCompletedSession",
+    personID,
+    school,
+    date,
+    startTime,
+    endTime,
+    programType,
+    serviceType,
+    hours,
+    notes
+  });
+
+  fetch(API_URL, {
+    method: "POST",
+    body: params
+  })
+    .then(response => response.json())
+    .then(result => {
+
+      if (result.success) {
+
+        message.textContent = "Manual time added successfully.";
+
+        document.getElementById("manualPersonID").value = "";
+        document.getElementById("manualSchool").value = "";
+        document.getElementById("manualDate").value = "";
+        document.getElementById("manualStartTime").value = "";
+        document.getElementById("manualEndTime").value = "";
+        document.getElementById("manualProgramType").value = "";
+        document.getElementById("manualServiceType").value = "";
+        document.getElementById("manualHours").value = "";
+        document.getElementById("manualNotes").value = "";
+
+        loadPayApprovals();
+
+      } else {
+
+        message.textContent =
+          result.message || "Unable to add manual time.";
+
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      message.textContent = "Error adding manual time.";
+    });
+}
 
 loadRequests();
 loadPayApprovals();
