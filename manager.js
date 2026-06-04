@@ -319,6 +319,7 @@ function submitManualCompletedSession() {
   const userName = document.getElementById("manualUserName").value.trim();
   const date = document.getElementById("manualDate").value;
   const programType = document.getElementById("manualProgramType").value;
+  const fund = document.getElementById("manualFund").value;
   const serviceType = document.getElementById("manualServiceType").value;
   const hours = document.getElementById("manualHours").value;
   const school = document.getElementById("manualSchool").value.trim();
@@ -326,7 +327,7 @@ function submitManualCompletedSession() {
 
   const message = document.getElementById("manualSessionMessage");
 
-  if (!userName || !date || !programType || !serviceType || !hours) {
+  if (!userName || !date || !programType || !fund || !serviceType || !hours) {
     message.textContent = "Please complete User Name, Date, Program Type, Service Type, and Hours.";
     return;
   }
@@ -336,6 +337,7 @@ function submitManualCompletedSession() {
     userName,
     date,
     programType,
+    fund,
     serviceType,
     hours,
     school,
@@ -355,6 +357,7 @@ function submitManualCompletedSession() {
         document.getElementById("manualUserName").value = "";
         document.getElementById("manualDate").value = "";
         document.getElementById("manualProgramType").value = "";
+        document.getElementById("manualFund").value = "";
         document.getElementById("manualServiceType").value = "";
         document.getElementById("manualHours").value = "";
         document.getElementById("manualSchool").value = "";
