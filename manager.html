@@ -8,29 +8,24 @@
 <body>
 
   <p><a href="index.html">Back to Opportunity Board</a></p>
-
   <p><a href="add-opportunity.html">Add Opportunity</a></p>
-
   <p><a href="payroll.html">Payroll Dashboard</a></p>
-
   <p><a href="utilization.html">Coach Utilization</a></p>
-
   <p><a href="manage-opportunities.html">Manage Opportunities</a></p>
 
   <h1>Manager Dashboard</h1>
 
   <h2>Release Requests</h2>
-
-<div id="releaseRequestList">
-  <p>Loading release requests...</p>
-</div>
+  <div id="releaseRequestList">
+    <p>Loading release requests...</p>
+  </div>
 
   <div class="opportunity">
-  <h2>Payroll Tools</h2>
-  <button onclick="generateScheduledPayroll()">
-    Generate Scheduled Payroll
-  </button>
-</div>
+    <h2>Payroll Tools</h2>
+    <button onclick="generateScheduledPayroll()">
+      Generate Scheduled Payroll
+    </button>
+  </div>
 
   <h2>Pending Requests</h2>
   <div id="requestList">
@@ -42,125 +37,36 @@
     <p>Loading pay approvals...</p>
   </div>
 
-<h2>Manual Coach Time Entry</h2>
-
-<div class="opportunity">
-
-  <p>
-    Use this when a coach completed work but was unable to submit it.
-  </p>
-
-  <input id="manualPersonID" placeholder="Coach Person ID">
-
-  <input id="manualSchool" placeholder="School">
-
-  <input id="manualDate" type="date">
-
-  <input id="manualStartTime" type="time">
-
-  <input id="manualEndTime" type="time">
-
-  <input id="manualProgramType" placeholder="Program Type">
-
-  <input id="manualServiceType" placeholder="Service Type">
-
-  <input id="manualHours" type="number" step="0.25" min="0" placeholder="Hours Worked">
-
-  <!DOCTYPE html>
-<html>
-<head>
-  <title>Manager Dashboard</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-  <p><a href="index.html">Back to Opportunity Board</a></p>
-
-  <p><a href="add-opportunity.html">Add Opportunity</a></p>
-
-  <p><a href="payroll.html">Payroll Dashboard</a></p>
-
-  <p><a href="utilization.html">Coach Utilization</a></p>
-
-  <p><a href="manage-opportunities.html">Manage Opportunities</a></p>
-
-  <h1>Manager Dashboard</h1>
-
-  <h2>Release Requests</h2>
-
-<div id="releaseRequestList">
-  <p>Loading release requests...</p>
-</div>
+  <h2>Manual Coach Time Entry</h2>
 
   <div class="opportunity">
-  <h2>Payroll Tools</h2>
-  <button onclick="generateScheduledPayroll()">
-    Generate Scheduled Payroll
-  </button>
-</div>
+    <p>Use this when a coach completed work but was unable to submit it.</p>
 
-  <h2>Pending Requests</h2>
-  <div id="requestList">
-    <p>Loading requests...</p>
+    <input id="manualPersonID" placeholder="Coach Person ID">
+    <input id="manualSchool" placeholder="School">
+    <input id="manualDate" type="date">
+    <input id="manualStartTime" type="time">
+    <input id="manualEndTime" type="time">
+
+    <br><br>
+
+    <input id="manualProgramType" placeholder="Program Type">
+    <input id="manualServiceType" placeholder="Service Type">
+    <input id="manualHours" type="number" step="0.25" min="0" placeholder="Hours Worked">
+
+    <div style="margin-top:10px;">
+      <textarea id="manualNotes" placeholder="Notes" style="width:480px; height:80px;"></textarea>
+    </div>
+
+    <br>
+
+    <button onclick="submitManualCompletedSession()">
+      Add Manual Time
+    </button>
+
+    <p id="manualSessionMessage"></p>
   </div>
 
-  <h2>Pending Pay Approvals</h2>
-  <div id="payApprovalList">
-    <p>Loading pay approvals...</p>
-  </div>
-
-<h2>Manual Coach Time Entry</h2>
-
-<div class="opportunity">
-
-  <p>
-    Use this when a coach completed work but was unable to submit it.
-  </p>
-
-  <input id="manualPersonID" placeholder="Coach Person ID">
-
-  <input id="manualSchool" placeholder="School">
-
-  <input id="manualDate" type="date">
-
-  <input id="manualStartTime" type="time">
-
-  <input id="manualEndTime" type="time">
-
-  <input id="manualProgramType" placeholder="Program Type">
-
-  <input id="manualServiceType" placeholder="Service Type">
-
-  <input id="manualHours" type="number" step="0.25" min="0" placeholder="Hours Worked">
-
-<div style="margin-top:10px;">
-  <textarea id="manualNotes" placeholder="Notes" style="width:480px; height:80px;"></textarea>
-</div>
-
-  <button onclick="submitManualCompletedSession()">
-    Add Manual Time
-  </button>
-
-  <p id="manualSessionMessage"></p>
-
-</div>
-  
-  <script src="manager.js"></script>
-
-</body>
-</html>
-
-  <br><br>
-
-  <button onclick="submitManualCompletedSession()">
-    Add Manual Time
-  </button>
-
-  <p id="manualSessionMessage"></p>
-
-</div>
-  
   <script src="manager.js"></script>
 
 </body>
