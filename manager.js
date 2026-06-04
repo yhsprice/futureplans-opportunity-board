@@ -317,27 +317,28 @@ function recordCallOff(requestID) {
 function submitManualCompletedSession() {
 
   const userName = document.getElementById("manualUserName").value.trim();
-  const school = document.getElementById("manualSchool").value.trim();
   const date = document.getElementById("manualDate").value;
-  const startTime = document.getElementById("manualStartTime").value;
-  const endTime = document.getElementById("manualEndTime").value;
-  const programType = document.getElementById("manualProgramType").value.trim();
-  const serviceType = document.getElementById("manualServiceType").value.trim();
+  const programType = document.getElementById("manualProgramType").value;
+  const serviceType = document.getElementById("manualServiceType").value;
   const hours = document.getElementById("manualHours").value;
+  const school = document.getElementById("manualSchool").value.trim();
   const notes = document.getElementById("manualNotes").value.trim();
 
   const message = document.getElementById("manualSessionMessage");
 
+  if (!userName || !date || !programType || !serviceType || !hours) {
+    message.textContent = "Please complete User Name, Date, Program Type, Service Type, and Hours.";
+    return;
+  }
+
   const params = new URLSearchParams({
     action: "addManualCompletedSession",
     userName,
-    school,
     date,
-    startTime,
-    endTime,
     programType,
     serviceType,
     hours,
+    school,
     notes
   });
 
@@ -349,26 +350,20 @@ function submitManualCompletedSession() {
     .then(result => {
 
       if (result.success) {
-
         message.textContent = "Manual time added successfully.";
 
         document.getElementById("manualUserName").value = "";
-        document.getElementById("manualSchool").value = "";
         document.getElementById("manualDate").value = "";
-        document.getElementById("manualStartTime").value = "";
-        document.getElementById("manualEndTime").value = "";
         document.getElementById("manualProgramType").value = "";
         document.getElementById("manualServiceType").value = "";
         document.getElementById("manualHours").value = "";
+        document.getElementById("manualSchool").value = "";
         document.getElementById("manualNotes").value = "";
 
         loadPayApprovals();
 
       } else {
-
-        message.textContent =
-          result.message || "Unable to add manual time.";
-
+        message.textContent = result.message || "Unable to add manual time.";
       }
     })
     .catch(error => {
