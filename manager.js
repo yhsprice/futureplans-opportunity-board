@@ -367,9 +367,9 @@ function submitManualCompletedSession() {
       }
     })
     .catch(error => {
-      console.error(error);
-      message.textContent = "Error adding manual time.";
-    });
+  console.error("Manual time error:", error);
+  message.textContent = "Error adding manual time. Check console or Apps Script deployment.";
+});
 }
 
 loadRequests();
