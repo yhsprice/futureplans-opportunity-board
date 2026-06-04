@@ -9,8 +9,8 @@ function addOpportunity() {
   const programType = document.getElementById("programType").value.trim();
   const notes = document.getElementById("notes").value.trim();
 
-  if (!school || !date || !startTime || !endTime || !coachesNeeded) {
-    alert("Please complete school, date, start time, end time, and coaches needed.");
+  if (!school || !date || !startTime || !endTime || !coachesNeeded || !programType || !fund) {
+    alert("Please complete all required fields including Program Type and Fund.");
     return;
   }
 
@@ -21,6 +21,7 @@ function addOpportunity() {
     + `&endTime=${encodeURIComponent(endTime)}`
     + `&coachesNeeded=${encodeURIComponent(coachesNeeded)}`
     + `&programType=${encodeURIComponent(programType)}`
+    + `&fund=${encodeURIComponent(fund)}`
     + `&notes=${encodeURIComponent(notes)}`;
 
   const img = new Image();
