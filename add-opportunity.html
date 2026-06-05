@@ -2,57 +2,98 @@
 <html>
 <head>
   <title>Add Opportunity</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
 
-  <p><a href="manager.html">Back to Manager Dashboard</a></p>
+<div class="app-layout">
 
-  <h1>Add Opportunity</h1>
+  <aside class="sidebar">
+    <div class="logo" style="text-align:center;">
+      <img src="Future Plans.png" alt="Future Plans" style="max-width:220px; width:100%;">
+    </div>
 
-  <div class="opportunity">
-    <p><strong>School</strong></p>
-    <input id="school" placeholder="School name">
+    <div class="nav-section-title">Manager</div>
 
-    <p><strong>Date</strong></p>
-    <input id="date" type="date">
+    <a class="nav-link" href="manager.html">Dashboard</a>
+    <a class="nav-link" href="index.html">Opportunity Board</a>
+    <a class="nav-link active" href="add-opportunity.html">Add Opportunity</a>
+    <a class="nav-link" href="manage-opportunities.html">Manage Opportunities</a>
+    <a class="nav-link" href="payroll.html">Payroll Dashboard</a>
+    <a class="nav-link" href="utilization.html">Coach Utilization</a>
 
-    <p><strong>Start Time</strong></p>
-    <input id="startTime" type="time">
+    <div class="nav-section-title">Account</div>
+    <a class="nav-link" href="login.html">Log Out</a>
 
-    <p><strong>End Time</strong></p>
-    <input id="endTime" type="time">
+    <div class="sidebar-image">
+      <img src="lita-yvonne.png" alt="Career Coaching and Assessment Coordinators">
+      <div style="text-align:center; margin-top:10px;">
+        <strong>Career Coaching & Assessment Coordinators</strong>
+      </div>
+    </div>
+  </aside>
 
-    <p><strong>Coaches Needed</strong></p>
-    <input id="coachesNeeded" type="number" min="1">
+  <main class="main-content">
 
-    <p><strong>Program Type</strong></p>
-<select id="programType">
-  <option value="">Select Program Type</option>
-  <option value="Youth">Youth</option>
-  <option value="Adult">Adult</option>
-  <option value="Summer Program">Summer Program</option>
-  <option value="Professional Development">Professional Development</option>
-  <option value="Meeting">Meeting</option>
-  <option value="Other">Other</option>
-</select>
+    <div class="top-bar">
+      <div>
+        <h1>Add Opportunity</h1>
+        <p>Create a new coaching opportunity for coaches to request.</p>
+      </div>
 
-<p><strong>Fund</strong></p>
-<select id="fund">
-  <option value="">Select Fund</option>
-  <option value="Grit">Grit</option>
-  <option value="NW OH">NW OH</option>
-  <option value="SW OH">SW OH</option>
-</select>
+      <div id="userBanner" class="welcome-pill"></div>
+    </div>
 
-    <p><strong>Notes</strong></p>
-    <textarea id="notes" placeholder="Optional notes"></textarea>
+    <div class="dashboard-card">
+      <p><strong>School / Location</strong></p>
+      <input id="school" placeholder="School or location name">
 
-    <br><br>
-    <button onclick="addOpportunity()">Add Opportunity</button>
-  </div>
+      <p><strong>Date</strong></p>
+      <input id="date" type="date">
 
-  <script src="add-opportunity.js"></script>
+      <p><strong>Start Time</strong></p>
+      <input id="startTime" type="time">
+
+      <p><strong>End Time</strong></p>
+      <input id="endTime" type="time">
+
+      <p><strong>Coaches Needed</strong></p>
+      <input id="coachesNeeded" type="number" min="1">
+
+      <p><strong>Program Type</strong></p>
+      <select id="programType">
+        <option value="">Select Program Type</option>
+        <option value="Youth">Youth</option>
+        <option value="Adult">Adult</option>
+        <option value="Summer Program">Summer Program</option>
+        <option value="Professional Development">Professional Development</option>
+        <option value="Meeting">Meeting</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <p><strong>Fund</strong></p>
+      <select id="fund">
+        <option value="">Select Fund</option>
+        <option value="Grit">Grit</option>
+        <option value="NW OH">NW OH</option>
+        <option value="SW OH">SW OH</option>
+      </select>
+
+      <p><strong>Notes</strong></p>
+      <textarea id="notes" placeholder="Optional notes"></textarea>
+
+      <br><br>
+
+      <button onclick="addOpportunity()">Add Opportunity</button>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="auth.js"></script>
+<script src="add-opportunity.js"></script>
 
 </body>
 </html>
