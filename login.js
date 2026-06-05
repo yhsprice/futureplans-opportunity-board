@@ -45,8 +45,6 @@ function login() {
   AdultApproved: person.AdultApproved || "No"
 }));
 
-  alert(`Logged in as ${person.Name}.`);
-
   window.location.href = "index.html";
 }
 
