@@ -332,3 +332,54 @@ th {
   margin-top: 14px;
   font-size: 16px;
 }
+
+body.login-page {
+  display: block;
+}
+
+.login-page .login-background {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.login-page .login-card {
+  width: 420px;
+  padding: 34px;
+  border-radius: 26px;
+  background: rgba(8, 15, 46, 0.95);
+  border: 1px solid rgba(56, 189, 248, 0.7);
+  box-shadow:
+    0 0 35px rgba(56, 189, 248, 0.45),
+    0 0 70px rgba(147, 51, 234, 0.35);
+  text-align: center;
+}
+
+.login-page .login-logo {
+  width: 240px;
+  max-width: 100%;
+  margin-bottom: 18px;
+  border-radius: 14px;
+}
+
+.login-page .login-card label {
+  display: block;
+  text-align: left;
+  margin: 14px 0 6px;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.login-page .login-card select,
+.login-page .login-card input {
+  width: 100%;
+  display: block;
+  margin: 0 0 12px 0;
+}
+
+.login-page .login-button {
+  width: 100%;
+  margin-top: 14px;
+}
