@@ -128,4 +128,5 @@ function requestRelease(requestID) {
 }
 
 showUserBanner();
+showManagerLinksOnly();
 loadSchedule();
