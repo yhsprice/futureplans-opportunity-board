@@ -100,8 +100,7 @@ async function loadOpportunities() {
     }
 
     let html = `
-      let html = `
-  <div class="dashboard-card">
+     <div class="dashboard-card">
     <table class="modern-table">
           <thead>
             <tr>
