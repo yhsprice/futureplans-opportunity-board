@@ -44,6 +44,16 @@ function canUserSeeOpportunity(opportunity) {
     return false;
   }
 
+  const programType = String(opportunity.ProgramType || "").trim();
+
+if (
+  programType === "Adult" &&
+  currentUser.AdultApproved !== "Yes" &&
+  currentUser.Role !== "Manager"
+) {
+  return false;
+}
+
   const userRole = String(currentUser.Role || "").trim();
   const userTier = Number(currentUser.Tier || 2);
 
