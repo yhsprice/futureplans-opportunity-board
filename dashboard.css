@@ -203,3 +203,33 @@ th {
 .modern-table tr:hover {
   background: rgba(56, 189, 248, 0.08);
 }
+
+.opportunity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.opportunity-card {
+  background: rgba(8, 15, 46, 0.95);
+  border: 1px solid #38bdf8;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+}
+
+.opportunity-card:hover {
+  transform: translateY(-3px);
+  transition: .2s;
+}
+
+.opportunity-card-header {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #38bdf8;
+}
+
+.opportunity-card-body p {
+  margin: 8px 0;
+}
