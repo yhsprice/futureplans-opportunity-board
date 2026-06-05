@@ -1,27 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Future Plans Coaching Portal</title>
+  <link rel="stylesheet" href="dashboard.css">
 </head>
-<body>
 
-  <h1 class="login-title">Future Plans Login</h1>
+<body class="login-page">
 
-  <div class="opportunity">
-    <p><strong>Select Your Name</strong></p>
-    <select id="personSelect">
-      <option value="">Loading names...</option>
-    </select>
+  <div class="login-background">
+    <div class="map-lines"></div>
 
-    <p><strong>Password</strong></p>
-    <input id="passwordInput" type="password" placeholder="Enter password">
+    <div class="login-card">
 
-    <br><br>
+      <img
+        src="Future Plans.png"
+        alt="Future Plans"
+        class="login-logo"
+      >
 
-   <button class="login-button" onclick="login()">
-  Login
-</button>
+      <h1>Coaching Portal</h1>
+
+      <p class="login-tagline">
+        Find your direction. Build your future.
+      </p>
+
+      <label>Select Your Name</label>
+      <select id="personSelect">
+        <option value="">Loading names...</option>
+      </select>
+
+      <label>Password</label>
+      <input id="passwordInput" type="password" placeholder="Enter password">
+
+      <button class="login-button" onclick="login()">
+        Sign In
+      </button>
+
+    </div>
   </div>
 
   <script src="login.js"></script>
