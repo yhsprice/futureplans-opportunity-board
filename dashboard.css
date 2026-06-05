@@ -333,12 +333,16 @@ body.login-page {
 }
 
 .school-box {
-  background: rgba(8, 15, 46, 0.95);
-  border: 1px solid rgba(168, 85, 247, 0.75);
+  background: rgba(8,15,46,.95);
+  border: 1px solid rgba(168,85,247,.75);
   border-radius: 20px;
-  padding: 22px;
-  margin-bottom: 22px;
-  box-shadow: 0 0 18px rgba(124, 58, 237, 0.35);
+
+  padding: 24px;
+  margin: 20px 0;
+
+  box-shadow:
+    0 0 18px rgba(124,58,237,.35),
+    0 0 40px rgba(56,189,248,.08);
 }
 
 .school-box-header {
@@ -380,4 +384,13 @@ body.login-page {
   background: rgba(148, 163, 184, 0.18);
   color: #cbd5e1;
   border: 1px solid rgba(148, 163, 184, 0.45);
+}
+
+.date-group {
+  margin-bottom: 50px;
+}
+
+.date-group > h2 {
+  margin-bottom: 24px;
+  color: #38bdf8;
 }
