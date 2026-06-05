@@ -181,3 +181,25 @@ th {
 .stat-card.orange .stat-number {
   color: #fb923c;
 }
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+.modern-table th {
+  text-align: left;
+  padding: 12px;
+  color: #38bdf8;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.modern-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modern-table tr:hover {
+  background: rgba(56, 189, 248, 0.08);
+}
