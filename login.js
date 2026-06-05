@@ -41,7 +41,8 @@ function login() {
   Name: person.Name,
   Email: person.Email,
   Role: person.Role,
-  Tier: person.Tiers
+  Tier: person.Tiers,
+  AdultApproved: person.AdultApproved || "No"
 }));
 
   alert(`Logged in as ${person.Name}.`);
