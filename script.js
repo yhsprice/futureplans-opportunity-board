@@ -99,64 +99,59 @@ async function loadOpportunities() {
       return;
     }
 
-    let html = `
-     <div class="dashboard-card">
-    <table class="modern-table">
-          <thead>
-            <tr>
-              <th style="text-align:left; padding:8px;">Date</th>
-              <th style="text-align:left; padding:8px;">Start</th>
-              <th style="text-align:left; padding:8px;">End</th>
-              <th style="text-align:left; padding:8px; min-width:220px;">School</th>
-              <th style="text-align:left; padding:8px;">Open</th>
-              <th style="text-align:left; padding:8px;">Program</th>
-              <th style="text-align:left; padding:8px;">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
+let html = `<div class="opportunity-grid">`;
 
-  openOpportunities.forEach(opportunity => {
+openOpportunities.forEach(opportunity => {
+
   const openings = Number(opportunity.RemainingOpenings || 0);
 
   html += `
-    <tr>
-      <td style="padding:8px; white-space:nowrap;">
-        ${formatDate(opportunity.Date)}
-      </td>
+    <div class="opportunity-card">
 
-      <td style="padding:8px; white-space:nowrap;">
-        ${formatTime(opportunity.StartTime)}
-      </td>
-
-      <td style="padding:8px; white-space:nowrap;">
-        ${formatTime(opportunity.EndTime)}
-      </td>
-
-      <td style="padding:8px; min-width:220px;">
+      <div class="opportunity-card-header">
         ${opportunity.School || "School Not Listed"}
-      </td>
+      </div>
 
-      <td style="padding:8px;">
-        ${openings}
-      </td>
+      <div class="opportunity-card-body">
 
-      <td style="padding:8px;">
-        ${opportunity.ProgramType || "Not listed"}
-      </td>
+        <p>
+          <strong>Date:</strong>
+          ${formatDate(opportunity.Date)}
+        </p>
 
-      <td style="padding:8px;">
-        <button onclick="requestOpportunity('${opportunity.OpportunityID || ""}')">
-          Request
-        </button>
-      </td>
-    </tr>
+        <p>
+          <strong>Time:</strong>
+          ${formatTime(opportunity.StartTime)}
+          -
+          ${formatTime(opportunity.EndTime)}
+        </p>
+
+        <p>
+          <strong>Program:</strong>
+          ${opportunity.ProgramType || "Not Listed"}
+        </p>
+
+        <p>
+          <strong>Fund:</strong>
+          ${opportunity.Fund || "Not Listed"}
+        </p>
+
+        <p>
+          <strong>Openings:</strong>
+          ${openings}
+        </p>
+
+      </div>
+
+      <button onclick="requestOpportunity('${opportunity.OpportunityID}')">
+        Request Opportunity
+      </button>
+
+    </div>
   `;
 });
-         
-    html += `
-          </tbody>
-        </table>
+
+html += `</div>`;
       </div>
     `;
 
