@@ -5,6 +5,8 @@ const container = document.getElementById("payrollSummary");
 const payPeriodSelect = document.getElementById("payPeriodSelect");
 const sortBy = document.getElementById("sortBy");
 
+showUserBanner();
+
 async function loadPayPeriods() {
   const response = await fetch(`${API_URL}?action=getPayPeriods`);
   const payPeriods = await response.json();
@@ -84,10 +86,10 @@ async function loadPayroll() {
   let totalSessions = 0;
 
   let html = `
-    <div class="opportunity">
+    <div class="dashboard-card">
       <h2>Payroll Summary: ${selectedPayPeriod}</h2>
 
-      <table style="width:100%; border-collapse:collapse;">
+      <table class="modern-table">
         <thead>
           <tr>
             <th style="text-align:left; padding:10px;">Coach</th>
@@ -122,15 +124,16 @@ async function loadPayroll() {
       <h3>Total Payroll: $${totalPay.toFixed(2)}</h3>
     </div>
 
-    <div class="opportunity">
+    <div class="dashboard-card">
       <h2>Payroll Details</h2>
 
-      <table style="width:100%; border-collapse:collapse;">
+      <table class="modern-table">
         <thead>
           <tr>
             <th style="text-align:left; padding:8px;">Coach</th>
             <th style="text-align:left; padding:8px;">Date</th>
             <th style="text-align:left; padding:8px;">Program</th>
+            <th style="text-align:left; padding:8px;">Fund</th>
             <th style="text-align:left; padding:8px;">Service</th>
             <th style="text-align:left; padding:8px;">School/Agency</th>
             <th style="text-align:left; padding:8px;">Hours</th>
@@ -147,6 +150,7 @@ async function loadPayroll() {
         <td style="padding:8px; border-bottom:1px solid #ddd;">${session.CoachName || ""}</td>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${formatDate(session.Date)}</td>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${session.ProgramType || ""}</td>
+        <td style="padding:8px; border-bottom:1px solid #ddd;">${session.Fund || ""}</td>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${session.PayRule || ""}</td>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${session.School || ""}</td>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${Number(session.PayHours || 0).toFixed(2)}</td>
@@ -166,7 +170,7 @@ async function loadPayroll() {
   `;
 
   totalsContainer.innerHTML = `
-    <div class="opportunity">
+    <div class="dashboard-card">
       <h2>${selectedPayPeriod} Summary</h2>
       <p><strong>Total Coaches:</strong> ${coaches.length}</p>
       <p><strong>Total Sessions:</strong> ${totalSessions}</p>
