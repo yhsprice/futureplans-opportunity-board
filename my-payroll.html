@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Payroll</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="logo" style="text-align:center;">
+      <img src="Future Plans.png" alt="Future Plans" style="max-width:220px; width:100%;">
+    </div>
+
+    <div class="nav-section-title">Coach</div>
+
+    <a class="nav-link" href="index.html">Available Opportunities</a>
+    <a class="nav-link" href="my-requests.html">My Requests</a>
+    <a class="nav-link" href="my-schedule.html">My Schedule</a>
+    <a class="nav-link" href="submit-session.html">Submit Time</a>
+    <a class="nav-link active" href="my-payroll.html">My Payroll</a>
+
+    <div class="nav-section-title manager-only">Manager</div>
+
+    <a class="nav-link manager-only" href="manager.html">Manager Dashboard</a>
+    <a class="nav-link manager-only" href="add-opportunity.html">Add Opportunity</a>
+    <a class="nav-link manager-only" href="manage-opportunities.html">Manage Opportunities</a>
+    <a class="nav-link manager-only" href="payroll.html">Payroll Dashboard</a>
+    <a class="nav-link manager-only" href="utilization.html">Coach Utilization</a>
+
+    <div class="sidebar-image">
+      <img src="lita-yvonne.png" alt="Career Coaching and Assessment Coordinators">
+      <div style="text-align:center; margin-top:10px;">
+        <strong>Career Coaching & Assessment Coordinators</strong>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="top-bar">
+      <div>
+        <h1>My Payroll</h1>
+        <p>View your submitted, approved, and paid coaching time.</p>
+      </div>
+
+      <div id="userBanner" class="welcome-pill"></div>
+    </div>
+
+    <div id="payrollSummaryCards" class="dashboard-grid"></div>
+
+    <div id="myPayrollList">
+      <p>Loading payroll...</p>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="auth.js"></script>
+<script src="my-payroll.js"></script>
+
+</body>
+</html>
