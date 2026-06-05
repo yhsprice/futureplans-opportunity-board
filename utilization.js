@@ -1,6 +1,7 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
 
 const container = document.getElementById("utilizationReport");
+showUserBanner();
 
 async function loadUtilization() {
   container.innerHTML = "<p>Loading utilization...</p>";
@@ -53,9 +54,9 @@ async function loadUtilization() {
   }
 
   let html = `
-    <div class="opportunity">
+    <div class="dashboard-card">
       <h2>Coach Utilization: ${currentPayPeriodID}</h2>
-      <table>
+      <table class="modern-table">
         <thead>
           <tr>
             <th>Coach</th>
