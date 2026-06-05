@@ -412,54 +412,46 @@ async function loadDashboardCounts() {
 }
 
 async function loadRecentActivity() {
-
-  let html = "";
+  const activityBox = document.getElementById("recentActivity");
 
   try {
+    const response = await fetch(`${API_URL}?action=getRequests`);
+    const requests = await response.json();
 
-    const requestsResponse =
-      await fetch(`${API_URL}?action=getRequests`);
-
-    const requests =
-      await requestsResponse.json();
+    if (!Array.isArray(requests) || requests.length === 0) {
+      activityBox.innerHTML = "<p>No recent activity yet.</p>";
+      return;
+    }
 
     const recentRequests = requests
+      .filter(r => r.RequestID)
       .slice(-5)
       .reverse();
 
     if (recentRequests.length === 0) {
-
-      html = `
-        <p>No recent activity.</p>
-      `;
-
-    } else {
-
-      recentRequests.forEach(request => {
-
-        html += `
-          <div style="
-            padding:10px;
-            border-bottom:1px solid rgba(255,255,255,.1);
-          ">
-            <strong>${request.CoachName}</strong>
-            requested
-            <strong>${request.School}</strong>
-            on
-            ${request.Date}
-          </div>
-        `;
-      });
+      activityBox.innerHTML = "<p>No recent activity yet.</p>";
+      return;
     }
 
-    document.getElementById("recentActivity").innerHTML = html;
+    let html = "";
 
-  } catch(error) {
+    recentRequests.forEach(request => {
+      html += `
+        <div style="padding:10px; border-bottom:1px solid rgba(255,255,255,.1);">
+          <strong>${request.CoachName || "Coach"}</strong>
+          requested
+          <strong>${request.School || "an opportunity"}</strong>
+          on
+          ${request.Date || ""}
+        </div>
+      `;
+    });
 
-    console.error(error);
+    activityBox.innerHTML = html;
 
-    document.getElementById("recentActivity").innerHTML =
-      "<p>Unable to load activity.</p>";
+  } catch (error) {
+    console.error("Recent activity error:", error);
+    activityBox.innerHTML = "<p>No recent activity yet.</p>";
   }
 }
 
