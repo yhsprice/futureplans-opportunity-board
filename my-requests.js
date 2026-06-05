@@ -68,8 +68,7 @@ async function loadMyRequests() {
 
 function renderSection(title, requests, showCompleteButton) {
   const section = document.createElement("div");
-  <table style="width:100%; border-collapse:collapse;">
-
+ 
   let html = `<h2>${title} (${requests.length})</h2>`;
 
   if (requests.length === 0) {
