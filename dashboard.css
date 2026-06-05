@@ -15,7 +15,7 @@ body {
 }
 
 .sidebar {
-  width: 270px;
+  width: 300px;
   background: linear-gradient(180deg, #090f2d, #030712);
   border-right: 1px solid #7c3aed;
   padding: 22px;
@@ -69,7 +69,7 @@ body {
 
 .main-content {
   flex: 1;
-  padding: 32px 42px;
+  padding: 40px;
 }
 
 .top-bar {
