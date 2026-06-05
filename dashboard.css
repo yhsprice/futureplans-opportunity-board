@@ -1,0 +1,151 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #050816;
+  color: #ffffff;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 270px;
+  background: linear-gradient(180deg, #090f2d, #030712);
+  border-right: 1px solid #7c3aed;
+  padding: 22px;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 35px;
+}
+
+.logo span {
+  color: #a855f7;
+}
+
+.nav-section-title {
+  color: #c084fc;
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin: 20px 0 10px;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  display: block;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: linear-gradient(90deg, #7c3aed, #0284c7);
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.7);
+}
+
+.sidebar-image {
+  margin-top: 25px;
+  border: 1px solid #a855f7;
+  border-radius: 18px;
+  padding: 8px;
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.7);
+}
+
+.sidebar-image img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 32px 42px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.welcome-pill {
+  border: 1px solid #38bdf8;
+  border-radius: 999px;
+  padding: 10px 18px;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+}
+
+.dashboard-card,
+.opportunity {
+  background: rgba(8, 15, 46, 0.92);
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 22px;
+  box-shadow: 0 0 18px rgba(30, 64, 175, 0.35);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: rgba(7, 17, 44, 0.95);
+  border-radius: 18px;
+  padding: 22px;
+  border: 1px solid #0ea5e9;
+  box-shadow: 0 0 18px rgba(14, 165, 233, 0.5);
+}
+
+.stat-number {
+  font-size: 38px;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+button {
+  background: linear-gradient(90deg, #2563eb, #9333ea);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  box-shadow: 0 0 14px rgba(147, 51, 234, 0.8);
+}
+
+input,
+select,
+textarea {
+  background: #070b1f;
+  color: white;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 11px;
+  margin: 5px;
+}
+
+table {
+  background: #070b1f;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+th {
+  color: #38bdf8;
+}
