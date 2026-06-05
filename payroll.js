@@ -320,6 +320,32 @@ async function copyAccountingSummary() {
   }
 }
 
+async function markPayPeriodPaid() {
+  const selectedPayPeriod = payPeriodSelect.value;
+
+  if (!selectedPayPeriod) {
+    alert("Please select a pay period first.");
+    return;
+  }
+
+  const confirmPaid = confirm(
+    "Mark all Approved for Pay records in this pay period as Paid? Do this only after accounting has processed payment."
+  );
+
+  if (!confirmPaid) {
+    return;
+  }
+
+  const response = await fetch(
+    `${API_URL}?action=markPayPeriodPaid&payPeriodID=${encodeURIComponent(selectedPayPeriod)}`
+  );
+
+  const result = await response.json();
+
+  alert(result.message || "Done.");
+  loadPayroll();
+}
+
 function formatDateForInput(value) {
   const date = new Date(value);
   if (isNaN(date)) return "";
