@@ -375,6 +375,43 @@ function submitManualCompletedSession() {
 });
 }
 
+async function loadDashboardCounts() {
+  try {
+    const opportunitiesResponse = await fetch(`${API_URL}?action=getOpportunities`);
+    const opportunities = await opportunitiesResponse.json();
+
+    const requestsResponse = await fetch(`${API_URL}?action=getRequests`);
+    const requests = await requestsResponse.json();
+
+    const sessionsResponse = await fetch(`${API_URL}?action=getCompletedSessions`);
+    const sessions = await sessionsResponse.json();
+
+    const openOpportunities = opportunities.length;
+
+    const pendingRequests = requests.filter(r =>
+      r.Status === "Pending Approval"
+    ).length;
+
+    const releaseRequests = requests.filter(r =>
+      r.ReleaseRequested === "Yes" &&
+      r.ReleaseStatus === "Pending Review"
+    ).length;
+
+    const pendingPayroll = sessions.filter(s =>
+      s.Status === "Pending Pay Approval"
+    ).length;
+
+    document.getElementById("openOpportunityCount").textContent = openOpportunities;
+    document.getElementById("pendingRequestCount").textContent = pendingRequests;
+    document.getElementById("pendingPayrollCount").textContent = pendingPayroll;
+    document.getElementById("releaseRequestCount").textContent = releaseRequests;
+
+  } catch (error) {
+    console.error("Dashboard count error:", error);
+  }
+}
+
 loadRequests();
 loadPayApprovals();
 loadReleaseRequests();
+loadDashboardCounts();
