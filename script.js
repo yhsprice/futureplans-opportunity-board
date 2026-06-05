@@ -165,8 +165,12 @@ Object.keys(grouped)
               </div>
 
               <div class="school-summary">
-                ${schoolOpportunities.length} time slot(s) • ${totalOpenings} total opening(s)
-              </div>
+  ${schoolOpportunities.length} time slot(s) • ${totalOpenings} total opening(s)
+  <br><br>
+  <button onclick="reserveSelected('${dateKey}', '${schoolKey}')">
+    Reserve Selected
+  </button>
+</div>
             </div>
 
             <table class="modern-table">
@@ -196,13 +200,24 @@ Object.keys(grouped)
                 ${isFilled ? "Filled" : `${openings} Open`}
               </td>
 
-              <td>
-                ${
-                  isFilled
-                    ? `<span class="status-badge filled">Filled</span>`
-                    : `<button onclick="requestOpportunity('${opportunity.OpportunityID}')">Reserve</button>`
-                }
-              </td>
+             <td>
+  ${
+    isFilled
+      ? `<span class="status-badge filled">Filled</span>`
+      : `
+        <label>
+          <input
+            type="checkbox"
+            class="reserve-checkbox"
+            data-date="${dateKey}"
+            data-school="${schoolKey}"
+            value="${opportunity.OpportunityID}"
+          >
+          Select
+        </label>
+      `
+  }
+</td>
             </tr>
           `;
         });
@@ -264,6 +279,64 @@ async function requestOpportunity(opportunityID) {
     alert("Something went wrong submitting the request.");
     console.error(error);
   }
+}
+
+async function reserveSelected(dateKey, schoolKey) {
+  const selected = Array.from(document.querySelectorAll(".reserve-checkbox"))
+    .filter(box =>
+      box.checked &&
+      box.dataset.date === dateKey &&
+      box.dataset.school === schoolKey
+    )
+    .map(box => box.value);
+
+  if (selected.length === 0) {
+    alert("Please select at least one time slot.");
+    return;
+  }
+
+  const confirmRequest = confirm(
+    `Reserve ${selected.length} selected time slot(s) at ${schoolKey}?`
+  );
+
+  if (!confirmRequest) {
+    return;
+  }
+
+  let successCount = 0;
+  let failMessages = [];
+
+  for (const opportunityID of selected) {
+    const personID = currentUser.PersonID;
+
+    const url = `${API_URL}?action=request`
+      + `&opportunityID=${encodeURIComponent(opportunityID)}`
+      + `&personID=${encodeURIComponent(personID)}`;
+
+    try {
+      const response = await fetch(url);
+      const result = await response.json();
+
+      if (result.success) {
+        successCount++;
+      } else {
+        failMessages.push(result.message || "One request failed.");
+      }
+
+    } catch (error) {
+      console.error(error);
+      failMessages.push("One request failed due to a connection error.");
+    }
+  }
+
+  let message = `${successCount} request(s) submitted.`;
+
+  if (failMessages.length > 0) {
+    message += `\n\nSome could not be submitted:\n` + failMessages.join("\n");
+  }
+
+  alert(message);
+  loadOpportunities();
 }
 
 loadOpportunities();
