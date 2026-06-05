@@ -245,6 +245,81 @@ async function editPayrollEntry(sessionID) {
   loadPayroll();
 }
 
+async function copyAccountingSummary() {
+  const selectedPayPeriod = payPeriodSelect.value;
+
+  if (!selectedPayPeriod) {
+    alert("Please select a pay period first.");
+    return;
+  }
+
+  const sessionsResponse = await fetch(`${API_URL}?action=getCompletedSessions`);
+  const sessions = await sessionsResponse.json();
+
+  const periodsResponse = await fetch(`${API_URL}?action=getPayPeriods`);
+  const payPeriods = await periodsResponse.json();
+
+  const period = payPeriods.find(p =>
+    String(p.PayPeriodID) === String(selectedPayPeriod)
+  );
+
+  const approved = sessions.filter(s =>
+    s.Status === "Approved for Pay" &&
+    s.PayPeriodID === selectedPayPeriod
+  );
+
+  if (approved.length === 0) {
+    alert("No approved payroll found for this pay period.");
+    return;
+  }
+
+  const summary = {};
+
+  approved.forEach(session => {
+    const coach = session.CoachName || "Unknown Coach";
+
+    if (!summary[coach]) {
+      summary[coach] = {
+        hours: 0,
+        pay: 0
+      };
+    }
+
+    summary[coach].hours += Number(session.PayHours || 0);
+    summary[coach].pay += Number(session.PayAmount || 0);
+  });
+
+  const coaches = Object.keys(summary).sort();
+
+  let totalHours = 0;
+  let totalPay = 0;
+
+  const payPeriodText = period
+    ? `${formatDateOnly(period.StartDate)} - ${formatDateOnly(period.EndDate)}`
+    : selectedPayPeriod;
+
+  let text = `Future Plans Coach Payroll\n`;
+  text += `Pay Period: ${payPeriodText}\n\n`;
+
+  coaches.forEach(coach => {
+    totalHours += summary[coach].hours;
+    totalPay += summary[coach].pay;
+
+    text += `${coach} - ${summary[coach].hours.toFixed(2)} hours - $${summary[coach].pay.toFixed(2)}\n`;
+  });
+
+  text += `\nTotal Hours: ${totalHours.toFixed(2)}\n`;
+  text += `Total Payroll: $${totalPay.toFixed(2)}\n`;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("Accounting summary copied. Paste it into your email.");
+  } catch (error) {
+    console.error(error);
+    prompt("Copy this accounting summary:", text);
+  }
+}
+
 function formatDateForInput(value) {
   const date = new Date(value);
   if (isNaN(date)) return "";
@@ -272,6 +347,18 @@ function formatDate(value) {
   const formattedHours = String(hours).padStart(2, "0");
 
   return `${month}/${day}/${year} ${formattedHours}:${minutes} ${ampm}`;
+}
+
+function formatDateOnly(value) {
+  const date = new Date(value);
+  if (isNaN(date)) return value || "";
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  });
 }
 
 loadPayPeriods();
