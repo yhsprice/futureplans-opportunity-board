@@ -1,6 +1,7 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
 
 const container = document.getElementById("opportunityManager");
+showUserBanner();
 
 async function loadOpportunities() {
   container.innerHTML = "<p>Loading opportunities...</p>";
@@ -24,8 +25,8 @@ async function loadOpportunities() {
   });
 
   let html = `
-    <div class="opportunity">
-      <table style="width:100%; border-collapse:collapse;">
+    <div class="dashboard-card">
+  <table class="modern-table">
         <thead>
           <tr>
             <th style="text-align:left; padding:8px;">Status</th>
@@ -37,6 +38,7 @@ async function loadOpportunities() {
             <th style="text-align:left; padding:8px;">Approved</th>
             <th style="text-align:left; padding:8px;">Open</th>
             <th style="text-align:left; padding:8px;">Program</th>
+            <th style="text-align:left; padding:8px;">Fund</th>
             <th style="text-align:left; padding:8px; min-width:220px;">Actions</th>
           </tr>
         </thead>
@@ -70,6 +72,7 @@ async function loadOpportunities() {
         <td style="padding:8px;">${opportunity.ApprovedCount || 0}</td>
         <td style="padding:8px;">${opportunity.RemainingOpenings}</td>
         <td style="padding:8px;">${opportunity.ProgramType}</td>
+        <td style="padding:8px;">${opportunity.Fund || ""}</td>
         <td style="padding:8px; min-width:220px;">
           <div style="display:flex; gap:4px; flex-wrap:nowrap;">
             <button onclick="showEditForm('${opportunity.OpportunityID}')">Edit</button>
@@ -80,7 +83,7 @@ async function loadOpportunities() {
       </tr>
 
       <tr id="edit-row-${opportunity.OpportunityID}" style="display:none;">
-        <td colspan="10">
+        <td colspan="11">
           <div class="opportunity">
             <p><strong>School</strong></p>
             <input id="school-${opportunity.OpportunityID}" value="${opportunity.School || ""}">
@@ -98,7 +101,21 @@ async function loadOpportunities() {
             <input id="coaches-${opportunity.OpportunityID}" type="number" value="${opportunity.CoachesNeeded || 1}">
 
             <p><strong>Program Type</strong></p>
-            <input id="program-${opportunity.OpportunityID}" value="${opportunity.ProgramType || ""}">
+            <select id="program-${opportunity.OpportunityID}">
+            <option value="Youth" ${opportunity.ProgramType === "Youth" ? "selected" : ""}>Youth</option>
+            <option value="Adult" ${opportunity.ProgramType === "Adult" ? "selected" : ""}>Adult</option>
+            <option value="Summer Program" ${opportunity.ProgramType === "Summer Program" ? "selected" : ""}>Summer Program</option>
+            <option value="Professional Development" ${opportunity.ProgramType === "Professional Development" ? "selected" : ""}>Professional Development</option>
+            <option value="Meeting" ${opportunity.ProgramType === "Meeting" ? "selected" : ""}>Meeting</option>
+            <option value="Other" ${opportunity.ProgramType === "Other" ? "selected" : ""}>Other</option>
+            </select>
+
+            <p><strong>Fund</strong></p>
+            <select id="fund-${opportunity.OpportunityID}">
+            <option value="Grit" ${opportunity.Fund === "Grit" ? "selected" : ""}>Grit</option>
+            <option value="NW OH" ${opportunity.Fund === "NW OH" ? "selected" : ""}>NW OH</option>
+            <option value="SW OH" ${opportunity.Fund === "SW OH" ? "selected" : ""}>SW OH</option>
+            </select>
 
             <p><strong>Notes</strong></p>
             <textarea id="notes-${opportunity.OpportunityID}">${opportunity.Notes || ""}</textarea>
@@ -144,7 +161,8 @@ function updateOpportunity(opportunityID) {
   const startTime = document.getElementById(`start-${opportunityID}`).value;
   const endTime = document.getElementById(`end-${opportunityID}`).value;
   const coachesNeeded = document.getElementById(`coaches-${opportunityID}`).value;
-  const programType = document.getElementById(`program-${opportunityID}`).value.trim();
+  const programType = document.getElementById(`program-${opportunityID}`).value;
+  const fund = document.getElementById(`fund-${opportunityID}`).value;  
   const notes = document.getElementById(`notes-${opportunityID}`).value.trim();
   const contact = document.getElementById(`contact-${opportunityID}`).value.trim();
 
@@ -156,6 +174,7 @@ function updateOpportunity(opportunityID) {
     + `&endTime=${encodeURIComponent(endTime)}`
     + `&coachesNeeded=${encodeURIComponent(coachesNeeded)}`
     + `&programType=${encodeURIComponent(programType)}`
+    + `&fund=${encodeURIComponent(fund)}`
     + `&notes=${encodeURIComponent(notes)}`
     + `&contact=${encodeURIComponent(contact)}`;
 
