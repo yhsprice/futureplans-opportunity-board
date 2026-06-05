@@ -100,8 +100,9 @@ async function loadOpportunities() {
     }
 
     let html = `
-      <div class="opportunity">
-        <table style="width:100%; border-collapse:collapse;">
+      let html = `
+  <div class="dashboard-card">
+    <table class="modern-table">
           <thead>
             <tr>
               <th style="text-align:left; padding:8px;">Date</th>
