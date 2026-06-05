@@ -1,12 +1,15 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
 
+showUserBanner();
+
 function addOpportunity() {
   const school = document.getElementById("school").value.trim();
   const date = document.getElementById("date").value;
   const startTime = document.getElementById("startTime").value;
   const endTime = document.getElementById("endTime").value;
   const coachesNeeded = document.getElementById("coachesNeeded").value;
-  const programType = document.getElementById("programType").value.trim();
+  const programType = document.getElementById("programType").value;
+  const fund = document.getElementById("fund").value;
   const notes = document.getElementById("notes").value.trim();
 
   if (!school || !date || !startTime || !endTime || !coachesNeeded || !programType || !fund) {
@@ -24,12 +27,18 @@ function addOpportunity() {
     + `&fund=${encodeURIComponent(fund)}`
     + `&notes=${encodeURIComponent(notes)}`;
 
-  const img = new Image();
-  img.src = url;
-
-  alert("Opportunity added!");
-
-  setTimeout(() => {
-    window.location.href = "index.html";
-  }, 1000);
+  fetch(url)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert("Opportunity added!");
+        window.location.href = "index.html";
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    })
+    .catch(error => {
+      alert("Something went wrong adding the opportunity.");
+      console.error(error);
+    });
 }
