@@ -68,7 +68,7 @@ async function loadMyRequests() {
 
 function renderSection(title, requests, showCompleteButton) {
   const section = document.createElement("div");
-  section.className = "opportunity";
+  <table style="width:100%; border-collapse:collapse;">
 
   let html = `<h2>${title} (${requests.length})</h2>`;
 
@@ -80,7 +80,7 @@ function renderSection(title, requests, showCompleteButton) {
   }
 
   html += `
-    <table style="width:100%; border-collapse:collapse;">
+    <table class="modern-table">
       <thead>
         <tr>
           <th style="text-align:left; padding:8px;">Date</th>
@@ -156,4 +156,5 @@ function completeRequest(requestID) {
 }
 
 showUserBanner();
+showManagerLinksOnly();
 loadMyRequests();
