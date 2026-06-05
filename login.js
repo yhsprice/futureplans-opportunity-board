@@ -45,7 +45,6 @@ function login() {
   AdultApproved: person.AdultApproved || "No"
 }));
 
-  window.location.href = "index.html";
-}
+window.location.href = "index.html";
 
 loadPeople();
