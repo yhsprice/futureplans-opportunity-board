@@ -411,7 +411,60 @@ async function loadDashboardCounts() {
   }
 }
 
+async function loadRecentActivity() {
+
+  let html = "";
+
+  try {
+
+    const requestsResponse =
+      await fetch(`${API_URL}?action=getRequests`);
+
+    const requests =
+      await requestsResponse.json();
+
+    const recentRequests = requests
+      .slice(-5)
+      .reverse();
+
+    if (recentRequests.length === 0) {
+
+      html = `
+        <p>No recent activity.</p>
+      `;
+
+    } else {
+
+      recentRequests.forEach(request => {
+
+        html += `
+          <div style="
+            padding:10px;
+            border-bottom:1px solid rgba(255,255,255,.1);
+          ">
+            <strong>${request.CoachName}</strong>
+            requested
+            <strong>${request.School}</strong>
+            on
+            ${request.Date}
+          </div>
+        `;
+      });
+    }
+
+    document.getElementById("recentActivity").innerHTML = html;
+
+  } catch(error) {
+
+    console.error(error);
+
+    document.getElementById("recentActivity").innerHTML =
+      "<p>Unable to load activity.</p>";
+  }
+}
+
 loadRequests();
 loadPayApprovals();
 loadReleaseRequests();
 loadDashboardCounts();
+loadRecentActivity();
