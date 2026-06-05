@@ -12,7 +12,9 @@ async function loadPeople() {
   personSelect.innerHTML = `<option value="">Select your name</option>`;
 
   people
-    .filter(person => person.Active === "Yes")
+    .filter(person =>
+      String(person.Active || person.ActiveStatus || "").trim() === "Yes"
+    )
     .sort((a, b) => a.Name.localeCompare(b.Name))
     .forEach(person => {
       const option = document.createElement("option");
@@ -37,14 +39,15 @@ function login() {
   }
 
   localStorage.setItem("loggedInUser", JSON.stringify({
-  PersonID: person.PersonID,
-  Name: person.Name,
-  Email: person.Email,
-  Role: person.Role,
-  Tier: person.Tiers,
-  AdultApproved: person.AdultApproved || "No"
-}));
+    PersonID: person.PersonID,
+    Name: person.Name,
+    Email: person.Email,
+    Role: person.Role,
+    Tier: person.Tiers,
+    AdultApproved: person.AdultApproved || "No"
+  }));
 
-window.location.href = "index.html";
+  window.location.href = "index.html";
+}
 
 loadPeople();
