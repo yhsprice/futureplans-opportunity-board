@@ -1,52 +1,128 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Submit Completed Session</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Submit Time</title>
+  <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
 
-  <p><a href="index.html">Back to Opportunity Board</a></p>
+<div class="app-layout">
 
-  <h1>Submit Completed Session</h1>
+  <aside class="sidebar">
+    <div class="logo" style="text-align:center;">
+      <img src="Future Plans.png" alt="Future Plans" style="max-width:220px; width:100%;">
+    </div>
 
-  <div class="opportunity">
-    <p><strong>Staff Number</strong></p>
-    <input id="personID" placeholder="Enter your staff number">
+    <div class="nav-section-title">Coach</div>
 
-    <p><strong>School</strong></p>
-    <input id="school" placeholder="School name">
+    <a class="nav-link" href="index.html">Available Opportunities</a>
+    <a class="nav-link" href="my-requests.html">My Requests</a>
+    <a class="nav-link" href="my-schedule.html">My Schedule</a>
+    <a class="nav-link active" href="submit-session.html">Submit Time</a>
 
-    <p><strong>Date</strong></p>
-    <input id="date" type="date">
+    <div class="nav-section-title manager-only">Manager</div>
 
-   <p><strong>Program Type</strong></p>
-<input id="programType" placeholder="Youth, Adult, Summer, etc.">
+    <a class="nav-link manager-only" href="manager.html">Manager Dashboard</a>
+    <a class="nav-link manager-only" href="add-opportunity.html">Add Opportunity</a>
+    <a class="nav-link manager-only" href="manage-opportunities.html">Manage Opportunities</a>
+    <a class="nav-link manager-only" href="payroll.html">Payroll Dashboard</a>
+    <a class="nav-link manager-only" href="utilization.html">Coach Utilization</a>
 
-<p><strong>Pay Rule</strong></p>
-<select id="payRule">
-  <option value="Regular Coaching">Regular Coaching</option>
-  <option value="Prof Development">Prof Development</option>
-  <option value="Revolution Group">Revolution Group</option>
-</select>
+    <div class="nav-section-title">Account</div>
+    <a class="nav-link" href="login.html">Log Out</a>
 
-<p><strong>Revolution Group Billing</strong></p>
-<select id="revolutionTier">
-  <option value="">Not Applicable</option>
-  <option value="0.25">1-15 Minutes ($6.25)</option>
-  <option value="0.50">16-30 Minutes ($12.50)</option>
-  <option value="0.75">31-45 Minutes ($18.75)</option>
-  <option value="1.00">46-60 Minutes ($25.00)</option>
-</select>
+    <div class="sidebar-image">
+      <img src="lita-yvonne.png" alt="Career Coaching and Assessment Coordinators">
+      <div style="text-align:center; margin-top:10px;">
+        <strong>Career Coaching & Assessment Coordinators</strong>
+      </div>
+    </div>
+  </aside>
 
-    <p><strong>Notes</strong></p>
-    <textarea id="notes" placeholder="Optional notes"></textarea>
+  <main class="main-content">
 
-    <br><br>
-    <button onclick="submitSession()">Submit Session</button>
-  </div>
+    <div class="top-bar">
+      <div>
+        <h1>Submit Time</h1>
+        <p>Submit completed coaching, training, meeting, or other approved service time.</p>
+      </div>
 
-  <script src="submit-session.js"></script>
+      <div id="userBanner" class="welcome-pill"></div>
+    </div>
+
+    <div class="dashboard-card">
+
+      <input id="personID" type="hidden">
+
+      <p><strong>School / Agency</strong></p>
+      <input id="school" placeholder="Optional school or agency">
+
+      <p><strong>Date</strong></p>
+      <input id="date" type="date">
+
+      <p><strong>Program Type</strong></p>
+      <select id="programType">
+        <option value="">Program Type</option>
+        <option value="Youth">Youth</option>
+        <option value="Adult">Adult</option>
+        <option value="Summer Program">Summer Program</option>
+        <option value="Professional Development">Professional Development</option>
+        <option value="Meeting">Meeting</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <p><strong>Fund</strong></p>
+      <select id="fund">
+        <option value="">Fund</option>
+        <option value="Grit">Grit</option>
+        <option value="NW OH">NW OH</option>
+        <option value="SW OH">SW OH</option>
+      </select>
+
+      <p><strong>Service Type</strong></p>
+      <select id="payRule">
+        <option value="">Service Type</option>
+        <option value="Regular Coaching">Coaching</option>
+        <option value="Prof Development">Professional Development / Training</option>
+        <option value="Revolution Group">Revolution</option>
+        <option value="Meeting">Meeting</option>
+        <option value="Administrative">Administrative</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <p><strong>Hours</strong></p>
+      <select id="revolutionTier">
+        <option value="">Hours</option>
+        <option value="5.00">5.00</option>
+        <option value="4.00">4.00</option>
+        <option value="3.00">3.00</option>
+        <option value="2.50">2.50</option>
+        <option value="2.25">2.25</option>
+        <option value="2.00">2.00</option>
+        <option value="1.75">1.75</option>
+        <option value="1.50">1.50</option>
+        <option value="1.25">1.25</option>
+        <option value="1.00">1.00</option>
+        <option value="0.75">0.75</option>
+        <option value="0.50">0.50</option>
+        <option value="0.25">0.25</option>
+      </select>
+
+      <p><strong>Notes</strong></p>
+      <textarea id="notes" placeholder="Optional notes"></textarea>
+
+      <br><br>
+
+      <button onclick="submitSession()">Submit Time</button>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="auth.js"></script>
+<script src="submit-session.js"></script>
 
 </body>
 </html>
