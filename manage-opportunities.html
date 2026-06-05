@@ -2,19 +2,59 @@
 <html>
 <head>
   <title>Manage Opportunities</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
 
-  <p><a href="manager.html">Back to Manager Dashboard</a></p>
+<div class="app-layout">
 
-  <h1>Manage Opportunities</h1>
+  <aside class="sidebar">
+    <div class="logo" style="text-align:center;">
+      <img src="Future Plans.png" alt="Future Plans" style="max-width:220px; width:100%;">
+    </div>
 
-  <div id="opportunityManager">
-    <p>Loading opportunities...</p>
-  </div>
+    <div class="nav-section-title">Manager</div>
 
-  <script src="manage-opportunities.js"></script>
+    <a class="nav-link" href="manager.html">Dashboard</a>
+    <a class="nav-link" href="index.html">Opportunity Board</a>
+    <a class="nav-link" href="add-opportunity.html">Add Opportunity</a>
+    <a class="nav-link active" href="manage-opportunities.html">Manage Opportunities</a>
+    <a class="nav-link" href="payroll.html">Payroll Dashboard</a>
+    <a class="nav-link" href="utilization.html">Coach Utilization</a>
+
+    <div class="nav-section-title">Account</div>
+    <a class="nav-link" href="login.html">Log Out</a>
+
+    <div class="sidebar-image">
+      <img src="lita-yvonne.png" alt="Career Coaching and Assessment Coordinators">
+      <div style="text-align:center; margin-top:10px;">
+        <strong>Career Coaching & Assessment Coordinators</strong>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="top-bar">
+      <div>
+        <h1>Manage Opportunities</h1>
+        <p>Edit, close, or cancel posted coaching opportunities.</p>
+      </div>
+
+      <div id="userBanner" class="welcome-pill"></div>
+    </div>
+
+    <div id="opportunityManager">
+      <p>Loading opportunities...</p>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="auth.js"></script>
+<script src="manage-opportunities.js"></script>
 
 </body>
 </html>
