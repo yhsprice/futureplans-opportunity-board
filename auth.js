@@ -13,14 +13,21 @@ function showUserBanner() {
   const banner = document.getElementById("userBanner");
   const user = getCurrentUser();
 
-  if (banner && user) {
-    banner.innerHTML = `
-      <div class="opportunity">
-        <strong>Logged in as:</strong> ${user.Name} (${user.Role})
-        <button onclick="logout()">Logout</button>
-      </div>
-    `;
-  }
+  if (!banner || !user) return;
+
+  const firstName = user.Name.split(" ")[0];
+
+  banner.innerHTML = `
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-weight:600;">
+        Welcome, ${firstName}
+      </span>
+
+      <button onclick="logout()">
+        Logout
+      </button>
+    </div>
+  `;
 }
 
 function logout() {
