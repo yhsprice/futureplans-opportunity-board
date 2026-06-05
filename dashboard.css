@@ -149,3 +149,35 @@ table {
 th {
   color: #38bdf8;
 }
+
+.stat-card.blue {
+  border-color: #00b7ff;
+  box-shadow: 0 0 20px rgba(0, 183, 255, 0.6);
+}
+
+.stat-card.green {
+  border-color: #66ff66;
+  box-shadow: 0 0 20px rgba(102, 255, 102, 0.55);
+}
+
+.stat-card.purple {
+  border-color: #d946ef;
+  box-shadow: 0 0 20px rgba(217, 70, 239, 0.55);
+}
+
+.stat-card.orange {
+  border-color: #fb923c;
+  box-shadow: 0 0 20px rgba(251, 146, 60, 0.55);
+}
+
+.stat-card.green .stat-number {
+  color: #66ff66;
+}
+
+.stat-card.purple .stat-number {
+  color: #d946ef;
+}
+
+.stat-card.orange .stat-number {
+  color: #fb923c;
+}
