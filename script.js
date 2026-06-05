@@ -109,52 +109,117 @@ async function loadOpportunities() {
       return;
     }
 
-let html = `
-  <div class="dashboard-card">
-    <table class="modern-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Start</th>
-          <th>End</th>
-          <th>School</th>
-          <th>Program</th>
-          <th>Fund</th>
-          <th>Open</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-`;
+const grouped = {};
 
 openOpportunities.forEach(opportunity => {
-  const openings = Number(opportunity.RemainingOpenings || 0);
+  const dateKey = opportunity.Date || "No Date";
+  const schoolKey = opportunity.School || "School Not Listed";
 
-  html += `
-    <tr>
-      <td>${formatDate(opportunity.Date)}</td>
-      <td>${formatTime(opportunity.StartTime)}</td>
-      <td>${formatTime(opportunity.EndTime)}</td>
-      <td>${opportunity.School || "School Not Listed"}</td>
-      <td>${opportunity.ProgramType || "Not Listed"}</td>
-      <td>${opportunity.Fund || "Not Listed"}</td>
-      <td>${openings}</td>
-      <td>
-        <button onclick="requestOpportunity('${opportunity.OpportunityID}')">
-          Request
-        </button>
-      </td>
-    </tr>
-  `;
+  if (!grouped[dateKey]) {
+    grouped[dateKey] = {};
+  }
+
+  if (!grouped[dateKey][schoolKey]) {
+    grouped[dateKey][schoolKey] = [];
+  }
+
+  grouped[dateKey][schoolKey].push(opportunity);
 });
 
-html += `
-      </tbody>
-    </table>
-  </div>
-`;
-      
-    container.innerHTML = html;
+let html = "";
+
+Object.keys(grouped)
+  .sort((a, b) => new Date(a) - new Date(b))
+  .forEach(dateKey => {
+
+    html += `
+      <div class="date-group">
+        <h2>${formatDate(dateKey)}</h2>
+    `;
+
+    Object.keys(grouped[dateKey])
+      .sort()
+      .forEach(schoolKey => {
+
+        const schoolOpportunities = grouped[dateKey][schoolKey];
+
+        schoolOpportunities.sort((a, b) => {
+          const timeA = new Date(`${a.Date} ${a.StartTime}`);
+          const timeB = new Date(`${b.Date} ${b.StartTime}`);
+          return timeA - timeB;
+        });
+
+        const programType = schoolOpportunities[0].ProgramType || "Not Listed";
+        const fund = schoolOpportunities[0].Fund || "Not Listed";
+
+        const totalOpenings = schoolOpportunities.reduce((sum, opportunity) => {
+          return sum + Number(opportunity.RemainingOpenings || 0);
+        }, 0);
+
+        html += `
+          <div class="school-box">
+            <div class="school-box-header">
+              <div>
+                <h3>${schoolKey}</h3>
+                <p>${programType} • ${fund}</p>
+              </div>
+
+              <div class="school-summary">
+                ${schoolOpportunities.length} time slot(s) • ${totalOpenings} total opening(s)
+              </div>
+            </div>
+
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Openings</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        schoolOpportunities.forEach(opportunity => {
+          const openings = Number(opportunity.RemainingOpenings || 0);
+          const isFilled = openings <= 0;
+
+          html += `
+            <tr>
+              <td>
+                ${formatTime(opportunity.StartTime)}
+                -
+                ${formatTime(opportunity.EndTime)}
+              </td>
+
+              <td>
+                ${isFilled ? "Filled" : `${openings} Open`}
+              </td>
+
+              <td>
+                ${
+                  isFilled
+                    ? `<span class="status-badge filled">Filled</span>`
+                    : `<button onclick="requestOpportunity('${opportunity.OpportunityID}')">Reserve</button>`
+                }
+              </td>
+            </tr>
+          `;
+        });
+
+        html += `
+              </tbody>
+            </table>
+          </div>
+        `;
+      });
+
+    html += `
+      </div>
+    `;
+  });
+
+container.innerHTML = html;
 
   } catch (error) {
     container.innerHTML = "<p>Something went wrong loading opportunities.</p>";
