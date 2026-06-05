@@ -99,62 +99,51 @@ async function loadOpportunities() {
       return;
     }
 
-let html = `<div class="opportunity-grid">`;
+let html = `
+  <div class="dashboard-card">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>School</th>
+          <th>Program</th>
+          <th>Fund</th>
+          <th>Open</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+`;
 
 openOpportunities.forEach(opportunity => {
-
   const openings = Number(opportunity.RemainingOpenings || 0);
 
   html += `
-    <div class="opportunity-card">
-
-      <div class="opportunity-card-header">
-        ${opportunity.School || "School Not Listed"}
-      </div>
-
-      <div class="opportunity-card-body">
-
-        <p>
-          <strong>Date:</strong>
-          ${formatDate(opportunity.Date)}
-        </p>
-
-        <p>
-          <strong>Time:</strong>
-          ${formatTime(opportunity.StartTime)}
-          -
-          ${formatTime(opportunity.EndTime)}
-        </p>
-
-        <p>
-          <strong>Program:</strong>
-          ${opportunity.ProgramType || "Not Listed"}
-        </p>
-
-        <p>
-          <strong>Fund:</strong>
-          ${opportunity.Fund || "Not Listed"}
-        </p>
-
-        <p>
-          <strong>Openings:</strong>
-          ${openings}
-        </p>
-
-      </div>
-
-      <button onclick="requestOpportunity('${opportunity.OpportunityID}')">
-        Request Opportunity
-      </button>
-
-    </div>
+    <tr>
+      <td>${formatDate(opportunity.Date)}</td>
+      <td>${formatTime(opportunity.StartTime)}</td>
+      <td>${formatTime(opportunity.EndTime)}</td>
+      <td>${opportunity.School || "School Not Listed"}</td>
+      <td>${opportunity.ProgramType || "Not Listed"}</td>
+      <td>${opportunity.Fund || "Not Listed"}</td>
+      <td>${openings}</td>
+      <td>
+        <button onclick="requestOpportunity('${opportunity.OpportunityID}')">
+          Request
+        </button>
+      </td>
+    </tr>
   `;
 });
 
-html += `</div>`;
-      </div>
-    `;
-
+html += `
+      </tbody>
+    </table>
+  </div>
+`;
+      
     container.innerHTML = html;
 
   } catch (error) {
