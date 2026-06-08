@@ -2,7 +2,11 @@ const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2
 
 const currentUser = getCurrentUser();
 
-document.getElementById("personID").value = currentUser.PersonID;
+const personIDField = document.getElementById("personID");
+
+if (personIDField) {
+  personIDField.value = currentUser.PersonID;
+}
 
 showUserBanner();
 showManagerLinksOnly();
