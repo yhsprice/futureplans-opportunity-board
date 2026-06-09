@@ -7,11 +7,12 @@ showManagerLinksOnly();
 
 let currentWeekStart = getMonday(new Date());
 
-document.getElementById("weekPicker").value = formatDateInput(currentWeekStart);
+const weekPicker = document.getElementById("weekPicker");
+weekPicker.value = formatDateInput(currentWeekStart);
 
 async function loadManagerCalendar() {
   const pickedDate = document.getElementById("weekPicker").value;
-  currentWeekStart = getMonday(new Date(pickedDate));
+  currentWeekStart = getMonday(parseLocalDate(pickedDate));
 
   const [opportunitiesResponse, requestsResponse] = await Promise.all([
     fetch(API_URL),
@@ -94,27 +95,33 @@ function renderCalendar(opportunities, requests) {
   container.innerHTML = html;
 }
 
-function changeWeek(days) {
-  currentWeekStart.setDate(currentWeekStart.getDate() + days);
-  document.getElementById("weekPicker").value = formatDateInput(currentWeekStart);
-  loadManagerCalendar();
+function parseLocalDate(value) {
+  if (value instanceof Date) {
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  }
+
+  const parts = String(value).split("-");
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
 }
 
 function getMonday(date) {
-  const d = new Date(date);
+  const d = parseLocalDate(date);
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   d.setDate(diff);
-  d.setHours(0, 0, 0, 0);
   return d;
 }
 
 function formatDateInput(date) {
-  return date.toISOString().split("T")[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 function formatDateKey(date) {
-  return date.toISOString().split("T")[0];
+  return formatDateInput(parseLocalDate(date));
 }
 
 loadManagerCalendar();
