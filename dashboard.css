@@ -443,3 +443,38 @@ body.login-page {
   background: rgba(239,68,68,.2);
   color: #f87171;
 }
+
+.manager-week-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+}
+
+.manager-day-column {
+  background: rgba(8, 15, 46, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 18px;
+  padding: 16px;
+  min-height: 400px;
+}
+
+.calendar-event-card {
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.calendar-card-full {
+  border-left: 6px solid #22c55e;
+}
+
+.calendar-card-pending {
+  border-left: 6px solid #f59e0b;
+}
+
+.calendar-card-open {
+  border-left: 6px solid #ef4444;
+}
