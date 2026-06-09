@@ -394,3 +394,14 @@ body.login-page {
   margin-bottom: 24px;
   color: #38bdf8;
 }
+
+.dashboard-card a {
+  color: #38bdf8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dashboard-card a:hover {
+  color: #7dd3fc;
+  text-decoration: underline;
+}
