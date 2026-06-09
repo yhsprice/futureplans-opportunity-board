@@ -32,6 +32,18 @@ async function loadMyPayroll() {
       return;
     }
 
+    const payableSessions = mySessions.filter(session =>
+      session.Status === "Pending Pay Approval" ||
+      session.Status === "Approved for Pay" ||
+      session.Status === "Paid"
+    );
+
+    const unapprovedSessions = mySessions.filter(session =>
+      session.Status === "Denied" ||
+      session.Status === "Cancelled" ||
+      session.Status === "Unapproved"
+    );
+
     const periodMap = {};
     payPeriods.forEach(period => {
       periodMap[String(period.PayPeriodID)] = period;
@@ -41,7 +53,7 @@ async function loadMyPayroll() {
     let approvedTotal = 0;
     let paidTotal = 0;
 
-    mySessions.forEach(session => {
+    payableSessions.forEach(session => {
       const amount = Number(session.PayAmount || 0);
 
       if (session.Status === "Pending Pay Approval") pendingTotal += amount;
@@ -71,7 +83,7 @@ async function loadMyPayroll() {
 
     const grouped = {};
 
-    mySessions.forEach(session => {
+    payableSessions.forEach(session => {
       const payPeriodID = String(session.PayPeriodID || "No Pay Period");
 
       if (!grouped[payPeriodID]) {
@@ -149,6 +161,52 @@ async function loadMyPayroll() {
       `;
     });
 
+    if (unapprovedSessions.length > 0) {
+      html += `
+        <div class="dashboard-card">
+          <h2>Cancelled / Unapproved</h2>
+          <p>These items are not included in your approved payroll totals.</p>
+
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Service</th>
+                <th>Program</th>
+                <th>Fund</th>
+                <th>School / Agency</th>
+                <th>Hours</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      unapprovedSessions
+        .sort((a, b) => new Date(a.Date) - new Date(b.Date))
+        .forEach(session => {
+          html += `
+            <tr>
+              <td>${formatDateShort(session.Date)}</td>
+              <td>${session.PayRule || ""}</td>
+              <td>${session.ProgramType || ""}</td>
+              <td>${session.Fund || ""}</td>
+              <td>${session.School || ""}</td>
+              <td>${Number(session.PayHours || 0).toFixed(2)}</td>
+              <td>$${Number(session.PayAmount || 0).toFixed(2)}</td>
+              <td>${formatStatus(session.Status)}</td>
+            </tr>
+          `;
+        });
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
     payrollList.innerHTML = html;
 
   } catch (error) {
@@ -192,6 +250,18 @@ function formatStatus(status) {
 
   if (status === "Paid") {
     return "🔵 Paid";
+  }
+
+  if (status === "Denied") {
+    return "🔴 Denied";
+  }
+
+  if (status === "Cancelled") {
+    return "⚫ Cancelled";
+  }
+
+  if (status === "Unapproved") {
+    return "🔴 Unapproved";
   }
 
   return status || "";
