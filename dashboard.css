@@ -420,3 +420,26 @@ body.login-page {
   margin-bottom: 4px;
   color: white;
 }
+
+.status-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pending {
+  background: rgba(234,179,8,.2);
+  color: #facc15;
+}
+
+.status-approved {
+  background: rgba(34,197,94,.2);
+  color: #4ade80;
+}
+
+.status-denied {
+  background: rgba(239,68,68,.2);
+  color: #f87171;
+}
