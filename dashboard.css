@@ -517,3 +517,13 @@ body.login-page {
   border-left: 6px solid #6b7280;
   opacity: .85;
 }
+
+input[type="date"] {
+  color-scheme: dark;
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
