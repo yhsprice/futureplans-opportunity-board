@@ -30,6 +30,7 @@ function loadWeeklySchedule(requests, personID) {
 
   const mine = requests.filter(r => {
     const requestDate = new Date(r.Date);
+
     return String(r.PersonID) === personID &&
       (r.Status === "Approved" || r.Status === "Pending Approval") &&
       requestDate >= today &&
@@ -44,30 +45,30 @@ function loadWeeklySchedule(requests, personID) {
   }
 
   let html = "<ul>";
+
   mine.forEach(r => {
+    let statusClass = "status-pending";
+
+    if (r.Status === "Approved") {
+      statusClass = "status-approved";
+    }
+
+    if (r.Status === "Denied") {
+      statusClass = "status-denied";
+    }
+
     html += `
-let statusClass = "status-pending";
-
-if (r.Status === "Approved") {
-  statusClass = "status-approved";
-}
-
-if (r.Status === "Denied") {
-  statusClass = "status-denied";
-}
-
-html += `
-  <li style="margin-bottom:18px; line-height:1.5;">
-    <strong>${r.School}</strong><br>
-    ${r.Date} | ${r.StartTime} - ${r.EndTime}<br>
-    <span class="status-pill ${statusClass}">
-      ${r.Status}
-    </span>
-  </li>
-`;
+      <li style="margin-bottom:18px; line-height:1.5;">
+        <strong>${r.School}</strong><br>
+        ${r.Date} | ${r.StartTime} - ${r.EndTime}<br>
+        <span class="status-pill ${statusClass}">
+          ${r.Status}
+        </span>
+      </li>
+    `;
   });
-  html += "</ul>";
 
+  html += "</ul>";
   box.innerHTML = html;
 }
 
