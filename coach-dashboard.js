@@ -46,11 +46,24 @@ function loadWeeklySchedule(requests, personID) {
   let html = "<ul>";
   mine.forEach(r => {
     html += `
-<li style="margin-bottom:18px;">
-  <strong>${r.School}</strong><br>
-  ${r.Date} | ${r.StartTime} - ${r.EndTime}<br>
-  <span style="color:#93c5fd;">${r.Status}</span>
-</li>
+let statusClass = "status-pending";
+
+if (r.Status === "Approved") {
+  statusClass = "status-approved";
+}
+
+if (r.Status === "Denied") {
+  statusClass = "status-denied";
+}
+
+html += `
+  <li style="margin-bottom:18px; line-height:1.5;">
+    <strong>${r.School}</strong><br>
+    ${r.Date} | ${r.StartTime} - ${r.EndTime}<br>
+    <span class="status-pill ${statusClass}">
+      ${r.Status}
+    </span>
+  </li>
 `;
   });
   html += "</ul>";
