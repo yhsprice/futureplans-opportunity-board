@@ -47,7 +47,11 @@ function login() {
     AdultApproved: person.AdultApproved || "No"
   }));
 
-  window.location.href = "index.html";
+ if (String(person.Role).trim() === "Manager") {
+  window.location.href = "manager.html";
+} else {
+  window.location.href = "coach-dashboard.html";
+}
 }
 
 loadPeople();
