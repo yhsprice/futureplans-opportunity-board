@@ -45,7 +45,13 @@ function loadWeeklySchedule(requests, personID) {
 
   let html = "<ul>";
   mine.forEach(r => {
-    html += `<li><strong>${r.School}</strong><br>${r.Date} | ${r.StartTime} - ${r.EndTime}<br>${r.Status}</li>`;
+    html += `
+<li style="margin-bottom:18px;">
+  <strong>${r.School}</strong><br>
+  ${r.Date} | ${r.StartTime} - ${r.EndTime}<br>
+  <span style="color:#93c5fd;">${r.Status}</span>
+</li>
+`;
   });
   html += "</ul>";
 
