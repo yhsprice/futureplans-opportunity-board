@@ -405,3 +405,18 @@ body.login-page {
   color: #7dd3fc;
   text-decoration: underline;
 }
+
+#weeklySchedule ul {
+  padding-left: 20px;
+}
+
+#weeklySchedule li {
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+#weeklySchedule strong {
+  display: block;
+  margin-bottom: 4px;
+  color: white;
+}
