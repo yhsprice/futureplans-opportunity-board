@@ -14,21 +14,24 @@ async function loadManagerCalendar() {
   const pickedDate = document.getElementById("weekPicker").value;
   currentWeekStart = getMonday(parseLocalDate(pickedDate));
 
-  const [opportunitiesResponse, requestsResponse] = await Promise.all([
+  const [opportunitiesResponse, requestsResponse, closedDatesResponse] = await Promise.all([
     fetch(API_URL),
-    fetch(`${API_URL}?action=getRequests`)
+    fetch(`${API_URL}?action=getRequests`),
+    fetch(`${API_URL}?action=getClosedDates`)
   ]);
 
   const opportunities = await opportunitiesResponse.json();
   const requests = await requestsResponse.json();
+  const closedDates = await closedDatesResponse.json();
 
-  renderCalendar(opportunities, requests);
+  renderCalendar(opportunities, requests, closedDates);
 }
 
-function renderCalendar(opportunities, requests) {
+function renderCalendar(opportunities, requests, closedDates) {
   const container = document.getElementById("calendarContainer");
 
   const weekDates = [];
+
   for (let i = 0; i < 5; i++) {
     const date = new Date(currentWeekStart);
     date.setDate(currentWeekStart.getDate() + i);
@@ -40,16 +43,34 @@ function renderCalendar(opportunities, requests) {
   weekDates.forEach(day => {
     const dayKey = formatDateKey(day);
 
+    const closedInfo = closedDates.find(closed =>
+      formatDateKey(new Date(closed.Date)) === dayKey &&
+      String(closed.Status || "").trim() === "Closed"
+    );
+
     const dayOpportunities = opportunities
       .filter(o => formatDateKey(new Date(o.Date)) === dayKey)
+      .filter(o => String(o.OpportunityStatus || "Open").trim() !== "Cancelled")
       .sort((a, b) => new Date(`${a.Date} ${a.StartTime}`) - new Date(`${b.Date} ${b.StartTime}`));
+
+    const dayStatus = getDayStatus(dayOpportunities, requests, closedInfo);
 
     html += `
       <div class="manager-day-column">
         <h2>${day.toLocaleDateString("en-US", { weekday: "long", month: "numeric", day: "numeric" })}</h2>
+        <div class="day-status ${dayStatus.className}">
+          ${dayStatus.label}
+        </div>
     `;
 
-    if (dayOpportunities.length === 0) {
+    if (closedInfo) {
+      html += `
+        <div class="calendar-event-card calendar-card-closed">
+          <strong>CLOSED</strong><br>
+          ${closedInfo.Reason || "Unavailable"}
+        </div>
+      `;
+    } else if (dayOpportunities.length === 0) {
       html += `<p>No appointments scheduled.</p>`;
     }
 
@@ -64,8 +85,12 @@ function renderCalendar(opportunities, requests) {
       const openSlots = Number(opportunity.RemainingOpenings || 0);
 
       let cardClass = "calendar-card-open";
-      if (openSlots === 0) cardClass = "calendar-card-full";
-      if (pending.length > 0) cardClass = "calendar-card-pending";
+
+      if (openSlots === 0) {
+        cardClass = "calendar-card-full";
+      } else if (approved.length > 0 || pending.length > 0) {
+        cardClass = "calendar-card-pending";
+      }
 
       html += `
         <div class="calendar-event-card ${cardClass}">
@@ -91,8 +116,62 @@ function renderCalendar(opportunities, requests) {
   });
 
   html += `</div>`;
-
   container.innerHTML = html;
+}
+
+function getDayStatus(dayOpportunities, requests, closedInfo) {
+  if (closedInfo) {
+    return {
+      label: "Closed",
+      className: "day-closed"
+    };
+  }
+
+  if (dayOpportunities.length === 0) {
+    return {
+      label: "No Appointments",
+      className: "day-empty"
+    };
+  }
+
+  let totalOpen = 0;
+  let totalApproved = 0;
+
+  dayOpportunities.forEach(opportunity => {
+    totalOpen += Number(opportunity.RemainingOpenings || 0);
+
+    const approved = requests.filter(r =>
+      String(r.OpportunityID) === String(opportunity.OpportunityID) &&
+      r.Status === "Approved"
+    );
+
+    totalApproved += approved.length;
+  });
+
+  if (totalOpen === 0) {
+    return {
+      label: "Filled",
+      className: "day-filled"
+    };
+  }
+
+  if (totalApproved > 0) {
+    return {
+      label: "Partially Filled",
+      className: "day-partial"
+    };
+  }
+
+  return {
+    label: "Still Open",
+    className: "day-open"
+  };
+}
+
+function changeWeek(days) {
+  currentWeekStart.setDate(currentWeekStart.getDate() + days);
+  document.getElementById("weekPicker").value = formatDateInput(currentWeekStart);
+  loadManagerCalendar();
 }
 
 function parseLocalDate(value) {
