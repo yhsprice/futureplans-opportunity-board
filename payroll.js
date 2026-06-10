@@ -333,9 +333,7 @@ async function markPayPeriodPaid() {
     "Mark all Approved for Pay records in this pay period as Paid? Do this only after accounting has processed payment."
   );
 
-  if (!confirmPaid) {
-    return;
-  }
+  if (!confirmPaid) return;
 
   const response = await fetch(
     `${API_URL}?action=markPayPeriodPaid&payPeriodID=${encodeURIComponent(selectedPayPeriod)}`
@@ -344,7 +342,8 @@ async function markPayPeriodPaid() {
   const result = await response.json();
 
   alert(result.message || "Done.");
-  loadPayroll();
+
+  await loadPayPeriods();
 }
 
 function formatDateForInput(value) {
