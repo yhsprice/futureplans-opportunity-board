@@ -37,9 +37,10 @@ async function loadPayroll() {
   const sessions = await response.json();
 
   const approved = sessions.filter(s =>
-    s.Status === "Approved for Pay" &&
-    s.PayPeriodID === selectedPayPeriod
-  );
+  (s.Status === "Approved for Pay" ||
+   s.Status === "Paid") &&
+  s.PayPeriodID === selectedPayPeriod
+);
 
   const summary = {};
 
