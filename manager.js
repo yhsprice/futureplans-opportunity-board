@@ -325,6 +325,17 @@ function submitManualCompletedSession() {
   const school = document.getElementById("manualSchool").value.trim();
   const notes = document.getElementById("manualNotes").value.trim();
 
+  const approveNow = confirm(
+  `Do you want to approve this for pay now?\n\n` +
+  `Coach: ${userName}\n` +
+  `Date: ${date}\n` +
+  `Program Type: ${programType}\n` +
+  `Fund: ${fund}\n` +
+  `Service Type: ${serviceType}\n` +
+  `Hours: ${hours}\n` +
+  `School/Agency: ${school || "N/A"}\n` +
+  `Notes: ${notes || "N/A"}`
+);
   const message = document.getElementById("manualSessionMessage");
 
   if (!userName || !date || !programType || !fund || !serviceType || !hours) {
@@ -334,6 +345,7 @@ function submitManualCompletedSession() {
 
   const params = new URLSearchParams({
     action: "addManualCompletedSession",
+    approveNow,
     userName,
     date,
     programType,
