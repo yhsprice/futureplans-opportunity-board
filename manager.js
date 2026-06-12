@@ -482,12 +482,14 @@ async function loadCoachNamesForManualEntry() {
 
     people.forEach(person => {
 
-      const option = document.createElement("option");
-      option.value = person.CoachName;
+  if (!person.Name) return;
 
-      list.appendChild(option);
+  const option = document.createElement("option");
+  option.value = person.Name;
 
-    });
+  list.appendChild(option);
+
+});
 
   } catch (error) {
 
