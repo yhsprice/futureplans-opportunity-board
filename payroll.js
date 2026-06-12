@@ -32,6 +32,7 @@ if (currentPayPeriod) {
 }
 
 loadPayroll();
+}
 
 async function loadPayroll() {
   const selectedPayPeriod = payPeriodSelect.value;
