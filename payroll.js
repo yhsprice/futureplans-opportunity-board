@@ -13,15 +13,25 @@ async function loadPayPeriods() {
 
   payPeriodSelect.innerHTML = "";
 
-  payPeriods.forEach(period => {
-    const option = document.createElement("option");
-    option.value = period.PayPeriodID;
-    option.textContent = `${period.PayPeriodID} | ${formatDate(period.StartDate)} - ${formatDate(period.EndDate)} | ${period.Status}`;
-    payPeriodSelect.appendChild(option);
-  });
+  let currentPayPeriod = "";
 
-  loadPayroll();
+payPeriods.forEach(period => {
+  const option = document.createElement("option");
+  option.value = period.PayPeriodID;
+  option.textContent = `${period.PayPeriodID} | ${formatDate(period.StartDate)} - ${formatDate(period.EndDate)} | ${period.Status}`;
+
+  payPeriodSelect.appendChild(option);
+
+  if (period.Status === "Current") {
+    currentPayPeriod = period.PayPeriodID;
+  }
+});
+
+if (currentPayPeriod) {
+  payPeriodSelect.value = currentPayPeriod;
 }
+
+loadPayroll();
 
 async function loadPayroll() {
   const selectedPayPeriod = payPeriodSelect.value;
