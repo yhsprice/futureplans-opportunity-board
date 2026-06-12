@@ -455,8 +455,39 @@ async function loadRecentActivity() {
   }
 }
 
+async function loadCoachNamesForManualEntry() {
+
+  const list = document.getElementById("coachNameList");
+
+  if (!list) return;
+
+  try {
+
+    const response = await fetch(`${API_URL}?action=getPeople`);
+    const people = await response.json();
+
+    list.innerHTML = "";
+
+    people.forEach(person => {
+
+      const option = document.createElement("option");
+      option.value = person.CoachName;
+
+      list.appendChild(option);
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
+
 loadRequests();
 loadPayApprovals();
 loadReleaseRequests();
 loadDashboardCounts();
 loadRecentActivity();
+loadCoachNamesForManualEntry();
