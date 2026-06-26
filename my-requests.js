@@ -153,7 +153,7 @@ function renderSection(title, requests, showCompleteButton) {
 
     html += `
       <tr>
-        <td style="padding:8px; white-space:nowrap;">${request.Date || ""}</td>
+        <td style="padding:8px; white-space:nowrap;">${formatDateOnly(request.Date)}</td>
         <td style="padding:8px; white-space:nowrap;">${request.StartTime || ""}</td>
         <td style="padding:8px; white-space:nowrap;">${request.EndTime || ""}</td>
         <td style="padding:8px; min-width:180px;">${request.School || ""}</td>
@@ -203,7 +203,7 @@ function renderMeetingSection(title, sessions) {
   sessions.forEach(session => {
     html += `
       <tr>
-        <td style="padding:8px; white-space:nowrap;">${session.Date || ""}</td>
+        <td style="padding:8px; white-space:nowrap;">${formatDateOnly(session.Date)}</td>
         <td style="padding:8px;">${session.PayHours || session.Hours || ""}</td>
         <td style="padding:8px;">${session.PayAmount ? "$" + session.PayAmount : ""}</td>
         <td style="padding:8px;">${session.Status || ""}</td>
