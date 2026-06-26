@@ -96,7 +96,11 @@ function renderCalendar(opportunities, requests, closedDates) {
         <div class="calendar-event-card ${cardClass}">
           <strong>${opportunity.School || "School Not Listed"}</strong><br>
           ${opportunity.StartTime} - ${opportunity.EndTime}<br>
-          <small>${opportunity.ProgramType || ""} ${opportunity.Fund ? " | " + opportunity.Fund : ""}</small>
+         <small>
+            ${opportunity.ProgramType || ""}
+            ${opportunity.Fund ? " | " + opportunity.Fund : ""}
+            ${opportunity.COP ? " | COP: " + opportunity.COP : " | COP: Not listed"}
+        </small>
 
           <p><strong>Needed:</strong> ${opportunity.CoachesNeeded || 0}</p>
           <p><strong>Open:</strong> ${openSlots}</p>
