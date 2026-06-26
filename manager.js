@@ -36,7 +36,7 @@ async function loadRequests() {
         <p><strong>Date:</strong> ${formatDateOnly(request.Date)}</p>
         <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
         <p><strong>Coach:</strong> ${request.CoachName}</p>
-        <p><strong>Requested At:</strong> ${formatDateOnly(request.RequestedAt)}</p>
+        <p><strong>Requested At:</strong> ${formatDateTime(request.RequestedAt)}</p>
         <p><strong>Status:</strong> ${request.Status}</p>
         ${request.AttendanceVerified === "Yes"
             ? `<p><strong>Attendance:</strong> Verified</p>`
@@ -235,7 +235,7 @@ async function loadReleaseRequests() {
               <th style="text-align:left; padding:8px;">Date</th>
               <th style="text-align:left; padding:8px;">Time</th>
               <th style="text-align:left; padding:8px;">Reason</th>
-              <th style="text-align:left; padding:8px;">Requested At</th>
+              <td style="padding:8px;">${formatDateTime(request.ReleaseRequestedAt)}</td>
               <th style="text-align:left; padding:8px;">Actions</th>
             </tr>
           </thead>
