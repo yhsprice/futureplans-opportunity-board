@@ -26,13 +26,15 @@
 
       <label>Type Your Name</label>
 
-<input
-  id="personInput"
-  list="peopleList"
-  placeholder="Start typing your name..."
-  autocomplete="off">
+<div class="autocomplete">
+    <input
+        id="personInput"
+        type="text"
+        placeholder="Start typing your name..."
+        autocomplete="off">
 
-<datalist id="peopleList"></datalist>
+    <div id="personSuggestions" class="autocomplete-items"></div>
+</div>
 
       <label>Password</label>
       <input id="passwordInput" type="password" placeholder="Enter password">
