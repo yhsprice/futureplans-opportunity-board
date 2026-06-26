@@ -14,9 +14,14 @@ async function loadMyRequests() {
   myRequestList.innerHTML = "<p>Loading your requests...</p>";
 
   try {
-    const response = await fetch(`${API_URL}?action=getRequests`);
-    const requests = await response.json();
+    const [requestsResponse, sessionsResponse] = await Promise.all([
+  fetch(`${API_URL}?action=getRequests`),
+  fetch(`${API_URL}?action=getCompletedSessions`)
+]);
 
+const requests = await requestsResponse.json();
+const completedSessions = await sessionsResponse.json();
+    
     const mine = requests
       .filter(request => String(request.PersonID) === String(personID))
       .sort((a, b) => {
@@ -25,7 +30,11 @@ async function loadMyRequests() {
         return dateA - dateB;
       });
 
-    if (mine.length === 0) {
+    const myPayRequests = completedSessions
+  .filter(session => String(session.PersonID) === String(personID))
+  .sort((a, b) => new Date(a.SessionDate) - new Date(b.SessionDate));
+
+    if (mine.length === 0 && myPayRequests.length === 0) {
       myRequestList.innerHTML = `
         <div class="empty-state">
           <h2>No Requests Found</h2>
@@ -59,6 +68,7 @@ async function loadMyRequests() {
     renderSection("Submitted for Pay", submittedForPay, false);
     renderSection("Waiting for Approval", waitingApproval, false);
     renderSection("Closed", closed, false);
+    renderPaySection("Extra Pay / Meeting Requests", myPayRequests);
 
   } catch (error) {
     myRequestList.innerHTML = "<p>Something went wrong loading your requests.</p>";
@@ -116,6 +126,57 @@ function renderSection(title, requests, showCompleteButton) {
         <td style="padding:8px;">${request.Status}</td>
         <td style="padding:8px;">${submittedText}</td>
         <td style="padding:8px;">${action}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  section.innerHTML = html;
+  myRequestList.appendChild(section);
+}
+
+function renderPaySection(title, sessions) {
+  const section = document.createElement("div");
+
+  let html = `<h2>${title} (${sessions.length})</h2>`;
+
+  if (sessions.length === 0) {
+    html += `<p>Nothing here right now.</p>`;
+    section.innerHTML = html;
+    myRequestList.appendChild(section);
+    return;
+  }
+
+  html += `
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th style="text-align:left; padding:8px;">Date</th>
+          <th style="text-align:left; padding:8px;">Service</th>
+          <th style="text-align:left; padding:8px;">Program</th>
+          <th style="text-align:left; padding:8px;">Hours</th>
+          <th style="text-align:left; padding:8px;">Pay</th>
+          <th style="text-align:left; padding:8px;">Status</th>
+          <th style="text-align:left; padding:8px;">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  sessions.forEach(session => {
+    html += `
+      <tr>
+        <td style="padding:8px; white-space:nowrap;">${session.SessionDate || ""}</td>
+        <td style="padding:8px;">${session.ServiceType || ""}</td>
+        <td style="padding:8px;">${session.ProgramType || ""}</td>
+        <td style="padding:8px;">${session.PayHours || ""}</td>
+        <td style="padding:8px;">${session.PayAmount ? "$" + session.PayAmount : ""}</td>
+        <td style="padding:8px;">${session.Status || ""}</td>
+        <td style="padding:8px;">${session.Notes || ""}</td>
       </tr>
     `;
   });
