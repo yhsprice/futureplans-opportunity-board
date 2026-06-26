@@ -151,6 +151,7 @@ Object.keys(grouped)
 
         const programType = schoolOpportunities[0].ProgramType || "Not Listed";
         const fund = schoolOpportunities[0].Fund || "Not Listed";
+        const cop = schoolOpportunities[0].COP || "Not Listed";
 
         const totalOpenings = schoolOpportunities.reduce((sum, opportunity) => {
           return sum + Number(opportunity.RemainingOpenings || 0);
@@ -161,7 +162,7 @@ Object.keys(grouped)
             <div class="school-box-header">
               <div>
                 <h3>${schoolKey}</h3>
-                <p>${programType} • ${fund}</p>
+                <p>${programType} • ${fund} • COP: ${cop}</p>
               </div>
 
               <div class="school-summary">
