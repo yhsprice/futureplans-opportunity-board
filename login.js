@@ -1,6 +1,7 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
 
-const personSelect = document.getElementById("personSelect");
+const personInput = document.getElementById("personInput");
+const peopleList = document.getElementById("peopleList");
 const passwordInput = document.getElementById("passwordInput");
 
 let people = [];
@@ -9,7 +10,7 @@ async function loadPeople() {
   const response = await fetch(`${API_URL}?action=getPeople`);
   people = await response.json();
 
-  personSelect.innerHTML = `<option value="">Select your name</option>`;
+  peopleList.innerHTML = "";
 
   people
     .filter(person =>
@@ -18,18 +19,17 @@ async function loadPeople() {
     .sort((a, b) => a.Name.localeCompare(b.Name))
     .forEach(person => {
       const option = document.createElement("option");
-      option.value = person.PersonID;
-      option.textContent = person.Name;
-      personSelect.appendChild(option);
+      option.value = person.Name;
+      peopleList.appendChild(option);
     });
 }
 
 function login() {
-  const personID = personSelect.value;
+  const typedName = personInput.value.trim();
   const password = passwordInput.value.trim();
 
   const person = people.find(p =>
-    String(p.PersonID) === String(personID) &&
+    String(p.Name).trim().toLowerCase() === typedName.toLowerCase() &&
     String(p.Password) === String(password)
   );
 
@@ -47,11 +47,11 @@ function login() {
     AdultApproved: person.AdultApproved || "No"
   }));
 
- if (String(person.Role).trim() === "Manager") {
-  window.location.href = "manager.html";
-} else {
-  window.location.href = "coach-dashboard.html";
-}
+  if (String(person.Role).trim() === "Manager") {
+    window.location.href = "manager.html";
+  } else {
+    window.location.href = "coach-dashboard.html";
+  }
 }
 
 loadPeople();
