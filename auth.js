@@ -48,13 +48,24 @@ function showManagerLinksOnly() {
 function formatDateOnly(value) {
   if (!value) return "";
 
+  // Already in MM/DD/YYYY format
+  if (typeof value === "string" && value.includes("/")) {
+    return value.split(" ")[0];
+  }
+
+  // Already in YYYY-MM-DD format
+  if (typeof value === "string" && value.includes("-") && value.length >= 10) {
+    const [year, month, day] = value.substring(0, 10).split("-");
+    return `${month}/${day}/${year}`;
+  }
+
   const date = new Date(value);
+
   if (isNaN(date)) return value;
 
-  return date.toLocaleDateString("en-US", {
-    month: "2-digit",
-    day: "2-digit",
-    year: "numeric",
-    timeZone: "UTC"
-  });
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${month}/${day}/${year}`;
 }
