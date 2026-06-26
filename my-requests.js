@@ -7,7 +7,7 @@ async function loadMyRequests() {
   const personID = currentUser.PersonID;
 
   if (!personID) {
-    alert("Please enter your assigned staff number.");
+    alert("Please log in again.");
     return;
   }
 
@@ -15,36 +15,35 @@ async function loadMyRequests() {
 
   try {
     const [requestsResponse, sessionsResponse] = await Promise.all([
-  fetch(`${API_URL}?action=getRequests`),
-  fetch(`${API_URL}?action=getCompletedSessions`)
-]);
+      fetch(`${API_URL}?action=getRequests`),
+      fetch(`${API_URL}?action=getCompletedSessions`)
+    ]);
 
-const requests = await requestsResponse.json();
-const completedSessions = await sessionsResponse.json();
-    
+    const requests = await requestsResponse.json();
+    const completedSessions = await sessionsResponse.json();
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const mine = requests
       .filter(request => String(request.PersonID) === String(personID))
+      .filter(request => {
+        const requestDate = new Date(request.Date);
+        requestDate.setHours(0, 0, 0, 0);
+
+        return requestDate >= today || request.Status === "Pending Approval";
+      })
       .sort((a, b) => {
         const dateA = new Date(`${a.Date} ${a.StartTime}`);
         const dateB = new Date(`${b.Date} ${b.StartTime}`);
         return dateA - dateB;
       });
 
-    const myPayRequests = completedSessions
-  .filter(session => String(session.PersonID) === String(personID))
-  .sort((a, b) => new Date(a.SessionDate) - new Date(b.SessionDate));
+    const waitingApproval = mine.filter(request =>
+      request.Status === "Pending Approval"
+    );
 
-    if (mine.length === 0 && myPayRequests.length === 0) {
-      myRequestList.innerHTML = `
-        <div class="empty-state">
-          <h2>No Requests Found</h2>
-          <p>You do not have any requests yet.</p>
-        </div>
-      `;
-      return;
-    }
-
-    const needsAction = mine.filter(request =>
+    const upcomingScheduled = mine.filter(request =>
       request.Status === "Approved" &&
       request.PayrollGenerated !== "Yes"
     );
@@ -53,22 +52,34 @@ const completedSessions = await sessionsResponse.json();
       request.PayrollGenerated === "Yes"
     );
 
-    const waitingApproval = mine.filter(request =>
-      request.Status === "Pending Approval"
-    );
+    const meetingRequestsWaitingApproval = completedSessions
+      .filter(session => String(session.PersonID) === String(personID))
+      .filter(session => String(session.ProgramType || "").trim() === "Meeting")
+      .filter(session => String(session.Status || "").trim() === "Pending Approval")
+      .sort((a, b) => new Date(a.Date) - new Date(b.Date));
 
-    const closed = mine.filter(request =>
-      request.Status === "Denied" ||
-      request.Status === "Coach Cancelled"
-    );
+    const totalCount =
+      waitingApproval.length +
+      meetingRequestsWaitingApproval.length +
+      upcomingScheduled.length +
+      submittedForPay.length;
+
+    if (totalCount === 0) {
+      myRequestList.innerHTML = `
+        <div class="empty-state">
+          <h2>No Current Requests</h2>
+          <p>You do not have any current requests right now.</p>
+        </div>
+      `;
+      return;
+    }
 
     myRequestList.innerHTML = "";
 
-    renderSection("Needs Action", needsAction, true);
-    renderSection("Submitted for Pay", submittedForPay, false);
     renderSection("Waiting for Approval", waitingApproval, false);
-    renderSection("Closed", closed, false);
-    renderPaySection("Extra Pay / Meeting Requests", myPayRequests);
+    renderMeetingSection("Meeting Requests Waiting for Approval", meetingRequestsWaitingApproval);
+    renderSection("Upcoming / Scheduled", upcomingScheduled, true);
+    renderSection("Submitted for Pay", submittedForPay, false);
 
   } catch (error) {
     myRequestList.innerHTML = "<p>Something went wrong loading your requests.</p>";
@@ -78,7 +89,7 @@ const completedSessions = await sessionsResponse.json();
 
 function renderSection(title, requests, showCompleteButton) {
   const section = document.createElement("div");
- 
+
   let html = `<h2>${title} (${requests.length})</h2>`;
 
   if (requests.length === 0) {
@@ -98,7 +109,7 @@ function renderSection(title, requests, showCompleteButton) {
           <th style="text-align:left; padding:8px; min-width:180px;">School</th>
           <th style="text-align:left; padding:8px;">Program</th>
           <th style="text-align:left; padding:8px;">Status</th>
-          <th style="text-align:left; padding:8px;">Submitted</th>
+          <th style="text-align:left; padding:8px;">Submitted for Pay</th>
           <th style="text-align:left; padding:8px;">Action</th>
         </tr>
       </thead>
@@ -111,19 +122,19 @@ function renderSection(title, requests, showCompleteButton) {
       : "No";
 
     const action = showCompleteButton
-      ? `<button onclick="completeRequest('${request.RequestID}')">Complete</button>`
+      ? `<button onclick="completeRequest('${request.RequestID}')">Submit for Pay</button>`
       : request.PayrollGenerated === "Yes"
-        ? `<strong>Already submitted</strong>`
+        ? `<strong>Submitted</strong>`
         : "";
 
     html += `
       <tr>
-        <td style="padding:8px; white-space:nowrap;">${request.Date}</td>
-        <td style="padding:8px; white-space:nowrap;">${request.StartTime}</td>
-        <td style="padding:8px; white-space:nowrap;">${request.EndTime}</td>
-        <td style="padding:8px; min-width:180px;">${request.School}</td>
+        <td style="padding:8px; white-space:nowrap;">${request.Date || ""}</td>
+        <td style="padding:8px; white-space:nowrap;">${request.StartTime || ""}</td>
+        <td style="padding:8px; white-space:nowrap;">${request.EndTime || ""}</td>
+        <td style="padding:8px; min-width:180px;">${request.School || ""}</td>
         <td style="padding:8px;">${request.ProgramType || ""}</td>
-        <td style="padding:8px;">${request.Status}</td>
+        <td style="padding:8px;">${request.Status || ""}</td>
         <td style="padding:8px;">${submittedText}</td>
         <td style="padding:8px;">${action}</td>
       </tr>
@@ -139,7 +150,7 @@ function renderSection(title, requests, showCompleteButton) {
   myRequestList.appendChild(section);
 }
 
-function renderPaySection(title, sessions) {
+function renderMeetingSection(title, sessions) {
   const section = document.createElement("div");
 
   let html = `<h2>${title} (${sessions.length})</h2>`;
@@ -156,8 +167,6 @@ function renderPaySection(title, sessions) {
       <thead>
         <tr>
           <th style="text-align:left; padding:8px;">Date</th>
-          <th style="text-align:left; padding:8px;">Service</th>
-          <th style="text-align:left; padding:8px;">Program</th>
           <th style="text-align:left; padding:8px;">Hours</th>
           <th style="text-align:left; padding:8px;">Pay</th>
           <th style="text-align:left; padding:8px;">Status</th>
@@ -171,8 +180,6 @@ function renderPaySection(title, sessions) {
     html += `
       <tr>
         <td style="padding:8px; white-space:nowrap;">${session.Date || ""}</td>
-        <td style="padding:8px;">${session.Source || ""}</td>
-        <td style="padding:8px;">${session.ProgramType || ""}</td>
         <td style="padding:8px;">${session.PayHours || session.Hours || ""}</td>
         <td style="padding:8px;">${session.PayAmount ? "$" + session.PayAmount : ""}</td>
         <td style="padding:8px;">${session.Status || ""}</td>
@@ -192,7 +199,7 @@ function renderPaySection(title, sessions) {
 
 function completeRequest(requestID) {
   const confirmComplete = confirm(
-    "Mark this approved opportunity as completed and submit it for pay approval?"
+    "Submit this completed opportunity for pay approval?"
   );
 
   if (!confirmComplete) {
@@ -203,7 +210,7 @@ function completeRequest(requestID) {
     .then(response => response.json())
     .then(result => {
       if (result.success) {
-        alert("Completed session submitted for pay approval.");
+        alert("Submitted for pay approval.");
         loadMyRequests();
       } else {
         alert(result.message || "Something went wrong.");
