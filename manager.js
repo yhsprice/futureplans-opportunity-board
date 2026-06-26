@@ -33,10 +33,10 @@ async function loadRequests() {
 
       div.innerHTML = `
        <h3>${request.School}</h3>
-        <p><strong>Date:</strong> ${request.Date}</p>
+        <p><strong>Date:</strong> ${formatDateOnly(request.Date)}</p>
         <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
         <p><strong>Coach:</strong> ${request.CoachName}</p>
-        <p><strong>Requested At:</strong> ${request.RequestedAt}</p>
+        <p><strong>Requested At:</strong> ${formatDateOnly(request.RequestedAt)}</p>
         <p><strong>Status:</strong> ${request.Status}</p>
         ${request.AttendanceVerified === "Yes"
             ? `<p><strong>Attendance:</strong> Verified</p>`
@@ -108,7 +108,7 @@ async function loadPayApprovals() {
       div.innerHTML = `
         <h3>${session.School}</h3>
         <p><strong>Coach:</strong> ${session.CoachName}</p>
-        <p><strong>Date:</strong> ${session.Date}</p>
+        <p><strong>Date:</strong> ${formatDateOnly(session.Date)}</p>
         <p><strong>Pay Rule:</strong> ${session.PayRule}</p>
         <p><strong>Pay Hours:</strong> ${session.PayHours}</p>
         <p><strong>Pay Amount:</strong> $${session.PayAmount}</p>
@@ -247,10 +247,10 @@ async function loadReleaseRequests() {
     <tr>
       <td style="padding:8px;">${request.CoachName}</td>
       <td style="padding:8px;">${request.School}</td>
-      <td style="padding:8px;">${request.Date}</td>
+      <td style="padding:8px;">${formatDateOnly(request.Date)}</td>
       <td style="padding:8px;">${request.StartTime} - ${request.EndTime}</td>
       <td style="padding:8px;">${request.ReleaseReason || ""}</td>
-      <td style="padding:8px;">${request.ReleaseRequestedAt || ""}</td>
+      <td style="padding:8px;">${formatDateOnly(request.ReleaseRequestedAt)}</td>
 
       <td style="padding:8px;">
         <button onclick="approveRelease('${request.RequestID}')">
@@ -454,7 +454,7 @@ async function loadRecentActivity() {
           requested
           <strong>${request.School || "an opportunity"}</strong>
           on
-          ${request.Date || ""}
+          ${formatDateOnly(request.Date)}
         </div>
       `;
     });
