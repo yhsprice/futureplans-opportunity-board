@@ -5,7 +5,8 @@ const currentUser = getCurrentUser();
 const personIDField = document.getElementById("personID");
 const dateField = document.getElementById("date");
 
-let isSubmitting = false;
+submitButton.disabled = true;
+submitButton.textContent = "Submitting...";
 
 if (personIDField) {
   personIDField.value = currentUser.PersonID;
