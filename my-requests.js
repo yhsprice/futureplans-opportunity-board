@@ -66,10 +66,19 @@ async function loadMyRequests() {
 
    const meetingRequestsWaitingApproval = completedSessions
   .filter(session => String(session.PersonID) === String(personID))
-  .filter(session => String(session.ProgramType || "").trim() === "Meeting")
+  .filter(session => {
+    const programType = String(session.ProgramType || "").trim();
+    const payRule = String(session.PayRule || "").trim();
+
+    return programType === "Meeting" ||
+           programType === "Professional Development" ||
+           payRule === "Prof Development";
+  })
   .filter(session => {
     const status = String(session.Status || "").trim();
-    return status === "Pending Approval" || status === "Submitted";
+    return status === "Pending Pay Approval" ||
+           status === "Pending Approval" ||
+           status === "Coach Submitted";
   })
   .sort((a, b) => new Date(a.Date) - new Date(b.Date));
 
@@ -92,7 +101,7 @@ async function loadMyRequests() {
     myRequestList.innerHTML = "";
 
     renderSection("Waiting for Approval", waitingApproval, false);
-    renderMeetingSection("Meeting Requests Waiting for Approval", meetingRequestsWaitingApproval);
+   renderMeetingSection("Meetings / Professional Development Waiting for Approval", meetingRequestsWaitingApproval);
     renderSection("Upcoming / Scheduled", upcomingScheduled, true);
     renderSection("Submitted for Pay", submittedForPay, false);
 
