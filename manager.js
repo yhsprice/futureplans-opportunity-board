@@ -131,6 +131,14 @@ async function loadPayApprovals() {
   Delete
 </button>
 
+<button onclick="editPayrollEntry('${session.SessionID}')">
+  Edit
+</button>
+
+<button onclick="deletePayrollEntry('${session.SessionID}')">
+  Delete
+</button>
+
 <button onclick="updatePayApproval('${session.SessionID}', 'Approved for Pay')">
   Approve for Pay
 </button>
