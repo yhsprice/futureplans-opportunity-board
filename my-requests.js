@@ -170,10 +170,10 @@ function renderPaySection(title, sessions) {
   sessions.forEach(session => {
     html += `
       <tr>
-        <td style="padding:8px; white-space:nowrap;">${session.SessionDate || ""}</td>
-        <td style="padding:8px;">${session.ServiceType || ""}</td>
+        <td style="padding:8px; white-space:nowrap;">${session.Date || ""}</td>
+        <td style="padding:8px;">${session.Source || ""}</td>
         <td style="padding:8px;">${session.ProgramType || ""}</td>
-        <td style="padding:8px;">${session.PayHours || ""}</td>
+        <td style="padding:8px;">${session.PayHours || session.Hours || ""}</td>
         <td style="padding:8px;">${session.PayAmount ? "$" + session.PayAmount : ""}</td>
         <td style="padding:8px;">${session.Status || ""}</td>
         <td style="padding:8px;">${session.Notes || ""}</td>
