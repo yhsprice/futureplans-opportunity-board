@@ -39,6 +39,7 @@ async function loadOpportunities() {
             <th style="text-align:left; padding:8px;">Open</th>
             <th style="text-align:left; padding:8px;">Program</th>
             <th style="text-align:left; padding:8px;">Fund</th>
+            <th style="text-align:left; padding:8px;">Meeting</th>
             <th style="text-align:left; padding:8px; min-width:220px;">Actions</th>
           </tr>
         </thead>
@@ -72,8 +73,11 @@ async function loadOpportunities() {
         <td style="padding:8px;">${opportunity.ApprovedCount || 0}</td>
         <td style="padding:8px;">${opportunity.RemainingOpenings}</td>
         <td style="padding:8px;">${opportunity.ProgramType}</td>
-        <td style="padding:8px;">${opportunity.Fund || ""}</td>
-        <td style="padding:8px; min-width:220px;">
+       <td style="padding:8px;">${opportunity.Fund || ""}</td>
+<td style="padding:8px;">
+  ${opportunity.MeetingLink ? `<a href="${opportunity.MeetingLink}" target="_blank">${opportunity.MeetingPlatform || "Meeting"}</a>` : "Not added"}
+</td>
+<td style="padding:8px; min-width:220px;">
           <div style="display:flex; gap:4px; flex-wrap:nowrap;">
             <button onclick="showEditForm('${opportunity.OpportunityID}')">Edit</button>
             <button onclick="setOpportunityStatus('${opportunity.OpportunityID}', 'Closed')">Close</button>
@@ -83,7 +87,7 @@ async function loadOpportunities() {
       </tr>
 
       <tr id="edit-row-${opportunity.OpportunityID}" style="display:none;">
-        <td colspan="11">
+        <td colspan="12">
           <div class="opportunity">
             <p><strong>School</strong></p>
             <input id="school-${opportunity.OpportunityID}" value="${opportunity.School || ""}">
@@ -122,6 +126,20 @@ async function loadOpportunities() {
 
             <p><strong>Contact</strong></p>
             <input id="contact-${opportunity.OpportunityID}" value="${opportunity.Contact || ""}">
+
+            <p><strong>Meeting Platform</strong></p>
+<select id="meetingPlatform-${opportunity.OpportunityID}">
+  <option value="" ${!opportunity.MeetingPlatform ? "selected" : ""}>Select Platform</option>
+  <option value="Google Meet" ${opportunity.MeetingPlatform === "Google Meet" ? "selected" : ""}>Google Meet</option>
+  <option value="Zoom" ${opportunity.MeetingPlatform === "Zoom" ? "selected" : ""}>Zoom</option>
+  <option value="Other" ${opportunity.MeetingPlatform === "Other" ? "selected" : ""}>Other</option>
+</select>
+
+<p><strong>Meeting Link</strong></p>
+<input id="meetingLink-${opportunity.OpportunityID}" value="${opportunity.MeetingLink || ""}" placeholder="Paste Zoom or Google Meet link">
+
+<p><strong>Meeting Notes</strong></p>
+<textarea id="meetingNotes-${opportunity.OpportunityID}" placeholder="Optional passcode, waiting room note, etc.">${opportunity.MeetingNotes || ""}</textarea>
 
             <br><br>
 
@@ -165,6 +183,9 @@ function updateOpportunity(opportunityID) {
   const fund = document.getElementById(`fund-${opportunityID}`).value;  
   const notes = document.getElementById(`notes-${opportunityID}`).value.trim();
   const contact = document.getElementById(`contact-${opportunityID}`).value.trim();
+  const meetingPlatform = document.getElementById(`meetingPlatform-${opportunityID}`).value;
+  const meetingLink = document.getElementById(`meetingLink-${opportunityID}`).value.trim();
+  const meetingNotes = document.getElementById(`meetingNotes-${opportunityID}`).value.trim();
 
   const url = `${API_URL}?action=updateOpportunity`
     + `&opportunityID=${encodeURIComponent(opportunityID)}`
@@ -176,7 +197,10 @@ function updateOpportunity(opportunityID) {
     + `&programType=${encodeURIComponent(programType)}`
     + `&fund=${encodeURIComponent(fund)}`
     + `&notes=${encodeURIComponent(notes)}`
-    + `&contact=${encodeURIComponent(contact)}`;
+    + `&contact=${encodeURIComponent(contact)}`
+    + `&meetingPlatform=${encodeURIComponent(meetingPlatform)}`
+    + `&meetingLink=${encodeURIComponent(meetingLink)}`
+    + `&meetingNotes=${encodeURIComponent(meetingNotes)}`;
 
   fetch(url)
     .then(response => response.json())
