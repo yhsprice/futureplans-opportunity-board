@@ -4,18 +4,13 @@ const currentUser = getCurrentUser();
 
 const personIDField = document.getElementById("personID");
 const dateField = document.getElementById("date");
+const submitButton = document.getElementById("submitButton");
 
-submitButton.disabled = true;
-submitButton.textContent = "Submitting...";
+let isSubmitting = false;
 
 if (personIDField) {
   personIDField.value = currentUser.PersonID;
 }
-
-const submitButton = document.getElementById("submitButton");
-
-submitButton.disabled = true;
-submitButton.textContent = "Submitting...";
 
 if (dateField && !dateField.value) {
   const today = new Date();
@@ -30,11 +25,7 @@ showUserBanner();
 showManagerLinksOnly();
 
 function submitSession() {
-  if (isSubmitting) {
-    return;
-  }
-
-  const submitButton = document.querySelector("button[onclick='submitSession()']");
+  if (isSubmitting) return;
 
   const personID = currentUser.PersonID;
   const school = document.getElementById("school").value.trim();
@@ -70,22 +61,17 @@ function submitSession() {
   fetch(url)
     .then(response => response.json())
     .then(result => {
-    if (result.success) {
+      if (result.success) {
         alert("Time submitted for approval.");
         window.location.href = "my-requests.html";
-    } else {
-        submitButton.disabled = false;
-        submitButton.textContent = "Submit Time";
+      } else {
         alert(result.message || "Something went wrong.");
-    }
-})
+      }
+    })
     .catch(error => {
-    submitButton.disabled = false;
-    submitButton.textContent = "Submit Time";
-
-    alert("Something went wrong submitting the time.");
-    console.error(error);
-});
+      alert("Something went wrong submitting the time.");
+      console.error(error);
+    })
     .finally(() => {
       isSubmitting = false;
 
