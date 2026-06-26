@@ -12,8 +12,8 @@ function addOpportunity() {
   const fund = document.getElementById("fund").value;
   const notes = document.getElementById("notes").value.trim();
 
-  if (!school || !date || !startTime || !endTime || !coachesNeeded || !programType || !fund) {
-    alert("Please complete all required fields including Program Type and Fund.");
+ if (!school || !date || !startTime || !endTime || !coachesNeeded || !programType || !fund || !cop) {
+   alert("Please complete all required fields including Program Type, Fund, and COP.");
     return;
   }
 
