@@ -160,7 +160,7 @@ async function loadPayroll() {
     html += `
       <tr>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${session.CoachName || ""}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">${formatDate(session.Date)}</td>
+        <td style="padding:8px; border-bottom:1px solid #ddd;"> ${formatDateOnly(session.Date)}</td>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${session.ProgramType || ""}</td>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${session.Fund || ""}</td>
         <td style="padding:8px; border-bottom:1px solid #ddd;">${session.PayRule || ""}</td>
@@ -384,18 +384,6 @@ function formatDate(value) {
   const formattedHours = String(hours).padStart(2, "0");
 
   return `${month}/${day}/${year} ${formattedHours}:${minutes} ${ampm}`;
-}
-
-function formatDateOnly(value) {
-  const date = new Date(value);
-  if (isNaN(date)) return value || "";
-
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC"
-  });
 }
 
 loadPayPeriods();
