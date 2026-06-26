@@ -25,6 +25,7 @@ function addOpportunity() {
     + `&coachesNeeded=${encodeURIComponent(coachesNeeded)}`
     + `&programType=${encodeURIComponent(programType)}`
     + `&fund=${encodeURIComponent(fund)}`
+    + `&cop=${encodeURIComponent(cop)}`
     + `&notes=${encodeURIComponent(notes)}`;
 
   fetch(url)
