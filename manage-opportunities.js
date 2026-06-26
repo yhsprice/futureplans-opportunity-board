@@ -6,7 +6,7 @@ showUserBanner();
 async function loadOpportunities() {
   container.innerHTML = "<p>Loading opportunities...</p>";
 
-  const response = await fetch(API_URL);
+  const response = await fetch(`${API_URL}?action=getManageOpportunities`);
   const opportunities = await response.json();
 
   opportunities.sort((a, b) => {
