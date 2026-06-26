@@ -121,9 +121,19 @@ async function loadPayApprovals() {
         <p><strong>Pay Hours:</strong> ${session.PayHours}</p>
         <p><strong>Pay Amount:</strong> $${session.PayAmount}</p>
         <p><strong>Notes:</strong> ${session.Notes || ""}</p>
-        <button onclick="updatePayApproval('${session.SessionID}', 'Approved for Pay')">
-          Approve for Pay
-        </button>
+       
+        
+       <button onclick="editPayrollEntry('${session.SessionID}')">
+  Edit
+</button>
+
+<button onclick="deletePayrollEntry('${session.SessionID}')">
+  Delete
+</button>
+
+<button onclick="updatePayApproval('${session.SessionID}', 'Approved for Pay')">
+  Approve for Pay
+</button>
 
 <button onclick="updatePayApproval('${session.SessionID}', 'Denied')">
   Deny
@@ -505,6 +515,81 @@ async function loadCoachNamesForManualEntry() {
 
   }
 
+}
+
+async function deletePayrollEntry(sessionID) {
+  if (!confirm("Delete this payroll entry?")) {
+    return;
+  }
+
+  const response = await fetch(
+    `${API_URL}?action=deleteCompletedSession&sessionID=${encodeURIComponent(sessionID)}`
+  );
+
+  const result = await response.json();
+
+  alert(result.message || "Done.");
+  loadPayApprovals();
+}
+
+async function editPayrollEntry(sessionID) {
+  const response = await fetch(`${API_URL}?action=getCompletedSessions`);
+  const sessions = await response.json();
+
+  const session = sessions.find(
+    s => String(s.SessionID) === String(sessionID)
+  );
+
+  if (!session) {
+    alert("Payroll entry not found.");
+    return;
+  }
+
+  const date = prompt("Date:", formatDateForInput(session.Date));
+  if (date === null) return;
+
+  const programType = prompt("Program Type:", session.ProgramType || "");
+  if (programType === null) return;
+
+  const serviceType = prompt("Service Type:", session.PayRule || "");
+  if (serviceType === null) return;
+
+  const school = prompt("School / Agency:", session.School || "");
+  if (school === null) return;
+
+  const hours = prompt("Hours:", session.PayHours || "");
+  if (hours === null) return;
+
+  const notes = prompt("Notes:", session.Notes || "");
+  if (notes === null) return;
+
+  const params = new URLSearchParams({
+    action: "editCompletedSession",
+    sessionID,
+    date,
+    programType,
+    serviceType,
+    school,
+    hours,
+    notes
+  });
+
+  const saveResponse = await fetch(API_URL, {
+    method: "POST",
+    body: params
+  });
+
+  const result = await saveResponse.json();
+
+  alert(result.message || "Done.");
+  loadPayApprovals();
+}
+
+function formatDateForInput(value) {
+  const date = new Date(value);
+  if (isNaN(date)) return "";
+
+  return date.toISOString().split("T")[0];
 }
 
 loadRequests();
