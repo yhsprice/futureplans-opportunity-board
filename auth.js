@@ -48,19 +48,16 @@ function showManagerLinksOnly() {
 function formatDateOnly(value) {
   if (!value) return "";
 
-  // Already in MM/DD/YYYY format
   if (typeof value === "string" && value.includes("/")) {
     return value.split(" ")[0];
   }
 
-  // Already in YYYY-MM-DD format
   if (typeof value === "string" && value.includes("-") && value.length >= 10) {
     const [year, month, day] = value.substring(0, 10).split("-");
     return `${month}/${day}/${year}`;
   }
 
   const date = new Date(value);
-
   if (isNaN(date)) return value;
 
   const month = String(date.getMonth() + 1).padStart(2, "0");
