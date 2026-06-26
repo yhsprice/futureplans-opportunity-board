@@ -28,11 +28,23 @@ async function loadMyRequests() {
     const mine = requests
       .filter(request => String(request.PersonID) === String(personID))
       .filter(request => {
-        const requestDate = new Date(request.Date);
-        requestDate.setHours(0, 0, 0, 0);
+  const status = String(request.Status || "").trim();
 
-        return requestDate >= today || request.Status === "Pending Approval";
-      })
+  if (status === "Pending Approval") {
+    return true;
+  }
+
+  if (status === "Approved" && request.PayrollGenerated !== "Yes") {
+    return true;
+  }
+
+  if (request.PayrollGenerated === "Yes") {
+    return true;
+  }
+
+  return false;
+})
+      
       .sort((a, b) => {
         const dateA = new Date(`${a.Date} ${a.StartTime}`);
         const dateB = new Date(`${b.Date} ${b.StartTime}`);
@@ -52,11 +64,14 @@ async function loadMyRequests() {
       request.PayrollGenerated === "Yes"
     );
 
-    const meetingRequestsWaitingApproval = completedSessions
-      .filter(session => String(session.PersonID) === String(personID))
-      .filter(session => String(session.ProgramType || "").trim() === "Meeting")
-      .filter(session => String(session.Status || "").trim() === "Pending Approval")
-      .sort((a, b) => new Date(a.Date) - new Date(b.Date));
+   const meetingRequestsWaitingApproval = completedSessions
+  .filter(session => String(session.PersonID) === String(personID))
+  .filter(session => String(session.ProgramType || "").trim() === "Meeting")
+  .filter(session => {
+    const status = String(session.Status || "").trim();
+    return status === "Pending Approval" || status === "Submitted";
+  })
+  .sort((a, b) => new Date(a.Date) - new Date(b.Date));
 
     const totalCount =
       waitingApproval.length +
