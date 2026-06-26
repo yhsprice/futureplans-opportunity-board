@@ -46,6 +46,14 @@ async function loadRequests() {
             </button>
             `
         }
+        
+        <button onclick="editPayrollEntry('${session.SessionID}')">
+          Edit
+        </button>
+
+        <button onclick="deletePayrollEntry('${session.SessionID}')">
+          Delete
+        </button>
 
         <button onclick="updateRequest('${request.RequestID}', 'Approved')">
           Approve
