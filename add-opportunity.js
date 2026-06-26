@@ -2,6 +2,26 @@ const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2
 
 showUserBanner();
 
+loadCOPList();
+
+function loadCOPList() {
+  fetch(`${API_URL}?action=getCOPList`)
+    .then(response => response.json())
+    .then(cops => {
+      const copList = document.getElementById("copList");
+      copList.innerHTML = "";
+
+      cops.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        copList.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error("Could not load COP list:", error);
+    });
+}
+
 function addOpportunity() {
   const school = document.getElementById("school").value.trim();
   const date = document.getElementById("date").value;
@@ -10,6 +30,7 @@ function addOpportunity() {
   const coachesNeeded = document.getElementById("coachesNeeded").value;
   const programType = document.getElementById("programType").value;
   const fund = document.getElementById("fund").value;
+  const cop = document.getElementById("cop").value.trim();
   const notes = document.getElementById("notes").value.trim();
 
  if (!school || !date || !startTime || !endTime || !coachesNeeded || !programType || !fund || !cop) {
