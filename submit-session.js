@@ -3,15 +3,33 @@ const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2
 const currentUser = getCurrentUser();
 
 const personIDField = document.getElementById("personID");
+const dateField = document.getElementById("date");
+
+let isSubmitting = false;
 
 if (personIDField) {
   personIDField.value = currentUser.PersonID;
+}
+
+if (dateField && !dateField.value) {
+  const today = new Date();
+  const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split("T")[0];
+
+  dateField.value = localDate;
 }
 
 showUserBanner();
 showManagerLinksOnly();
 
 function submitSession() {
+  if (isSubmitting) {
+    return;
+  }
+
+  const submitButton = document.querySelector("button[onclick='submitSession()']");
+
   const personID = currentUser.PersonID;
   const school = document.getElementById("school").value.trim();
   const date = document.getElementById("date").value;
@@ -24,6 +42,13 @@ function submitSession() {
   if (!personID || !date || !programType || !fund || !payRule || !revolutionTier) {
     alert("Please complete Date, Program Type, Fund, Service Type, and Hours.");
     return;
+  }
+
+  isSubmitting = true;
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
   }
 
   const url = `${API_URL}?action=submitSession`
@@ -49,5 +74,13 @@ function submitSession() {
     .catch(error => {
       alert("Something went wrong submitting the time.");
       console.error(error);
+    })
+    .finally(() => {
+      isSubmitting = false;
+
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Time";
+      }
     });
 }
