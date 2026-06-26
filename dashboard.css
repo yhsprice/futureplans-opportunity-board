@@ -527,3 +527,35 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
   cursor: pointer;
 }
+
+.autocomplete{
+    position:relative;
+    width:100%;
+}
+
+.autocomplete-items{
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+
+    background:#151a3d;
+    border:1px solid #4b59ff;
+    border-radius:8px;
+
+    max-height:220px;
+    overflow-y:auto;
+
+    display:none;
+    z-index:9999;
+}
+
+.autocomplete-item{
+    padding:10px 14px;
+    cursor:pointer;
+    color:white;
+}
+
+.autocomplete-item:hover{
+    background:#3949ff;
+}
