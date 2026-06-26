@@ -276,7 +276,7 @@ async function loadReleaseRequests() {
       <td style="padding:8px;">${formatDateOnly(request.Date)}</td>
       <td style="padding:8px;">${request.StartTime} - ${request.EndTime}</td>
       <td style="padding:8px;">${request.ReleaseReason || ""}</td>
-      <td style="padding:8px;">${formatDateOnly(request.ReleaseRequestedAt)}</td>
+      <td style="padding:8px;">${formatDateTime(request.ReleaseRequestedAt)}</td>
 
       <td style="padding:8px;">
         <button onclick="approveRelease('${request.RequestID}')">
@@ -599,6 +599,77 @@ function formatDateForInput(value) {
 
   return date.toISOString().split("T")[0];
 }
+
+async function deletePayrollEntry(sessionID) {
+  if (!confirm("Delete this payroll entry?")) {
+    return;
+  }
+
+  const response = await fetch(`${API_URL}?action=deleteCompletedSession&sessionID=${encodeURIComponent(sessionID)}`);
+  const result = await response.json();
+
+  alert(result.message || "Done.");
+  loadPayroll();
+}
+
+async function editPayrollEntry(sessionID) {
+  const response = await fetch(`${API_URL}?action=getCompletedSessions`);
+  const sessions = await response.json();
+
+  const session = sessions.find(s => String(s.SessionID) === String(sessionID));
+
+  if (!session) {
+    alert("Payroll entry not found.");
+    return;
+  }
+
+  const date = prompt("Date:", formatDateForInput(session.Date));
+  if (date === null) return;
+
+  const programType = prompt("Program Type:", session.ProgramType || "");
+  if (programType === null) return;
+
+  const serviceType = prompt("Service Type:", session.PayRule || "");
+  if (serviceType === null) return;
+
+  const school = prompt("School / Agency optional:", session.School || "");
+  if (school === null) return;
+
+  const hours = prompt("Hours:", session.PayHours || "");
+  if (hours === null) return;
+
+  const notes = prompt("Notes:", session.Notes || "");
+  if (notes === null) return;
+
+  const params = new URLSearchParams({
+    action: "editCompletedSession",
+    sessionID,
+    date,
+    programType,
+    serviceType,
+    school,
+    hours,
+    notes
+  });
+
+  const saveResponse = await fetch(API_URL, {
+    method: "POST",
+    body: params
+  });
+
+  const result = await saveResponse.json();
+
+  alert(result.message || "Done.");
+  loadPayroll();
+}
+
+function formatDateForInput(value) {
+  const date = new Date(value);
+  if (isNaN(date)) return "";
+
+  return date.toISOString().split("T")[0];
+}
+
 
 loadRequests();
 loadPayApprovals();
