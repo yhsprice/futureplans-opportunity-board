@@ -24,10 +24,15 @@
         Coach Scheduling & Payroll Access
       </p>
 
-      <label>Select Your Name</label>
-      <select id="personSelect">
-        <option value="">Loading names...</option>
-      </select>
+      <label>Type Your Name</label>
+
+<input
+  id="personInput"
+  list="peopleList"
+  placeholder="Start typing your name..."
+  autocomplete="off">
+
+<datalist id="peopleList"></datalist>
 
       <label>Password</label>
       <input id="passwordInput" type="password" placeholder="Enter password">
