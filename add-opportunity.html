@@ -94,8 +94,16 @@
       </select>
 
      <p><strong>COP</strong></p>
-<input id="cop" list="copList" placeholder="Start typing COP name">
-<datalist id="copList"></datalist>
+
+<div class="autocomplete">
+  <input
+    id="cop"
+    type="text"
+    placeholder="Start typing COP name..."
+    autocomplete="off">
+
+  <div id="copSuggestions" class="autocomplete-items"></div>
+</div>
       
       <p><strong>Notes</strong></p>
       <textarea id="notes" placeholder="Optional notes"></textarea>
