@@ -101,7 +101,7 @@ async function loadMyRequests() {
     myRequestList.innerHTML = "";
 
     renderSection("Waiting for Approval", waitingApproval, false);
-   renderMeetingSection("Meetings / Professional Development Waiting for Approval", meetingRequestsWaitingApproval);
+    renderMeetingSection("Meetings / Professional Development Waiting for Approval", meetingRequestsWaitingApproval);
     renderSection("Upcoming / Scheduled", upcomingScheduled, true);
     renderSection("Submitted for Pay", submittedForPay, false);
 
