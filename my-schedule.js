@@ -47,6 +47,7 @@ async function loadSchedule() {
               <th style="text-align:left; padding:8px;">End</th>
               <th style="text-align:left; padding:8px; min-width:180px;">School</th>
               <th style="text-align:left; padding:8px;">Program</th>
+              <th style="text-align:left; padding:8px;">COP</th>
               <th style="text-align:left; padding:8px;">Status</th>
               <th style="text-align:left; padding:8px;">Release</th>
             </tr>
@@ -64,6 +65,7 @@ async function loadSchedule() {
           <td style="padding:8px; white-space:nowrap;">${request.EndTime}</td>
           <td style="padding:8px; min-width:180px;">${request.School}</td>
           <td style="padding:8px;">${request.ProgramType || ""}</td>
+          <td style="padding:8px;">${request.COP || "Not listed"}</td>
           <td style="padding:8px;">${request.Status}</td>
           <td style="padding:8px;">
             ${releaseRequested
