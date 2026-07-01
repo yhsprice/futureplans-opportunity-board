@@ -31,14 +31,14 @@
     <div class="top-bar">
       <div>
         <h1>Meeting Attendance</h1>
-        <p>Track live attendance and video completion for paid meetings.</p>
+        <p>Check live attendance or mark coaches who watched the recording later.</p>
       </div>
 
       <div id="userBanner" class="welcome-pill"></div>
     </div>
 
     <div class="dashboard-card">
-      <h2>Add Attendance Record</h2>
+      <h2>Meeting Information</h2>
 
       <p><strong>Meeting Name</strong></p>
       <input id="meetingName" placeholder="Example: Monthly Coach Meeting">
@@ -46,32 +46,28 @@
       <p><strong>Meeting Date</strong></p>
       <input id="meetingDate" type="date">
 
-      <p><strong>Coach Name</strong></p>
-      <input id="coachName" list="coachNameList" placeholder="Start typing coach name...">
-      <datalist id="coachNameList"></datalist>
-
-      <p><strong>Attendance Type</strong></p>
-      <select id="attendanceType">
-        <option value="">Select Attendance Type</option>
-        <option value="Live">Watched Live</option>
-        <option value="Later">Watched Later</option>
-        <option value="Did Not Attend">Did Not Attend</option>
-      </select>
-
-      <p><strong>Watch Date</strong></p>
-      <input id="watchDate" type="date">
-
       <p><strong>Pay Period</strong></p>
       <select id="payPeriodID">
         <option value="">Loading pay periods...</option>
       </select>
 
       <p><strong>Notes</strong></p>
-      <textarea id="notes" placeholder="Optional notes"></textarea>
+      <textarea id="notes" placeholder="Optional meeting notes"></textarea>
+    </div>
 
-      <br><br>
+    <div class="dashboard-card">
+      <h2>Coach Attendance</h2>
+      <p>Leave coaches blank if they did not attend or watch the recording.</p>
 
-      <button onclick="addMeetingAttendance()">Add Attendance</button>
+      <div id="coachAttendanceList">
+        <p>Loading coaches...</p>
+      </div>
+
+      <br>
+
+      <button onclick="saveBulkMeetingAttendance()">
+        Save Attendance
+      </button>
 
       <p id="attendanceMessage"></p>
     </div>
@@ -86,7 +82,7 @@
 </div>
 
 <script src="auth.js?v=2"></script>
-<script src="meeting-attendance.js"></script>
+<script src="meeting-attendance.js?v=2"></script>
 
 </body>
 </html>
