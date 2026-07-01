@@ -26,12 +26,9 @@ async function loadCoaches() {
   const response = await fetch(`${API_URL}?action=getPeople`);
   const people = await response.json();
 
-  activeCoaches = people
-    .filter(person =>
-      person.Name &&
-      String(person.Active || person.ActiveStatus || "").trim() === "Yes"
-    )
-    .sort((a, b) => a.Name.localeCompare(b.Name));
+ activeCoaches = people
+  .filter(person => person.Name)
+  .sort((a, b) => a.Name.localeCompare(b.Name));
 
   if (activeCoaches.length === 0) {
     container.innerHTML = "<p>No active coaches found.</p>";
