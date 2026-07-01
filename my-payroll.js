@@ -16,6 +16,8 @@ async function loadMyPayroll() {
 
     const periodsResponse = await fetch(`${API_URL}?action=getPayPeriods`);
     const payPeriods = await periodsResponse.json();
+    const approvalsResponse = await fetch(`${API_URL}?action=getCoachPayrollApprovals`);
+    const payrollApprovals = await approvalsResponse.json();
 
     const mySessions = sessions.filter(session =>
       String(session.PersonID) === String(currentUser.PersonID)
@@ -111,9 +113,41 @@ async function loadMyPayroll() {
         ? `${formatDateLong(period.StartDate)} - ${formatDateLong(period.EndDate)}`
         : payPeriodID;
 
+      const coachApproval = payrollApprovals.find(approval =>
+  String(approval.PersonID) === String(currentUser.PersonID) &&
+  String(approval.PayPeriodID) === String(payPeriodID)
+);
+
+let approvalAlert = "";
+
+if (coachApproval && coachApproval.Status === "Coach Approved") {
+  approvalAlert = `
+    <div style="background:#d4edda; color:#155724; padding:12px; border-radius:8px; margin:12px 0;">
+      ✅ Good job! You approved this payroll on ${formatDateTime(coachApproval.ApprovedAt)}.
+    </div>
+  `;
+} else if (coachApproval && coachApproval.Status === "Not Approved In Time") {
+  approvalAlert = `
+    <div style="background:#f8d7da; color:#721c24; padding:12px; border-radius:8px; margin:12px 0;">
+      ⚠️ Payroll was submitted to HR, but you did not approve it before the deadline.
+    </div>
+  `;
+} else {
+  approvalAlert = `
+    <div style="background:#fff3cd; color:#856404; padding:12px; border-radius:8px; margin:12px 0;">
+      Please review this payroll and approve it before the end of the first day of the next pay period.
+      <br><br>
+      <button onclick="approveMyPayroll('${payPeriodID}')">
+        Approve This Payroll
+      </button>
+    </div>
+  `;
+}
+
       html += `
         <div class="dashboard-card">
           <h2>${periodTitle}</h2>
+${approvalAlert}
 
           <p>
             <strong>Total Hours:</strong> ${totalHours.toFixed(2)}
@@ -265,6 +299,29 @@ function formatStatus(status) {
   }
 
   return status || "";
+}
+
+function approveMyPayroll(payPeriodID) {
+  const confirmApproval = confirm(
+    "Approve this payroll period? This confirms you reviewed your payroll and agree it is correct."
+  );
+
+  if (!confirmApproval) return;
+
+  const url = `${API_URL}?action=approveCoachPayroll`
+    + `&personID=${encodeURIComponent(currentUser.PersonID)}`
+    + `&payPeriodID=${encodeURIComponent(payPeriodID)}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(result => {
+      alert(result.message || "Payroll approval saved.");
+      loadMyPayroll();
+    })
+    .catch(error => {
+      alert("Something went wrong approving payroll.");
+      console.error(error);
+    });
 }
 
 loadMyPayroll();
