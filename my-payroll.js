@@ -114,13 +114,13 @@ async function loadMyPayroll() {
         : payPeriodID;
 
       const coachApproval = payrollApprovals.find(approval =>
-  String(approval.PersonID) === String(currentUser.PersonID) &&
-  String(approval.PayPeriodID) === String(payPeriodID)
+  String(approval.PersonID).trim() === String(currentUser.PersonID).trim() &&
+  String(approval.PayPeriodID).trim() === String(payPeriodID).trim()
 );
 
 let approvalAlert = "";
 
-if (coachApproval && coachApproval.Status === "Coach Approved") {
+if (coachApproval && String(coachApproval.Status || "").trim() === "Coach Approved") {
   approvalAlert = `
     <div style="background:#d4edda; color:#155724; padding:12px; border-radius:8px; margin:12px 0;">
       ✅ Good job! You approved this payroll on ${formatDateTime(coachApproval.ApprovedAt)}.
