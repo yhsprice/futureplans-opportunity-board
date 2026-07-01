@@ -122,19 +122,10 @@ async function loadPayApprovals() {
         <p><strong>Pay Amount:</strong> $${session.PayAmount}</p>
         <p><strong>Notes:</strong> ${session.Notes || ""}</p>
        
-        
-       <button onclick="editPayrollEntry('${session.SessionID}')">
+   <button onclick="editPayrollEntry('${session.SessionID}')">
   Edit
 </button>
-
-<button onclick="deletePayrollEntry('${session.SessionID}')">
-  Delete
-</button>
-
-<button onclick="editPayrollEntry('${session.SessionID}')">
-  Edit
-</button>
-
+     
 <button onclick="deletePayrollEntry('${session.SessionID}')">
   Delete
 </button>
