@@ -3,6 +3,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2
 showUserBanner();
 
 let activeCoaches = [];
+let meetings = [];
 
 async function loadPayPeriods() {
   const select = document.getElementById("payPeriodID");
@@ -21,35 +22,100 @@ async function loadPayPeriods() {
 }
 
 async function loadCoaches() {
-  const container = document.getElementById("coachAttendanceList");
-
   const response = await fetch(`${API_URL}?action=getPeople`);
   const people = await response.json();
 
- activeCoaches = people
-  .filter(person => person.Name)
-  .sort((a, b) => a.Name.localeCompare(b.Name));
+  activeCoaches = people
+    .filter(person =>
+      person.Name &&
+      String(person.Role || "").trim() !== "Manager"
+    )
+    .sort((a, b) => a.Name.localeCompare(b.Name));
+}
 
-  if (activeCoaches.length === 0) {
-    container.innerHTML = "<p>No active coaches found.</p>";
+async function createMeeting() {
+  const meetingName = document.getElementById("meetingName").value.trim();
+  const meetingDate = document.getElementById("meetingDate").value;
+  const payPeriodID = document.getElementById("payPeriodID").value;
+  const programType = document.getElementById("programType").value;
+  const payRule = document.getElementById("payRule").value;
+  const hours = document.getElementById("hours").value;
+  const fund = document.getElementById("fund").value;
+  const notes = document.getElementById("meetingNotes").value.trim();
+  const message = document.getElementById("meetingMessage");
+
+  if (!meetingName || !meetingDate || !payPeriodID || !programType || !payRule || !hours || !fund) {
+    message.textContent = "Please complete all meeting fields.";
     return;
   }
 
-  let html = `
-    <table class="modern-table">
-      <thead>
-        <tr>
-          <th style="text-align:left;">Coach</th>
-          <th style="text-align:center;">Live</th>
-          <th style="text-align:center;">Watched Later</th>
-          <th style="text-align:left;">Watch Date</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
+  const url = `${API_URL}?action=addMeeting`
+    + `&meetingName=${encodeURIComponent(meetingName)}`
+    + `&meetingDate=${encodeURIComponent(meetingDate)}`
+    + `&payPeriodID=${encodeURIComponent(payPeriodID)}`
+    + `&programType=${encodeURIComponent(programType)}`
+    + `&payRule=${encodeURIComponent(payRule)}`
+    + `&hours=${encodeURIComponent(hours)}`
+    + `&fund=${encodeURIComponent(fund)}`
+    + `&notes=${encodeURIComponent(notes)}`;
+
+  const response = await fetch(url);
+  const result = await response.json();
+
+  if (result.success) {
+    message.textContent = "Meeting created.";
+
+    document.getElementById("meetingName").value = "";
+    document.getElementById("meetingDate").value = "";
+    document.getElementById("payPeriodID").value = "";
+    document.getElementById("programType").value = "";
+    document.getElementById("payRule").value = "";
+    document.getElementById("hours").value = "";
+    document.getElementById("fund").value = "";
+    document.getElementById("meetingNotes").value = "";
+
+    loadMeetings();
+  } else {
+    message.textContent = result.message || "Unable to create meeting.";
+  }
+}
+
+async function loadMeetings() {
+  const container = document.getElementById("meetingList");
+  container.innerHTML = "<p>Loading meetings...</p>";
+
+  const response = await fetch(`${API_URL}?action=getMeetings`);
+  meetings = await response.json();
+
+  if (!meetings || meetings.length === 0) {
+    container.innerHTML = `
+      <div class="dashboard-card">
+        <h2>No Meetings Created</h2>
+        <p>Create a meeting above to start tracking attendance.</p>
+      </div>
+    `;
+    return;
+  }
+
+  let html = "";
+
+  meetings
+    .filter(meeting => String(meeting.Status || "Open").trim() !== "Closed")
+    .sort((a, b) => new Date(b.MeetingDate) - new Date(a.MeetingDate))
+    .forEach(meeting => {
+      html += renderMeetingCard(meeting);
+    });
+
+  container.innerHTML = html;
+}
+
+function renderMeetingCard(meeting) {
+  let rows = "";
 
   activeCoaches.forEach(coach => {
-    html += `
+    const personID = coach.PersonID;
+
+    rows += `
       <tr>
         <td>${coach.Name}</td>
 
@@ -57,9 +123,9 @@ async function loadCoaches() {
           <input
             type="checkbox"
             class="live-check"
-            data-personid="${coach.PersonID}"
-            data-coachname="${coach.Name}"
-            onchange="handleAttendanceChoice('${coach.PersonID}', 'live')"
+            data-meetingid="${meeting.MeetingID}"
+            data-personid="${personID}"
+            onchange="handleAttendanceChoice('${meeting.MeetingID}', '${personID}', 'live')"
           >
         </td>
 
@@ -67,9 +133,9 @@ async function loadCoaches() {
           <input
             type="checkbox"
             class="later-check"
-            data-personid="${coach.PersonID}"
-            data-coachname="${coach.Name}"
-            onchange="handleAttendanceChoice('${coach.PersonID}', 'later')"
+            data-meetingid="${meeting.MeetingID}"
+            data-personid="${personID}"
+            onchange="handleAttendanceChoice('${meeting.MeetingID}', '${personID}', 'later')"
           >
         </td>
 
@@ -77,24 +143,53 @@ async function loadCoaches() {
           <input
             type="date"
             class="watch-date"
-            data-personid="${coach.PersonID}"
+            data-meetingid="${meeting.MeetingID}"
+            data-personid="${personID}"
           >
         </td>
       </tr>
     `;
   });
 
-  html += `
-      </tbody>
-    </table>
-  `;
+  return `
+    <div class="dashboard-card">
+      <h2>${meeting.MeetingName}</h2>
+      <p>
+        <strong>Date:</strong> ${formatDateOnly(meeting.MeetingDate)}
+        &nbsp; | &nbsp;
+        <strong>Pay Period:</strong> ${meeting.PayPeriodID}
+        &nbsp; | &nbsp;
+        <strong>Pay:</strong> ${meeting.Hours} hour(s) • ${meeting.PayRule} • ${meeting.Fund}
+      </p>
 
-  container.innerHTML = html;
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Coach</th>
+            <th style="text-align:center;">Live</th>
+            <th style="text-align:center;">Watched Later</th>
+            <th style="text-align:left;">Watch Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+
+      <br>
+
+      <button onclick="saveMeetingAttendanceForMeeting('${meeting.MeetingID}')">
+        Save Attendance for This Meeting
+      </button>
+
+      <p id="message-${meeting.MeetingID}"></p>
+    </div>
+  `;
 }
 
-function handleAttendanceChoice(personID, choice) {
-  const liveBox = document.querySelector(`.live-check[data-personid="${personID}"]`);
-  const laterBox = document.querySelector(`.later-check[data-personid="${personID}"]`);
+function handleAttendanceChoice(meetingID, personID, choice) {
+  const liveBox = document.querySelector(`.live-check[data-meetingid="${meetingID}"][data-personid="${personID}"]`);
+  const laterBox = document.querySelector(`.later-check[data-meetingid="${meetingID}"][data-personid="${personID}"]`);
 
   if (choice === "live" && liveBox.checked) {
     laterBox.checked = false;
@@ -105,32 +200,27 @@ function handleAttendanceChoice(personID, choice) {
   }
 }
 
-async function saveBulkMeetingAttendance() {
-  const meetingName = document.getElementById("meetingName").value.trim();
-  const meetingDate = document.getElementById("meetingDate").value;
-  const payPeriodID = document.getElementById("payPeriodID").value;
-  const notes = document.getElementById("notes").value.trim();
-  const message = document.getElementById("attendanceMessage");
+async function saveMeetingAttendanceForMeeting(meetingID) {
+  const meeting = meetings.find(m => String(m.MeetingID) === String(meetingID));
+  const message = document.getElementById(`message-${meetingID}`);
 
-  if (!meetingName || !meetingDate || !payPeriodID) {
-    message.textContent = "Please complete Meeting Name, Meeting Date, and Pay Period.";
+  if (!meeting) {
+    alert("Meeting not found.");
     return;
   }
 
   const records = [];
 
   activeCoaches.forEach(coach => {
-    const liveBox = document.querySelector(`.live-check[data-personid="${coach.PersonID}"]`);
-    const laterBox = document.querySelector(`.later-check[data-personid="${coach.PersonID}"]`);
-    const watchDateInput = document.querySelector(`.watch-date[data-personid="${coach.PersonID}"]`);
+    const liveBox = document.querySelector(`.live-check[data-meetingid="${meetingID}"][data-personid="${coach.PersonID}"]`);
+    const laterBox = document.querySelector(`.later-check[data-meetingid="${meetingID}"][data-personid="${coach.PersonID}"]`);
+    const watchDateInput = document.querySelector(`.watch-date[data-meetingid="${meetingID}"][data-personid="${coach.PersonID}"]`);
 
     const watchedLive = liveBox && liveBox.checked;
     const watchedLater = laterBox && laterBox.checked;
     const watchDate = watchDateInput ? watchDateInput.value : "";
 
-    if (!watchedLive && !watchedLater) {
-      return;
-    }
+    if (!watchedLive && !watchedLater) return;
 
     if (watchedLater && !watchDate) {
       records.push({
@@ -156,20 +246,21 @@ async function saveBulkMeetingAttendance() {
   }
 
   if (records.length === 0) {
-    message.textContent = "No coaches were marked as live or watched later.";
+    message.textContent = "No coaches were marked for this meeting.";
     return;
   }
 
-  const confirmSave = confirm(`Save attendance for ${records.length} coach(es)?`);
+  const confirmSave = confirm(`Save attendance for ${records.length} coach(es) for ${meeting.MeetingName}?`);
 
   if (!confirmSave) return;
 
   const params = new URLSearchParams({
     action: "addMeetingAttendanceBatch",
-    meetingName,
-    meetingDate,
-    payPeriodID,
-    notes,
+    meetingID: meeting.MeetingID,
+    meetingName: meeting.MeetingName,
+    meetingDate: meeting.MeetingDate,
+    payPeriodID: meeting.PayPeriodID,
+    notes: meeting.Notes || "",
     records: JSON.stringify(records)
   });
 
@@ -183,21 +274,6 @@ async function saveBulkMeetingAttendance() {
 
     if (result.success) {
       message.textContent = result.message || "Attendance saved.";
-
-      document.getElementById("meetingName").value = "";
-      document.getElementById("meetingDate").value = "";
-      document.getElementById("payPeriodID").value = "";
-      document.getElementById("notes").value = "";
-
-      document.querySelectorAll(".live-check, .later-check").forEach(box => {
-        box.checked = false;
-      });
-
-      document.querySelectorAll(".watch-date").forEach(input => {
-        input.value = "";
-      });
-
-      loadAttendanceLog();
     } else {
       message.textContent = result.message || "Unable to save attendance.";
     }
@@ -208,71 +284,10 @@ async function saveBulkMeetingAttendance() {
   }
 }
 
-async function loadAttendanceLog() {
-  const container = document.getElementById("attendanceLog");
-  container.innerHTML = "<p>Loading attendance records...</p>";
-
-  try {
-    const response = await fetch(`${API_URL}?action=getMeetingAttendance`);
-    const records = await response.json();
-
-    if (!records || records.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <h2>No Attendance Records</h2>
-          <p>No meeting attendance has been logged yet.</p>
-        </div>
-      `;
-      return;
-    }
-
-    let html = `
-      <table class="modern-table">
-        <thead>
-          <tr>
-            <th>Meeting</th>
-            <th>Meeting Date</th>
-            <th>Coach</th>
-            <th>Attendance</th>
-            <th>Watch Date</th>
-            <th>Pay Period</th>
-            <th>Status</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-    records
-      .sort((a, b) => new Date(b.MeetingDate) - new Date(a.MeetingDate))
-      .forEach(record => {
-        html += `
-          <tr>
-            <td>${record.MeetingName || ""}</td>
-            <td>${formatDateOnly(record.MeetingDate)}</td>
-            <td>${record.CoachName || ""}</td>
-            <td>${record.WatchedLive === "Yes" ? "Live" : record.WatchedLater === "Yes" ? "Watched Later" : ""}</td>
-            <td>${formatDateOnly(record.WatchDate)}</td>
-            <td>${record.PayPeriodID || ""}</td>
-            <td>${record.AttendanceStatus || ""}</td>
-            <td>${record.Notes || ""}</td>
-          </tr>
-        `;
-      });
-
-    html += `
-        </tbody>
-      </table>
-    `;
-
-    container.innerHTML = html;
-
-  } catch (error) {
-    container.innerHTML = "<p>Something went wrong loading attendance records.</p>";
-    console.error(error);
-  }
+async function initPage() {
+  await loadPayPeriods();
+  await loadCoaches();
+  await loadMeetings();
 }
 
-loadPayPeriods();
-loadCoaches();
-loadAttendanceLog();
+initPage();
