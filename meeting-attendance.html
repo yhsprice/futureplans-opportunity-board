@@ -31,14 +31,14 @@
     <div class="top-bar">
       <div>
         <h1>Meeting Attendance</h1>
-        <p>Check live attendance or mark coaches who watched the recording later.</p>
+        <p>Create meetings, then mark which coaches attended live or watched later.</p>
       </div>
 
       <div id="userBanner" class="welcome-pill"></div>
     </div>
 
     <div class="dashboard-card">
-      <h2>Meeting Information</h2>
+      <h2>Create Meeting</h2>
 
       <p><strong>Meeting Name</strong></p>
       <input id="meetingName" placeholder="Example: Monthly Coach Meeting">
@@ -47,34 +47,57 @@
       <input id="meetingDate" type="date">
 
       <p><strong>Pay Period</strong></p>
-      <select id="payPeriodID">
-        <option value="">Loading pay periods...</option>
+      <select id="payPeriodID"></select>
+
+      <p><strong>Program Type</strong></p>
+      <select id="programType">
+        <option value="">Program Type</option>
+        <option value="Professional Development">Professional Development</option>
+        <option value="Meeting">Meeting</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <p><strong>Pay Rule</strong></p>
+      <select id="payRule">
+        <option value="">Pay Rule</option>
+        <option value="Prof Development">Professional Development</option>
+        <option value="Meeting">Meeting</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <p><strong>Hours</strong></p>
+      <select id="hours">
+        <option value="">Hours</option>
+        <option value="2.00">2.00</option>
+        <option value="1.75">1.75</option>
+        <option value="1.50">1.50</option>
+        <option value="1.25">1.25</option>
+        <option value="1.00">1.00</option>
+        <option value="0.75">0.75</option>
+        <option value="0.50">0.50</option>
+        <option value="0.25">0.25</option>
+      </select>
+
+      <p><strong>Fund</strong></p>
+      <select id="fund">
+        <option value="">Fund</option>
+        <option value="Grit">Grit</option>
+        <option value="NW OH">NW OH</option>
+        <option value="SW OH">SW OH</option>
       </select>
 
       <p><strong>Notes</strong></p>
-      <textarea id="notes" placeholder="Optional meeting notes"></textarea>
+      <textarea id="meetingNotes" placeholder="Optional meeting notes"></textarea>
+
+      <br><br>
+
+      <button onclick="createMeeting()">Create Meeting</button>
+      <p id="meetingMessage"></p>
     </div>
 
-    <div class="dashboard-card">
-      <h2>Coach Attendance</h2>
-      <p>Leave coaches blank if they did not attend or watch the recording.</p>
-
-      <div id="coachAttendanceList">
-        <p>Loading coaches...</p>
-      </div>
-
-      <br>
-
-      <button onclick="saveBulkMeetingAttendance()">
-        Save Attendance
-      </button>
-
-      <p id="attendanceMessage"></p>
-    </div>
-
-    <h2>Attendance Log</h2>
-    <div id="attendanceLog" class="dashboard-card">
-      <p>Loading attendance records...</p>
+    <h2>Meetings</h2>
+    <div id="meetingList">
+      <p>Loading meetings...</p>
     </div>
 
   </main>
@@ -82,7 +105,7 @@
 </div>
 
 <script src="auth.js?v=2"></script>
-<script src="meeting-attendance.js?v=2"></script>
+<script src="meeting-attendance.js?v=3"></script>
 
 </body>
 </html>
