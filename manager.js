@@ -622,13 +622,13 @@ async function loadManualPayrollPeople() {
     const response = await fetch(`${API_URL}?action=getPeople`);
     const people = await response.json();
 
-    manualPayrollPeople = people
-      .filter(person =>
-        person.Name &&
-        String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
-        String(person.Role || "").trim() === "Coach"
-      )
-      .sort((a, b) => a.Name.localeCompare(b.Name));
+  manualPayrollPeople = people
+  .filter(person =>
+    person.Name &&
+    String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
+    String(person.Type || person.Role || "").trim() === "Coach"
+  )
+  .sort((a, b) => a.Name.localeCompare(b.Name));
 
   } catch (error) {
     console.error("Error loading people:", error);
