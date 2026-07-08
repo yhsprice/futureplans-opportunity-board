@@ -654,11 +654,6 @@ function showManualCoachSuggestions() {
     )
     .slice(0, 8);
 
-  if (!matches.length) {
-    manualCoachSuggestions.style.display = "none";
-    return;
-  }
-
   matches.forEach(person => {
     const item = document.createElement("div");
     item.className = "autocomplete-item";
@@ -672,16 +667,10 @@ function showManualCoachSuggestions() {
     manualCoachSuggestions.appendChild(item);
   });
 
-  manualCoachSuggestions.style.display = "block";
+  manualCoachSuggestions.style.display = matches.length ? "block" : "none";
 }
 
 manualCoachInput.addEventListener("input", showManualCoachSuggestions);
-
-document.addEventListener("click", function(event) {
-  if (!event.target.closest(".autocomplete")) {
-    manualCoachSuggestions.style.display = "none";
-  }
-});
 
 loadManualPayrollPeople();
 
