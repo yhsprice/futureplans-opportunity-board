@@ -6,12 +6,29 @@ const requestList = document.getElementById("requestList");
 
 const payApprovalList = document.getElementById("payApprovalList");
 
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "jsonp_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      script.remove();
+      resolve(data);
+    };
+
+    const script = document.createElement("script");
+    script.src = url + "&callback=" + callbackName;
+    script.onerror = reject;
+
+    document.body.appendChild(script);
+  });
+}
+
 async function loadRequests() {
   requestList.innerHTML = "<p>Loading requests...</p>";
 
   try {
-    const response = await fetch(`${API_URL}?action=getRequests`);
-    const requests = await response.json();
+    const requests = await jsonp(`${API_URL}?action=getRequests`);
 
     requestList.innerHTML = "";
 
