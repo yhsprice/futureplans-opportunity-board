@@ -37,6 +37,8 @@ async function loadRequests() {
   try {
     const requests = await jsonp(`${API_URL}?action=getRequests`);
 
+    console.log("Requests loaded:", requests);
+
     requestList.innerHTML = "";
 
     const pending = requests.filter(request => request.Status === "Pending Approval");
@@ -56,36 +58,22 @@ async function loadRequests() {
       div.className = "opportunity";
 
       div.innerHTML = `
-       <h3>${request.School}</h3>
+        <h3>${request.School}</h3>
         <p><strong>Date:</strong> ${formatDateOnly(request.Date)}</p>
         <p><strong>Time:</strong> ${request.StartTime} - ${request.EndTime}</p>
         <p><strong>Coach:</strong> ${request.CoachName}</p>
-        <p><strong>Requested At:</strong> ${formatDateTime(request.RequestedAt)}</p>
         <p><strong>Status:</strong> ${request.Status}</p>
-        ${request.AttendanceVerified === "Yes"
-            ? `<p><strong>Attendance:</strong> Verified</p>`
-            : `
-            <button onclick="verifyAttendance('${request.RequestID}')">
-              Verify Worked
-            </button>
-            `
-        }
-        
-        <button onclick="updateRequest('${request.RequestID}', 'Approved')">
-          Approve
-        </button>
 
-        <button onclick="updateRequest('${request.RequestID}', 'Denied')">
-          Deny
-        </button>
+        <button onclick="updateRequest('${request.RequestID}', 'Approved')">Approve</button>
+        <button onclick="updateRequest('${request.RequestID}', 'Denied')">Deny</button>
       `;
 
       requestList.appendChild(div);
     });
 
   } catch (error) {
+    console.error("Requests error:", error);
     requestList.innerHTML = "<p>Something went wrong loading requests.</p>";
-    console.error(error);
   }
 }
 
@@ -622,20 +610,20 @@ function loadManualPayrollPeople() {
 
   jsonp(`${API_URL}?action=getPeople`)
     .then(people => {
-      console.log("People from JSONP:", people);
+      console.log("People loaded:", people);
 
       manualPayrollPeople = people
         .filter(person =>
           person.Name &&
           String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
-          String(person.Type || person.Role || "").trim() === "Coach"
+          String(person.Type || person.Role || "").trim() !== "COP"
         )
         .sort((a, b) => a.Name.localeCompare(b.Name));
 
-      console.log("Filtered manual payroll people:", manualPayrollPeople);
+      console.log("Manual payroll people:", manualPayrollPeople);
     })
     .catch(error => {
-      console.error("Error loading people:", error);
+      console.error("Manual people error:", error);
     });
 }
 
@@ -672,11 +660,9 @@ function showManualCoachSuggestions() {
 
 manualCoachInput.addEventListener("input", showManualCoachSuggestions);
 
-loadManualPayrollPeople();
-
 loadRequests();
 loadPayApprovals();
+loadManualPayrollPeople();
 loadReleaseRequests();
 loadDashboardCounts();
 loadRecentActivity();
-loadCoachNamesForManualEntry();
