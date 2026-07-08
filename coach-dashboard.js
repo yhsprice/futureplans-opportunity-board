@@ -87,6 +87,13 @@ function loadCurrentPay(sessions, personID) {
   `;
 }
 
+function logout() {
+  sessionStorage.clear();
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("userRole");
+  window.location.href = "login.html";
+}
+
 function loadOpenings(opportunities) {
   const open = opportunities.filter(o =>
     String(o.OpportunityStatus || "Open").trim() === "Open" &&
