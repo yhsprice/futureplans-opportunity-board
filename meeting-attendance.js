@@ -44,7 +44,7 @@ async function createMeeting() {
   const notes = document.getElementById("meetingNotes").value.trim();
   const message = document.getElementById("meetingMessage");
 
-  if (!meetingName || !meetingDate || !payPeriodID || !programType || !payRule || !hours || !fund) {
+  if (!meetingName || !meetingDate || !programType || !payRule || !hours || !fund) {
     message.textContent = "Please complete all meeting fields.";
     return;
   }
@@ -52,7 +52,6 @@ async function createMeeting() {
   const url = `${API_URL}?action=addMeeting`
     + `&meetingName=${encodeURIComponent(meetingName)}`
     + `&meetingDate=${encodeURIComponent(meetingDate)}`
-    + `&payPeriodID=${encodeURIComponent(payPeriodID)}`
     + `&programType=${encodeURIComponent(programType)}`
     + `&payRule=${encodeURIComponent(payRule)}`
     + `&hours=${encodeURIComponent(hours)}`
@@ -67,7 +66,6 @@ async function createMeeting() {
 
     document.getElementById("meetingName").value = "";
     document.getElementById("meetingDate").value = "";
-    document.getElementById("payPeriodID").value = "";
     document.getElementById("programType").value = "";
     document.getElementById("payRule").value = "";
     document.getElementById("hours").value = "";
