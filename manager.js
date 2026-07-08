@@ -612,6 +612,75 @@ function formatDateForInput(value) {
   return date.toISOString().split("T")[0];
 }
 
+const manualCoachInput = document.getElementById("manualCoachInput");
+const manualCoachSuggestions = document.getElementById("manualCoachSuggestions");
+
+let manualPayrollPeople = [];
+
+async function loadManualPayrollPeople() {
+  try {
+    const response = await fetch(`${API_URL}?action=getPeople`);
+    const people = await response.json();
+
+    manualPayrollPeople = people
+      .filter(person =>
+        person.Name &&
+        String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
+        String(person.Role || "").trim() === "Coach"
+      )
+      .sort((a, b) => a.Name.localeCompare(b.Name));
+
+  } catch (error) {
+    console.error("Error loading people:", error);
+  }
+}
+
+function showManualCoachSuggestions() {
+  const typed = manualCoachInput.value.trim().toLowerCase();
+  manualCoachSuggestions.innerHTML = "";
+
+  if (!typed) {
+    manualCoachSuggestions.style.display = "none";
+    return;
+  }
+
+  const matches = manualPayrollPeople
+    .filter(person =>
+      String(person.Name || "").toLowerCase().startsWith(typed)
+    )
+    .slice(0, 8);
+
+  if (!matches.length) {
+    manualCoachSuggestions.style.display = "none";
+    return;
+  }
+
+  matches.forEach(person => {
+    const item = document.createElement("div");
+    item.className = "autocomplete-item";
+    item.textContent = person.Name;
+
+    item.addEventListener("click", () => {
+      manualCoachInput.value = person.Name;
+      manualCoachSuggestions.style.display = "none";
+    });
+
+    manualCoachSuggestions.appendChild(item);
+  });
+
+  manualCoachSuggestions.style.display = "block";
+}
+
+manualCoachInput.addEventListener("input", showManualCoachSuggestions);
+
+document.addEventListener("click", function(event) {
+  if (!event.target.closest(".autocomplete")) {
+    manualCoachSuggestions.style.display = "none";
+  }
+});
+
+loadManualPayrollPeople();
+
 loadRequests();
 loadPayApprovals();
 loadReleaseRequests();
