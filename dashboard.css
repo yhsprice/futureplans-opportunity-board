@@ -528,36 +528,39 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
-.autocomplete{
-    position:relative;
-    width:100%;
+.autocomplete {
+  position: relative;
+  width: 280px;
 }
 
-.autocomplete-items{
-    position:absolute;
-    top:100%;
-    left:0;
-    right:0;
-
-    background:#151a3d;
-    border:1px solid #4b59ff;
-    border-radius:8px;
-
-    max-height:220px;
-    overflow-y:auto;
-
-    display:none;
-    z-index:9999;
+.autocomplete-suggestions {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  color: #111111;
+  border: 1px solid #bdbdbd;
+  border-radius: 8px;
+  z-index: 9999;
+  margin-top: 4px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
 
-.autocomplete-item{
-    padding:10px 14px;
-    cursor:pointer;
-    color:white;
+.autocomplete-item {
+  padding: 10px 12px;
+  color: #111111;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
 }
 
-.autocomplete-item:hover{
-    background:#3949ff;
+.autocomplete-item:hover {
+  background: #e9eefc;
+  color: #000000;
 }
 
 .top-bar {
@@ -574,30 +577,3 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   gap: 10px;
 }
 
-.autocomplete {
-  position: relative;
-  width: 100%;
-}
-
-.autocomplete-suggestions {
-  display: none;
-  position: absolute;
-  background: white;
-  color: black;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 100%;
-  max-height: 220px;
-  overflow-y: auto;
-  z-index: 9999;
-  margin-top: 4px;
-}
-
-.autocomplete-item {
-  padding: 10px 12px;
-  cursor: pointer;
-}
-
-.autocomplete-item:hover {
-  background: #eee;
-}
