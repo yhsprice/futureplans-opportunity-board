@@ -619,8 +619,7 @@ let manualPayrollPeople = [];
 
 async function loadManualPayrollPeople() {
   try {
-    const response = await fetch(`${API_URL}?action=getPeople`);
-    const people = await response.json();
+    const people = await jsonp(`${API_URL}?action=getPeople`);
 
   manualPayrollPeople = people
   .filter(person =>
