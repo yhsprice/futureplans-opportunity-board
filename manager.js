@@ -349,7 +349,7 @@ function recordCallOff(requestID) {
 }
 function submitManualCompletedSession() {
 
-  const userName = document.getElementById("manualUserName").value.trim();
+  const userName = document.getElementById("manualCoachInput").value.trim();
   const date = document.getElementById("manualDate").value;
   const programType = document.getElementById("manualProgramType").value;
   const fund = document.getElementById("manualFund").value;
@@ -399,7 +399,7 @@ function submitManualCompletedSession() {
       if (result.success) {
         message.textContent = "Manual time added successfully.";
 
-        document.getElementById("manualUserName").value = "";
+        document.getElementById("manualCoachInput").value = "";
         document.getElementById("manualDate").value = "";
         document.getElementById("manualProgramType").value = "";
         document.getElementById("manualFund").value = "";
@@ -617,25 +617,26 @@ const manualCoachSuggestions = document.getElementById("manualCoachSuggestions")
 
 let manualPayrollPeople = [];
 
-async function loadManualPayrollPeople() {
+function loadManualPayrollPeople() {
   console.log("Starting loadManualPayrollPeople");
-  
-  try {
-    const people = await jsonp(`${API_URL}?action=getPeople`);
 
-  console.log("People from JSONP:", people);
+  jsonp(`${API_URL}?action=getPeople`)
+    .then(people => {
+      console.log("People from JSONP:", people);
 
-  manualPayrollPeople = people
-  .filter(person =>
-    person.Name &&
-    String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
-    String(person.Type || person.Role || "").trim() === "Coach"
-  )
-  .sort((a, b) => a.Name.localeCompare(b.Name));
+      manualPayrollPeople = people
+        .filter(person =>
+          person.Name &&
+          String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
+          String(person.Type || person.Role || "").trim() === "Coach"
+        )
+        .sort((a, b) => a.Name.localeCompare(b.Name));
 
-  } catch (error) {
-    console.error("Error loading people:", error);
-  }
+      console.log("Filtered manual payroll people:", manualPayrollPeople);
+    })
+    .catch(error => {
+      console.error("Error loading people:", error);
+    });
 }
 
 function showManualCoachSuggestions() {
