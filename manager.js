@@ -513,16 +513,21 @@ async function loadCoachNamesForManualEntry() {
 
     list.innerHTML = "";
 
-    people.forEach(person => {
+    people
+  .filter(person =>
+    person.Name &&
+    String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
+    String(person.Role || "").trim() !== "COP"
+  )
+  .sort((a, b) => a.Name.localeCompare(b.Name))
+  .forEach(person => {
 
-  if (!person.Name) return;
+    const option = document.createElement("option");
+    option.value = person.Name;
 
-  const option = document.createElement("option");
-  option.value = person.Name;
+    list.appendChild(option);
 
-  list.appendChild(option);
-
-});
+  });
 
   } catch (error) {
 
