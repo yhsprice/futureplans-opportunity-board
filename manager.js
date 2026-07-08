@@ -6,6 +6,13 @@ const requestList = document.getElementById("requestList");
 
 const payApprovalList = document.getElementById("payApprovalList");
 
+function logout() {
+  sessionStorage.clear();
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("userRole");
+  window.location.href = "login.html";
+}
+
 function jsonp(url) {
   return new Promise((resolve, reject) => {
     const callbackName = "jsonp_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
