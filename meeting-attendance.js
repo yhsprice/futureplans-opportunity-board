@@ -5,22 +5,6 @@ showUserBanner();
 let activeCoaches = [];
 let meetings = [];
 
-async function loadPayPeriods() {
-  const select = document.getElementById("payPeriodID");
-
-  const response = await fetch(`${API_URL}?action=getPayPeriods`);
-  const payPeriods = await response.json();
-
-  select.innerHTML = `<option value="">Select Pay Period</option>`;
-
-  payPeriods.forEach(period => {
-    const option = document.createElement("option");
-    option.value = period.PayPeriodID;
-    option.textContent = `${period.PayPeriodID} | ${formatDateOnly(period.StartDate)} - ${formatDateOnly(period.EndDate)} | ${period.Status}`;
-    select.appendChild(option);
-  });
-}
-
 async function loadCoaches() {
   const response = await fetch(`${API_URL}?action=getPeople`);
   const people = await response.json();
@@ -283,7 +267,6 @@ async function saveMeetingAttendanceForMeeting(meetingID) {
 }
 
 async function initPage() {
-  await loadPayPeriods();
   await loadCoaches();
   await loadMeetings();
 }
