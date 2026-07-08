@@ -94,8 +94,7 @@ async function loadPayApprovals() {
   payApprovalList.innerHTML = "<p>Loading pay approvals...</p>";
 
   try {
-    const response = await fetch(`${API_URL}?action=getCompletedSessions`);
-    const sessions = await response.json();
+    const sessions = await jsonp(`${API_URL}?action=getCompletedSessions`);
 
     const pending = sessions.filter(session =>
       session.Status === "Pending Pay Approval"
@@ -410,14 +409,11 @@ function submitManualCompletedSession() {
 
 async function loadDashboardCounts() {
   try {
-    const opportunitiesResponse = await fetch(`${API_URL}?action=getOpportunities`);
-    const opportunities = await opportunitiesResponse.json();
+    const opportunities = await jsonp(`${API_URL}?action=getOpportunities`);
 
-    const requestsResponse = await fetch(`${API_URL}?action=getRequests`);
-    const requests = await requestsResponse.json();
+    const requests = await jsonp(`${API_URL}?action=getRequests`);
 
-    const sessionsResponse = await fetch(`${API_URL}?action=getCompletedSessions`);
-    const sessions = await sessionsResponse.json();
+    const sessions = await jsonp(`${API_URL}?action=getCompletedSessions`);
 
     const openOpportunities = opportunities.length;
 
