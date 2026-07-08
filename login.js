@@ -21,10 +21,11 @@ function showSuggestions() {
   }
 
   const matches = people
-    .filter(person =>
-      String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
-      String(person.Name || "").toLowerCase().startsWith(typed)
-    )
+  .filter(person =>
+    String(person.Active || person.ActiveStatus || "").trim() === "Yes" &&
+    String(person.Role || "").trim() !== "COP" &&
+    String(person.Name || "").toLowerCase().startsWith(typed)
+  )
     .sort((a, b) => a.Name.localeCompare(b.Name))
     .slice(0, 8);
 
@@ -62,9 +63,11 @@ function login() {
   const password = passwordInput.value.trim();
 
   const person = people.find(p =>
-    String(p.Name).trim().toLowerCase() === typedName.toLowerCase() &&
-    String(p.Password) === String(password)
-  );
+  String(p.Name).trim().toLowerCase() === typedName.toLowerCase() &&
+  String(p.Password) === String(password) &&
+  String(p.Active || p.ActiveStatus || "").trim() === "Yes" &&
+  String(p.Role || "").trim() !== "COP"
+);
 
   if (!person) {
     alert("Name or password is incorrect.");
