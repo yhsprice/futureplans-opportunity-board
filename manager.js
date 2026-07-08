@@ -617,9 +617,10 @@ const manualCoachSuggestions = document.getElementById("manualCoachSuggestions")
 
 let manualPayrollPeople = [];
 
-async function loadManualPayrollPeople() {
   try {
     const people = await jsonp(`${API_URL}?action=getPeople`);
+
+    async function loadManualPayrollPeople() {
 
   manualPayrollPeople = people
   .filter(person =>
