@@ -6,7 +6,6 @@
 </head>
 
 <body>
-
 <div class="app-layout">
 
   <aside class="sidebar">
@@ -15,32 +14,20 @@
     </div>
 
     <div class="nav-section-title">Manager</div>
-
     <a class="nav-link" href="manager.html">Dashboard</a>
     <a class="nav-link" href="index.html">Opportunity Board</a>
     <a class="nav-link" href="add-opportunity.html">Add Opportunity</a>
     <a class="nav-link" href="manage-opportunities.html">Manage Opportunities</a>
-    <a class="nav-link" href="payroll.html">Payroll Dashboard</a>
-<a class="nav-link" href="meeting-attendance.html">Meeting Attendance</a>
-<a class="nav-link" href="utilization.html">Coach Utilization</a>
+    <a class="nav-link active" href="payroll.html">Payroll Dashboard</a>
+    <a class="nav-link" href="meeting-attendance.html">Meeting Attendance</a>
+    <a class="nav-link" href="utilization.html">Coach Utilization</a>
+
     <div class="nav-section-title">Resources</div>
+    <a class="nav-link" target="_blank" href="https://engage.cloud.microsoft/main/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiIxNzgzOTI0ODE3OTIifQ/new">Viva Engage</a>
+    <a class="nav-link" target="_blank" href="https://futureplans4u.github.io/Main-Page-Career-Games/">Coaching Games</a>
+    <a class="nav-link" target="_blank" href="https://futureplans4u.github.io/Main-Page-Career-Games/coaching.html">Coaching Tools</a>
 
-<a class="nav-link" target="_blank"
-   href="https://engage.cloud.microsoft/main/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiIxNzgzOTI0ODE3OTIifQ/new">
-   Viva Engage
-</a>
-
-<a class="nav-link" target="_blank"
-   href="https://futureplans4u.github.io/Main-Page-Career-Games/">
-   Coaching Games
-</a>
-
-<a class="nav-link" target="_blank"
-   href="https://futureplans4u.github.io/Main-Page-Career-Games/coaching.html">
-   Coaching Tools
-</a>
-    
-     <div class="sidebar-image">
+    <div class="sidebar-image">
       <img src="lita-yvonne.png" alt="Career Coaching and Assessment Coordinators">
       <div style="text-align:center; margin-top:10px;">
         <strong>Career Coaching & Assessment Coordinators</strong>
@@ -53,85 +40,119 @@
     <div class="top-bar">
       <div>
         <h1>Payroll Dashboard</h1>
-        <p>Review approved payroll totals and edit payroll entries when needed.</p>
+        <p>Review payroll by pay period, grant, coach, and status.</p>
       </div>
-
       <div id="userBanner" class="welcome-pill"></div>
     </div>
 
+    <div class="dashboard-card payroll-toolbar">
+      <div class="payroll-toolbar-left">
+        <label><strong>Pay Period</strong></label>
+        <select id="payPeriodSelect" onchange="loadPayroll()">
+          <option value="">Loading pay periods...</option>
+        </select>
+
+        <label><strong>Status</strong></label>
+        <select id="payrollStatusFilter" onchange="loadPayroll()">
+          <option value="Approved for Pay">Approved for Pay</option>
+          <option value="Paid">Paid</option>
+          <option value="all">All</option>
+        </select>
+
+        <label><strong>Grant</strong></label>
+        <select id="grantFilter" onchange="loadPayroll()">
+          <option value="all">All Grants</option>
+        </select>
+
+        <label><strong>Sort By</strong></label>
+        <select id="sortBy" onchange="loadPayroll()">
+          <option value="date">Date</option>
+          <option value="coach">Coach Name</option>
+          <option value="grant">Grant</option>
+          <option value="hours">Hours</option>
+          <option value="pay">Pay</option>
+        </select>
+      </div>
+
+      <div class="payroll-toolbar-right">
+        <button onclick="exportPayrollToExcel()">Export to Excel</button>
+        <button onclick="copyAccountingSummary()">Copy Accounting Summary</button>
+        <button onclick="markPayPeriodPaid()">Mark Pay Period as Paid</button>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="stat-card blue">
+        <div class="stat-number" id="totalCoaches">--</div>
+        <h3>Total Coaches</h3>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-number" id="totalSessions">--</div>
+        <h3>Total Sessions</h3>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-number" id="totalHours">--</div>
+        <h3>Total Hours</h3>
+      </div>
+
+      <div class="stat-card orange">
+        <div class="stat-number" id="totalPayroll">--</div>
+        <h3>Total Payroll</h3>
+      </div>
+    </div>
+
     <div class="dashboard-card">
-      <p><strong>Select Pay Period</strong></p>
-      <select id="payPeriodSelect" onchange="loadPayroll()">
-        <option value="">Loading pay periods...</option>
-      </select>
-
-      <p><strong>Sort By</strong></p>
-      <select id="sortBy" onchange="loadPayroll()">
-        <option value="hours">Hours (Highest First)</option>
-        <option value="pay">Pay (Highest First)</option>
-        <option value="sessions">Sessions (Highest First)</option>
-        <option value="name">Coach Name (A-Z)</option>
-      </select>
-
-        </div>
-
-  <div class="payroll-toolbar-right">
-
-<button onclick="exportPayrollToExcel()">
-  Export to Excel
-</button>
-
-<br><br>
-
-<button onclick="copyAccountingSummary()">
-
-<button onclick="markPayPeriodPaid()">
-  Mark Pay Period as Paid
-</button>
-    </div>
+      <h2>Grant Totals</h2>
+      <table class="batch-table">
+        <thead>
+          <tr>
+            <th>Grant</th>
+            <th>Sessions</th>
+            <th>Hours</th>
+            <th>Payroll</th>
+          </tr>
+        </thead>
+        <tbody id="grantTotalsBody">
+          <tr><td colspan="4">Select a pay period.</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <div id="payrollTotals"></div>
+    <div class="dashboard-card">
+      <h2>Payroll Detail</h2>
+      <table id="payrollDetailTable" class="batch-table">
+        <thead>
+          <tr>
+            <th>Coach</th>
+            <th>Date</th>
+            <th>Grant</th>
+            <th>Program</th>
+            <th>Service</th>
+            <th>School</th>
+            <th>Hours</th>
+            <th>Rate</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="payrollDetailBody">
+          <tr><td colspan="11">Select a pay period to view payroll.</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-<div class="dashboard-card payroll-toolbar">
-
-  <div class="payroll-toolbar-left">
-    
-  <h2>Payroll Detail</h2>
-
-  <div style="margin-bottom:12px;">
-     </div>
-
-  <table id="payrollDetailTable" class="batch-table">
-    <thead>
-      <tr>
-        <th>Coach</th>
-        <th>Date</th>
-        <th>Grant</th>
-        <th>Program</th>
-        <th>Service</th>
-        <th>Hours</th>
-        <th>Rate</th>
-        <th>Amount</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="payrollDetailBody">
-      <tr>
-        <td colspan="9">Select a pay period to view payroll.</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<div id="payrollSummary"></div>
+    <details class="dashboard-card">
+      <summary><strong>Coach Totals</strong></summary>
+      <div id="coachTotals"></div>
+    </details>
 
   </main>
-
 </div>
 
 <script src="auth.js"></script>
-<script src="payroll.js?v=2"></script>
-
+<script src="payroll.js?v=3"></script>
 </body>
 </html>
