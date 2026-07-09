@@ -732,6 +732,112 @@ const manualCoachSuggestions = document.getElementById("manualCoachSuggestions")
 
 let manualPayrollPeople = [];
 
+function manualCoachOptions() {
+  return manualPayrollPeople
+    .map(person => `<option value="${person.Name}"></option>`)
+    .join("");
+}
+
+function addManualGridRow(copyFromLast = true) {
+  const body = document.getElementById("manualPayrollGridBody");
+
+  let previous = null;
+
+  if (copyFromLast && body.children.length > 0) {
+    const lastRow = body.children[body.children.length - 1];
+
+    previous = {
+      date: lastRow.querySelector(".grid-date").value,
+      programType: lastRow.querySelector(".grid-program").value,
+      fund: lastRow.querySelector(".grid-fund").value,
+      serviceType: lastRow.querySelector(".grid-service").value,
+      hours: lastRow.querySelector(".grid-hours").value,
+      school: lastRow.querySelector(".grid-school").value,
+      notes: lastRow.querySelector(".grid-notes").value
+    };
+  }
+
+  const row = document.createElement("tr");
+
+  row.innerHTML = `
+    <td>
+      <input class="grid-coach" list="manualCoachGridList" placeholder="Coach">
+    </td>
+
+    <td>
+      <input class="grid-date" type="date" value="${previous ? previous.date : ""}">
+    </td>
+
+    <td>
+      <select class="grid-program">
+        <option value="">Program</option>
+        <option value="Youth">Youth</option>
+        <option value="Adult">Adult</option>
+        <option value="Summer Program">Summer Program</option>
+        <option value="Professional Development">Professional Development</option>
+        <option value="Meeting">Meeting</option>
+        <option value="Other">Other</option>
+      </select>
+    </td>
+
+    <td>
+      <select class="grid-fund">
+        <option value="">Fund</option>
+        <option value="Grit">Grit</option>
+        <option value="NW OH">NW OH</option>
+        <option value="SW OH">SW OH</option>
+      </select>
+    </td>
+
+    <td>
+      <select class="grid-service">
+        <option value="">Service</option>
+        <option value="Coaching">Coaching</option>
+        <option value="Revolution">Revolution</option>
+        <option value="Training">Training</option>
+        <option value="Shadowing">Shadowing</option>
+        <option value="Administrative">Administrative</option>
+        <option value="Other">Other</option>
+      </select>
+    </td>
+
+    <td>
+      <input class="grid-hours" type="number" step="0.25" min="0" placeholder="Hours" value="${previous ? previous.hours : ""}">
+    </td>
+
+    <td>
+      <input class="grid-school" placeholder="School / Agency" value="${previous ? previous.school : ""}">
+    </td>
+
+    <td>
+      <input class="grid-notes" placeholder="Notes" value="${previous ? previous.notes : ""}">
+    </td>
+
+    <td>
+      <button onclick="this.closest('tr').remove()">Remove</button>
+    </td>
+  `;
+
+  body.appendChild(row);
+
+  if (previous) {
+    row.querySelector(".grid-program").value = previous.programType;
+    row.querySelector(".grid-fund").value = previous.fund;
+    row.querySelector(".grid-service").value = previous.serviceType;
+  }
+
+  row.querySelector(".grid-coach").focus();
+}
+
+function clearManualGrid() {
+  if (!confirm("Clear all manual payroll rows?")) return;
+
+  document.getElementById("manualPayrollGridBody").innerHTML = "";
+  document.getElementById("manualSessionMessage").textContent = "";
+
+  addManualGridRow(false);
+}
+
 function loadManualPayrollPeople() {
   console.log("Starting loadManualPayrollPeople");
 
@@ -753,6 +859,13 @@ function loadManualPayrollPeople() {
       console.error("Manual people error:", error);
     });
 }
+
+setTimeout(() => {
+  const table = document.getElementById("manualPayrollGridBody");
+  if (table && table.children.length === 0) {
+    addManualGridRow(false);
+  }
+}, 500);
 
 function showManualCoachSuggestions() {
   const typed = manualCoachInput.value.trim().toLowerCase();
