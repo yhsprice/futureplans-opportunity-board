@@ -577,3 +577,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   gap: 10px;
 }
 
+.payroll-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:40px;
+}
+
+.payroll-toolbar-left{
+    flex:1;
+}
+
+.payroll-toolbar-right{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    min-width:220px;
+}
