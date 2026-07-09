@@ -460,6 +460,79 @@ function removeManualBatchEntry(index) {
   renderManualBatch();
 }
 
+function submitManualBatch() {
+  const message = document.getElementById("manualSessionMessage");
+
+  if (manualBatch.length === 0) {
+    alert("There are no batch entries to submit.");
+    return;
+  }
+
+  const approveNow = confirm(
+    `Submit ${manualBatch.length} manual payroll entr${manualBatch.length === 1 ? "y" : "ies"}?\n\nApprove these for pay now?`
+  );
+
+  let completed = 0;
+  let failed = 0;
+
+  manualBatch.forEach(entry => {
+    const params = new URLSearchParams({
+      action: "addManualCompletedSession",
+      approveNow,
+      userName: entry.userName,
+      date: entry.date,
+      programType: entry.programType,
+      fund: entry.fund,
+      serviceType: entry.serviceType,
+      hours: entry.hours,
+      school: entry.school,
+      notes: entry.notes
+    });
+
+    fetch(API_URL, {
+      method: "POST",
+      body: params
+    })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          completed++;
+        } else {
+          failed++;
+          console.error("Manual batch failed:", result.message, entry);
+        }
+
+        if (completed + failed === manualBatch.length) {
+          message.textContent = `${completed} added successfully. ${failed} failed.`;
+
+          if (failed === 0) {
+            manualBatch = [];
+            renderManualBatch();
+
+            document.getElementById("manualCoachInput").value = "";
+            document.getElementById("manualDate").value = "";
+            document.getElementById("manualProgramType").value = "";
+            document.getElementById("manualFund").value = "";
+            document.getElementById("manualServiceType").value = "";
+            document.getElementById("manualHours").value = "";
+            document.getElementById("manualSchool").value = "";
+            document.getElementById("manualNotes").value = "";
+
+            loadPayApprovals();
+          }
+        }
+      })
+      .catch(error => {
+        failed++;
+        console.error("Manual batch error:", error);
+
+        if (completed + failed === manualBatch.length) {
+          message.textContent = `${completed} added successfully. ${failed} failed.`;
+        }
+      });
+  });
+}
+
 async function loadDashboardCounts() {
   try {
     const opportunities = await jsonp(`${API_URL}?action=getOpportunities`);
