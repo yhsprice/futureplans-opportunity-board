@@ -407,137 +407,6 @@ function submitManualCompletedSession() {
 });
 }
 
-let manualBatch = [];
-
-function addManualEntryToBatch() {
-  const entry = {
-    userName: document.getElementById("manualCoachInput").value.trim(),
-    date: document.getElementById("manualDate").value,
-    programType: document.getElementById("manualProgramType").value,
-    fund: document.getElementById("manualFund").value,
-    serviceType: document.getElementById("manualServiceType").value,
-    hours: document.getElementById("manualHours").value,
-    school: document.getElementById("manualSchool").value.trim(),
-    notes: document.getElementById("manualNotes").value.trim()
-  };
-
-  if (!entry.userName || !entry.date || !entry.programType || !entry.fund || !entry.serviceType || !entry.hours) {
-    alert("Please complete Coach, Date, Program Type, Fund, Service Type, and Hours.");
-    return;
-  }
-
-  manualBatch.push(entry);
-  renderManualBatch();
-}
-
-document.getElementById("manualCoachInput").value = "";
-document.getElementById("manualCoachInput").focus();
-document.getElementById("manualSchool").value = entry.school;
-document.getElementById("manualNotes").value = entry.notes;
-
-function renderManualBatch() {
-  const body = document.getElementById("manualBatchBody");
-  const button = document.getElementById("submitBatchBtn");
-
-  body.innerHTML = "";
-
-  manualBatch.forEach((entry, index) => {
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td>${entry.userName}</td>
-      <td>${entry.date}</td>
-      <td>${entry.programType}</td>
-      <td>${entry.serviceType}</td>
-      <td>${entry.hours}</td>
-      <td>${entry.school || ""}</td>
-      <td><button onclick="removeManualBatchEntry(${index})">Remove</button></td>
-    `;
-
-    body.appendChild(row);
-  });
-
-  button.textContent = `Submit Batch (${manualBatch.length})`;
-}
-
-function removeManualBatchEntry(index) {
-  manualBatch.splice(index, 1);
-  renderManualBatch();
-}
-
-function submitManualBatch() {
-  const message = document.getElementById("manualSessionMessage");
-
-  if (manualBatch.length === 0) {
-    alert("There are no batch entries to submit.");
-    return;
-  }
-
-  const approveNow = confirm(
-    `Submit ${manualBatch.length} manual payroll entr${manualBatch.length === 1 ? "y" : "ies"}?\n\nApprove these for pay now?`
-  );
-
-  let completed = 0;
-  let failed = 0;
-
-  manualBatch.forEach(entry => {
-    const params = new URLSearchParams({
-      action: "addManualCompletedSession",
-      approveNow,
-      userName: entry.userName,
-      date: entry.date,
-      programType: entry.programType,
-      fund: entry.fund,
-      serviceType: entry.serviceType,
-      hours: entry.hours,
-      school: entry.school,
-      notes: entry.notes
-    });
-
-    fetch(API_URL, {
-      method: "POST",
-      body: params
-    })
-      .then(response => response.json())
-      .then(result => {
-        if (result.success) {
-          completed++;
-        } else {
-          failed++;
-          console.error("Manual batch failed:", result.message, entry);
-        }
-
-        if (completed + failed === manualBatch.length) {
-          message.textContent = `${completed} added successfully. ${failed} failed.`;
-
-          if (failed === 0) {
-            manualBatch = [];
-            renderManualBatch();
-
-            document.getElementById("manualCoachInput").value = "";
-            document.getElementById("manualDate").value = "";
-            document.getElementById("manualProgramType").value = "";
-            document.getElementById("manualFund").value = "";
-            document.getElementById("manualServiceType").value = "";
-            document.getElementById("manualHours").value = "";
-            document.getElementById("manualSchool").value = "";
-            document.getElementById("manualNotes").value = "";
-
-            loadPayApprovals();
-          }
-        }
-      })
-      .catch(error => {
-        failed++;
-        console.error("Manual batch error:", error);
-
-        if (completed + failed === manualBatch.length) {
-          message.textContent = `${completed} added successfully. ${failed} failed.`;
-        }
-      });
-  });
-}
-
 async function loadDashboardCounts() {
   try {
     const opportunities = await jsonp(`${API_URL}?action=getOpportunities`);
@@ -898,7 +767,9 @@ function showManualCoachSuggestions() {
   manualCoachSuggestions.style.display = matches.length ? "block" : "none";
 }
 
-manualCoachInput.addEventListener("input", showManualCoachSuggestions);
+if (manualCoachInput) {
+  manualCoachInput.addEventListener("input", showManualCoachSuggestions);
+}
 
 loadRequests();
 loadPayApprovals();
