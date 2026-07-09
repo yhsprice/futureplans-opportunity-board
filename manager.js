@@ -407,6 +407,59 @@ function submitManualCompletedSession() {
 });
 }
 
+let manualBatch = [];
+
+function addManualEntryToBatch() {
+  const entry = {
+    userName: document.getElementById("manualCoachInput").value.trim(),
+    date: document.getElementById("manualDate").value,
+    programType: document.getElementById("manualProgramType").value,
+    fund: document.getElementById("manualFund").value,
+    serviceType: document.getElementById("manualServiceType").value,
+    hours: document.getElementById("manualHours").value,
+    school: document.getElementById("manualSchool").value.trim(),
+    notes: document.getElementById("manualNotes").value.trim()
+  };
+
+  if (!entry.userName || !entry.date || !entry.programType || !entry.fund || !entry.serviceType || !entry.hours) {
+    alert("Please complete Coach, Date, Program Type, Fund, Service Type, and Hours.");
+    return;
+  }
+
+  manualBatch.push(entry);
+  renderManualBatch();
+}
+
+function renderManualBatch() {
+  const body = document.getElementById("manualBatchBody");
+  const button = document.getElementById("submitBatchBtn");
+
+  body.innerHTML = "";
+
+  manualBatch.forEach((entry, index) => {
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${entry.userName}</td>
+      <td>${entry.date}</td>
+      <td>${entry.programType}</td>
+      <td>${entry.serviceType}</td>
+      <td>${entry.hours}</td>
+      <td>${entry.school || ""}</td>
+      <td><button onclick="removeManualBatchEntry(${index})">Remove</button></td>
+    `;
+
+    body.appendChild(row);
+  });
+
+  button.textContent = `Submit Batch (${manualBatch.length})`;
+}
+
+function removeManualBatchEntry(index) {
+  manualBatch.splice(index, 1);
+  renderManualBatch();
+}
+
 async function loadDashboardCounts() {
   try {
     const opportunities = await jsonp(`${API_URL}?action=getOpportunities`);
