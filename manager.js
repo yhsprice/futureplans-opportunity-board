@@ -736,9 +736,10 @@ function submitManualGrid() {
   );
 
   if (incomplete) {
-    alert("Please complete Coach, Date, Program, Fund, Service, and Hours for every row.");
-    return;
-  }
+  console.log("Grid entries being checked:", entries);
+  alert("One or more rows is missing Coach, Date, Program, Fund, Service, or Hours. Notes are optional.");
+  return;
+}
 
   const approveNow = confirm(
     `Submit ${entries.length} payroll entr${entries.length === 1 ? "y" : "ies"}?\n\nApprove for pay now?`
@@ -788,6 +789,14 @@ function submitManualGrid() {
 
 function loadManualPayrollPeople() {
   console.log("Starting loadManualPayrollPeople");
+
+  const gridList = document.getElementById("manualCoachGridList");
+
+if (gridList) {
+  gridList.innerHTML = manualPayrollPeople
+    .map(person => `<option value="${person.Name}"></option>`)
+    .join("");
+}
 
   jsonp(`${API_URL}?action=getPeople`)
     .then(people => {
