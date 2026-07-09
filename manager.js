@@ -811,6 +811,15 @@ if (gridList) {
         .sort((a, b) => a.Name.localeCompare(b.Name));
 
       console.log("Manual payroll people:", manualPayrollPeople);
+
+      const gridList = document.getElementById("manualCoachGridList");
+
+if (gridList) {
+  gridList.innerHTML = manualPayrollPeople
+    .map(person => `<option value="${person.Name}"></option>`)
+    .join("");
+}
+      
     })
     .catch(error => {
       console.error("Manual people error:", error);
