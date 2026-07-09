@@ -128,108 +128,44 @@
       <p>Loading pay approvals...</p>
     </div>
 
-    <h2>Manual Coach Time Entry</h2>
+  <h2>Manual Coach Time Entry</h2>
 
-    <div class="dashboard-card">
-      <p>Use this when a coach completed work but was unable to submit it.</p>
+<div class="dashboard-card">
+  <p>Enter multiple payroll items below. New rows copy the previous row except coach.</p>
 
-      <div class="autocomplete">
-  <input 
-    id="manualCoachInput" 
-    type="text" 
-    placeholder="Start typing coach name..."
-    autocomplete="off"
-  >
-  <div id="manualCoachSuggestions" class="autocomplete-suggestions"></div>
-</div>
+  <div class="manual-grid-actions">
+    <button onclick="addManualGridRow()">+ Add Row</button>
+    <button onclick="clearManualGrid()">Clear All</button>
+    <button onclick="submitManualGrid()">Submit All</button>
+  </div>
 
-      <input id="manualDate" type="date">
-
-      <select id="manualProgramType">
-        <option value="">Program Type</option>
-        <option value="Youth">Youth</option>
-        <option value="Adult">Adult</option>
-        <option value="Summer Program">Summer Program</option>
-        <option value="Professional Development">Professional Development</option>
-        <option value="Meeting">Meeting</option>
-        <option value="Other">Other</option>
-      </select>
-
-      <select id="manualFund">
-        <option value="">Fund</option>
-        <option value="Grit">Grit</option>
-        <option value="NW OH">NW OH</option>
-        <option value="SW OH">SW OH</option>
-      </select>
-
-      <select id="manualServiceType">
-        <option value="">Service Type</option>
-        <option value="Coaching">Coaching</option>
-        <option value="Revolution">Revolution</option>
-        <option value="Training">Training</option>
-        <option value="Shadowing">Shadowing</option>
-        <option value="Administrative">Administrative</option>
-        <option value="Other">Other</option>
-      </select>
-
-      <select id="manualHours">
-        <option value="">Hours</option>
-        <option value=".25">.25</option>
-        <option value=".5">.5</option>
-        <option value=".75">.75</option>
-        <option value="1.00">1.00</option>
-        <option value="1.25">1.25</option>
-        <option value="1.50">1.50</option>
-        <option value="1.75">1.75</option>
-        <option value="3.50">3.50</option>
-        </select>
-
-      <br><br>
-
-      <input id="manualSchool" placeholder="School / Agency optional">
-
-      <div style="margin-top:10px;">
-        <textarea id="manualNotes" placeholder="Notes optional" style="width:480px; height:80px;"></textarea>
-      </div>
-
-      <br>
-
-        <button onclick="addManualEntryToBatch()">
-        Add to Batch
-        </button>
-
-        <button onclick="submitManualBatch()" id="submitBatchBtn">
-        Submit Batch (0)
-        </button>
-
-      <h3>Pending Batch</h3>
-
-<table id="manualBatchTable" class="batch-table">
+  <table id="manualPayrollGrid" class="batch-table">
     <thead>
-        <tr>
-            <th>Coach</th>
-            <th>Date</th>
-            <th>Program</th>
-            <th>Service</th>
-            <th>Hours</th>
-            <th>School</th>
-            <th></th>
-        </tr>
+      <tr>
+        <th>Coach</th>
+        <th>Date</th>
+        <th>Program</th>
+        <th>Fund</th>
+        <th>Service</th>
+        <th>Hours</th>
+        <th>School</th>
+        <th>Notes</th>
+        <th></th>
+      </tr>
     </thead>
 
-    <tbody id="manualBatchBody">
-    </tbody>
-</table>
+    <tbody id="manualPayrollGridBody"></tbody>
+  </table>
 
-      <p id="manualSessionMessage"></p>
-    </div>
+  <p id="manualSessionMessage"></p>
+</div>
 
-  </main>
+</main>
 
 </div>
 
 <script src="auth.js?v=2"></script>
-<script src="manager.js?v=11"></script>
+<script src="manager.js?v=12"></script>
 
 </body>
 </html>
