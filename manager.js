@@ -818,6 +818,8 @@ if (gridList) {
   gridList.innerHTML = manualPayrollPeople
     .map(person => `<option value="${person.Name}"></option>`)
     .join("");
+
+  console.log("Grid datalist populated:", gridList.options.length);
 }
       
     })
