@@ -73,20 +73,30 @@
         <option value="name">Coach Name (A-Z)</option>
       </select>
 
-      <br><br>
+        </div>
+
+  <div class="payroll-toolbar-right">
+
+<button onclick="exportPayrollToExcel()">
+  Export to Excel
+</button>
+
+<br><br>
 
 <button onclick="copyAccountingSummary()">
-  Copy Accounting Summary
-</button>
 
 <button onclick="markPayPeriodPaid()">
   Mark Pay Period as Paid
 </button>
     </div>
+    </div>
 
     <div id="payrollTotals"></div>
 
-<div class="dashboard-card">
+<div class="dashboard-card payroll-toolbar">
+
+  <div class="payroll-toolbar-left">
+    
   <h2>Payroll Detail</h2>
 
   <div style="margin-bottom:12px;">
