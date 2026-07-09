@@ -86,16 +86,43 @@
 
     <div id="payrollTotals"></div>
 
-    <div id="payrollSummary">
-      <p>Select a pay period to view payroll.</p>
-    </div>
+<div class="dashboard-card">
+  <h2>Payroll Detail</h2>
+
+  <div style="margin-bottom:12px;">
+    <button onclick="exportPayrollToExcel()">Export to Excel</button>
+  </div>
+
+  <table id="payrollDetailTable" class="batch-table">
+    <thead>
+      <tr>
+        <th>Coach</th>
+        <th>Date</th>
+        <th>Grant</th>
+        <th>Program</th>
+        <th>Service</th>
+        <th>Hours</th>
+        <th>Rate</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="payrollDetailBody">
+      <tr>
+        <td colspan="9">Select a pay period to view payroll.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="payrollSummary"></div>
 
   </main>
 
 </div>
 
 <script src="auth.js"></script>
-<script src="payroll.js"></script>
+<script src="payroll.js?v=2"></script>
 
 </body>
 </html>
