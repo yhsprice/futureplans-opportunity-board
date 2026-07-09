@@ -707,6 +707,85 @@ function clearManualGrid() {
   addManualGridRow(false);
 }
 
+function submitManualGrid() {
+  const rows = document.querySelectorAll("#manualPayrollGridBody tr");
+  const message = document.getElementById("manualSessionMessage");
+
+  if (rows.length === 0) {
+    alert("There are no rows to submit.");
+    return;
+  }
+
+  const entries = [];
+
+  rows.forEach(row => {
+    entries.push({
+      userName: row.querySelector(".grid-coach").value.trim(),
+      date: row.querySelector(".grid-date").value,
+      programType: row.querySelector(".grid-program").value,
+      fund: row.querySelector(".grid-fund").value,
+      serviceType: row.querySelector(".grid-service").value,
+      hours: row.querySelector(".grid-hours").value,
+      school: row.querySelector(".grid-school").value.trim(),
+      notes: row.querySelector(".grid-notes").value.trim()
+    });
+  });
+
+  const incomplete = entries.some(e =>
+    !e.userName || !e.date || !e.programType || !e.fund || !e.serviceType || !e.hours
+  );
+
+  if (incomplete) {
+    alert("Please complete Coach, Date, Program, Fund, Service, and Hours for every row.");
+    return;
+  }
+
+  const approveNow = confirm(
+    `Submit ${entries.length} payroll entr${entries.length === 1 ? "y" : "ies"}?\n\nApprove for pay now?`
+  );
+
+  let completed = 0;
+  let failed = 0;
+
+  entries.forEach(entry => {
+    const params = new URLSearchParams({
+      action: "addManualCompletedSession",
+      approveNow,
+      userName: entry.userName,
+      date: entry.date,
+      programType: entry.programType,
+      fund: entry.fund,
+      serviceType: entry.serviceType,
+      hours: entry.hours,
+      school: entry.school,
+      notes: entry.notes
+    });
+
+    fetch(API_URL, {
+      method: "POST",
+      body: params
+    })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) completed++;
+        else failed++;
+
+        if (completed + failed === entries.length) {
+          message.textContent = `${completed} added successfully. ${failed} failed.`;
+
+          if (failed === 0) {
+            clearManualGrid();
+            loadPayApprovals();
+          }
+        }
+      })
+      .catch(error => {
+        failed++;
+        console.error("Grid submit error:", error);
+      });
+  });
+}
+
 function loadManualPayrollPeople() {
   console.log("Starting loadManualPayrollPeople");
 
