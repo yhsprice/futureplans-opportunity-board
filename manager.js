@@ -430,6 +430,11 @@ function addManualEntryToBatch() {
   renderManualBatch();
 }
 
+document.getElementById("manualCoachInput").value = "";
+document.getElementById("manualCoachInput").focus();
+document.getElementById("manualSchool").value = entry.school;
+document.getElementById("manualNotes").value = entry.notes;
+
 function renderManualBatch() {
   const body = document.getElementById("manualBatchBody");
   const button = document.getElementById("submitBatchBtn");
