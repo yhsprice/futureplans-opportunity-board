@@ -194,9 +194,32 @@
 
       <br>
 
-        <button onclick="submitManualCompletedSession()">
-        Add Manual Time
-      </button>
+        <button onclick="addManualEntryToBatch()">
+        Add to Batch
+        </button>
+
+        <button onclick="submitManualBatch()" id="submitBatchBtn">
+        Submit Batch (0)
+        </button>
+
+      <h3>Pending Batch</h3>
+
+<table id="manualBatchTable" class="batch-table">
+    <thead>
+        <tr>
+            <th>Coach</th>
+            <th>Date</th>
+            <th>Program</th>
+            <th>Service</th>
+            <th>Hours</th>
+            <th>School</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody id="manualBatchBody">
+    </tbody>
+</table>
 
       <p id="manualSessionMessage"></p>
     </div>
