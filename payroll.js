@@ -1,5 +1,30 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
 
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const callbackName =
+      "jsonp_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+
+    const script = document.createElement("script");
+
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      script.remove();
+      resolve(data);
+    };
+
+    script.src = `${url}&callback=${callbackName}`;
+
+    script.onerror = function(error) {
+      delete window[callbackName];
+      script.remove();
+      reject(error);
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
 const totalsContainer = document.getElementById("payrollTotals");
 const container = document.getElementById("payrollSummary");
 const payPeriodSelect = document.getElementById("payPeriodSelect");
@@ -8,30 +33,46 @@ const sortBy = document.getElementById("sortBy");
 showUserBanner();
 
 async function loadPayPeriods() {
-  const response = await fetch(`${API_URL}?action=getPayPeriods`);
-  const payPeriods = await response.json();
+  try {
+    const payPeriods = await jsonp(
+      `${API_URL}?action=getPayPeriods`
+    );
 
-  payPeriodSelect.innerHTML = "";
+    payPeriodSelect.innerHTML = "";
 
-  let currentPayPeriod = "";
+    let currentPayPeriod = "";
 
-payPeriods.forEach(period => {
-  const option = document.createElement("option");
-  option.value = period.PayPeriodID;
-  option.textContent = `${period.PayPeriodID} | ${formatDate(period.StartDate)} - ${formatDate(period.EndDate)} | ${period.Status}`;
+    payPeriods.forEach(period => {
+      const option = document.createElement("option");
 
-  payPeriodSelect.appendChild(option);
+      option.value = period.PayPeriodID;
 
-  if (period.Status === "Current") {
-    currentPayPeriod = period.PayPeriodID;
+      option.textContent =
+        `${period.PayPeriodID} | ` +
+        `${formatDateOnly(period.StartDate)} - ` +
+        `${formatDateOnly(period.EndDate)} | ` +
+        `${period.Status}`;
+
+      payPeriodSelect.appendChild(option);
+
+      if (String(period.Status).trim() === "Current") {
+        currentPayPeriod = period.PayPeriodID;
+      }
+    });
+
+    if (currentPayPeriod) {
+      payPeriodSelect.value = currentPayPeriod;
+    }
+
+    await loadPayroll();
+
+  } catch (error) {
+    console.error("Pay period loading error:", error);
+
+    payPeriodSelect.innerHTML = `
+      <option value="">Unable to load pay periods</option>
+    `;
   }
-});
-
-if (currentPayPeriod) {
-  payPeriodSelect.value = currentPayPeriod;
-}
-
-loadPayroll();
 }
 
 async function loadPayroll() {
@@ -40,8 +81,9 @@ async function loadPayroll() {
 
   if (!selectedPayPeriod) return;
 
-  const response = await fetch(`${API_URL}?action=getCompletedSessions`);
-  const sessions = await response.json();
+  const sessions = await jsonp(
+    `${API_URL}?action=getCompletedSessions`
+  );
 
   const statusFilter =
     document.getElementById("payrollStatusFilter")?.value || "Approved for Pay";
