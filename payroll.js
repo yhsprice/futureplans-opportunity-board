@@ -67,6 +67,39 @@ async function loadPayroll() {
 
   console.log("Payroll loaded:", payroll);
 
+  loadSummaryCards(payroll);
+
+}
+
+function loadSummaryCards(payroll) {
+
+  const coaches = new Set();
+
+  let totalSessions = payroll.length;
+  let totalHours = 0;
+  let totalPayroll = 0;
+
+  payroll.forEach(session => {
+
+    coaches.add(session.CoachName);
+
+    totalHours += Number(session.PayHours || 0);
+    totalPayroll += Number(session.PayAmount || 0);
+
+  });
+
+  document.getElementById("totalCoaches").textContent =
+    coaches.size;
+
+  document.getElementById("totalSessions").textContent =
+    totalSessions;
+
+  document.getElementById("totalHours").textContent =
+    totalHours.toFixed(2);
+
+  document.getElementById("totalPayroll").textContent =
+    "$" + totalPayroll.toFixed(2);
+
 }
 
 async function deletePayrollEntry(sessionID) {
