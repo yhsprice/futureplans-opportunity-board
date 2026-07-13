@@ -111,6 +111,7 @@ async function loadPayroll() {
 
   loadSummaryCards(payroll);
   loadGrantTotals(payroll);
+  loadCoachTotals(payroll);
   loadPayrollTable(payroll);
 
 }
@@ -213,6 +214,87 @@ function loadGrantTotals(payroll) {
   `;
 
   body.appendChild(totalRow);
+}
+
+function loadCoachTotals(payroll) {
+
+  const container = document.getElementById("coachTotals");
+
+  const coaches = {};
+
+  payroll.forEach(session => {
+
+    const coach = session.CoachName || "Unknown Coach";
+
+    if (!coaches[coach]) {
+      coaches[coach] = {
+        sessions: 0,
+        hours: 0,
+        payroll: 0
+      };
+    }
+
+    coaches[coach].sessions++;
+    coaches[coach].hours += Number(session.PayHours || 0);
+    coaches[coach].payroll += Number(session.PayAmount || 0);
+
+  });
+
+  const coachNames = Object.keys(coaches).sort();
+
+  if (coachNames.length === 0) {
+    container.innerHTML = "<p>No payroll records found.</p>";
+    return;
+  }
+
+  let html = `
+    <table class="batch-table">
+      <thead>
+        <tr>
+          <th>Coach</th>
+          <th>Sessions</th>
+          <th>Hours</th>
+          <th>Payroll</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  let totalSessions = 0;
+  let totalHours = 0;
+  let totalPayroll = 0;
+
+  coachNames.forEach(coach => {
+
+    const c = coaches[coach];
+
+    totalSessions += c.sessions;
+    totalHours += c.hours;
+    totalPayroll += c.payroll;
+
+    html += `
+      <tr>
+        <td>${coach}</td>
+        <td>${c.sessions}</td>
+        <td>${c.hours.toFixed(2)}</td>
+        <td>$${c.payroll.toFixed(2)}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      <tr>
+        <td><strong>TOTAL</strong></td>
+        <td><strong>${totalSessions}</strong></td>
+        <td><strong>${totalHours.toFixed(2)}</strong></td>
+        <td><strong>$${totalPayroll.toFixed(2)}</strong></td>
+      </tr>
+      </tbody>
+    </table>
+  `;
+
+  container.innerHTML = html;
+
 }
 
 function loadPayrollTable(payroll) {
