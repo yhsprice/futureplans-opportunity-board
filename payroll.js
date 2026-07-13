@@ -35,163 +35,38 @@ loadPayroll();
 }
 
 async function loadPayroll() {
+
   const selectedPayPeriod = payPeriodSelect.value;
 
-  if (!selectedPayPeriod) {
-    container.innerHTML = "<p>Select a pay period to view payroll.</p>";
-    return;
-  }
-
-  container.innerHTML = "<p>Loading payroll...</p>";
+  if (!selectedPayPeriod) return;
 
   const response = await fetch(`${API_URL}?action=getCompletedSessions`);
   const sessions = await response.json();
 
-  const approved = sessions.filter(s =>
-  (s.Status === "Approved for Pay" ||
-   s.Status === "Paid") &&
-  s.PayPeriodID === selectedPayPeriod
-);
+  const statusFilter =
+    document.getElementById("payrollStatusFilter")?.value || "Approved for Pay";
 
-  const summary = {};
+  const grantFilter =
+    document.getElementById("grantFilter")?.value || "all";
 
-  approved.forEach(session => {
-    const coach = session.CoachName || "Unknown Coach";
+  let payroll = sessions.filter(session => {
 
-    if (!summary[coach]) {
-      summary[coach] = {
-        hours: 0,
-        pay: 0,
-        sessions: 0
-      };
-    }
+    if (session.PayPeriodID !== selectedPayPeriod)
+      return false;
 
-    summary[coach].hours += Number(session.PayHours || 0);
-    summary[coach].pay += Number(session.PayAmount || 0);
-    summary[coach].sessions += 1;
+    if (statusFilter !== "all" &&
+        session.Status !== statusFilter)
+      return false;
+
+    if (grantFilter !== "all" &&
+        session.Fund !== grantFilter)
+      return false;
+
+    return true;
   });
 
-  let coaches = Object.keys(summary);
+  console.log("Payroll loaded:", payroll);
 
-  switch (sortBy.value) {
-    case "pay":
-      coaches.sort((a, b) => summary[b].pay - summary[a].pay);
-      break;
-    case "sessions":
-      coaches.sort((a, b) => summary[b].sessions - summary[a].sessions);
-      break;
-    case "name":
-      coaches.sort();
-      break;
-    default:
-      coaches.sort((a, b) => summary[b].hours - summary[a].hours);
-  }
-
-  if (coaches.length === 0) {
-    totalsContainer.innerHTML = "";
-    container.innerHTML = `<p>No approved payroll items found for ${selectedPayPeriod}.</p>`;
-    return;
-  }
-
-  let totalHours = 0;
-  let totalPay = 0;
-  let totalSessions = 0;
-
-  let html = `
-    <div class="dashboard-card">
-      <h2>Payroll Summary: ${selectedPayPeriod}</h2>
-
-      <table class="modern-table">
-        <thead>
-          <tr>
-            <th style="text-align:left; padding:10px;">Coach</th>
-            <th style="text-align:left; padding:10px;">Sessions</th>
-            <th style="text-align:left; padding:10px;">Pay Hours</th>
-            <th style="text-align:left; padding:10px;">Pay Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-
-  coaches.forEach(coach => {
-    totalHours += summary[coach].hours;
-    totalPay += summary[coach].pay;
-    totalSessions += summary[coach].sessions;
-
-    html += `
-      <tr>
-        <td style="padding:10px; border-bottom:1px solid #ddd;">${coach}</td>
-        <td style="padding:10px; border-bottom:1px solid #ddd;">${summary[coach].sessions}</td>
-        <td style="padding:10px; border-bottom:1px solid #ddd;">${summary[coach].hours.toFixed(2)}</td>
-        <td style="padding:10px; border-bottom:1px solid #ddd;">$${summary[coach].pay.toFixed(2)}</td>
-      </tr>
-    `;
-  });
-
-  html += `
-        </tbody>
-      </table>
-
-      <h3>Total Hours: ${totalHours.toFixed(2)}</h3>
-      <h3>Total Payroll: $${totalPay.toFixed(2)}</h3>
-    </div>
-
-    <div class="dashboard-card">
-      <h2>Payroll Details</h2>
-
-      <table class="modern-table">
-        <thead>
-          <tr>
-            <th style="text-align:left; padding:8px;">Coach</th>
-            <th style="text-align:left; padding:8px;">Date</th>
-            <th style="text-align:left; padding:8px;">Program</th>
-            <th style="text-align:left; padding:8px;">Fund</th>
-            <th style="text-align:left; padding:8px;">Service</th>
-            <th style="text-align:left; padding:8px;">School/Agency</th>
-            <th style="text-align:left; padding:8px;">Hours</th>
-            <th style="text-align:left; padding:8px;">Pay</th>
-            <th style="text-align:left; padding:8px;">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-
-  approved.forEach(session => {
-    html += `
-      <tr>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">${session.CoachName || ""}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;"> ${formatDateOnly(session.Date)}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">${session.ProgramType || ""}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">${session.Fund || ""}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">${session.PayRule || ""}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">${session.School || ""}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">${Number(session.PayHours || 0).toFixed(2)}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">$${Number(session.PayAmount || 0).toFixed(2)}</td>
-        <td style="padding:8px; border-bottom:1px solid #ddd;">
-          <button onclick="editPayrollEntry('${session.SessionID}')">Edit</button>
-          <button onclick="deletePayrollEntry('${session.SessionID}')">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
-
-  html += `
-        </tbody>
-      </table>
-    </div>
-  `;
-
-  totalsContainer.innerHTML = `
-    <div class="dashboard-card">
-      <h2>${selectedPayPeriod} Summary</h2>
-      <p><strong>Total Coaches:</strong> ${coaches.length}</p>
-      <p><strong>Total Sessions:</strong> ${totalSessions}</p>
-      <p><strong>Total Hours:</strong> ${totalHours.toFixed(2)}</p>
-      <p><strong>Total Payroll:</strong> $${totalPay.toFixed(2)}</p>
-    </div>
-  `;
-
-  container.innerHTML = html;
 }
 
 async function deletePayrollEntry(sessionID) {
