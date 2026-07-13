@@ -67,7 +67,10 @@ async function loadPayroll() {
 
   console.log("Payroll loaded:", payroll);
 
-  loadSummaryCards(payroll);
+loadSummaryCards(payroll);
+loadGrantTotals(payroll);
+
+}
 
 }
 
@@ -100,6 +103,75 @@ function loadSummaryCards(payroll) {
   document.getElementById("totalPayroll").textContent =
     "$" + totalPayroll.toFixed(2);
 
+}
+
+function loadGrantTotals(payroll) {
+  const body = document.getElementById("grantTotalsBody");
+
+  const grants = {};
+
+  payroll.forEach(session => {
+    const grant = session.Fund || "Unassigned";
+
+    if (!grants[grant]) {
+      grants[grant] = {
+        sessions: 0,
+        hours: 0,
+        payroll: 0
+      };
+    }
+
+    grants[grant].sessions += 1;
+    grants[grant].hours += Number(session.PayHours || 0);
+    grants[grant].payroll += Number(session.PayAmount || 0);
+  });
+
+  body.innerHTML = "";
+
+  const grantNames = Object.keys(grants).sort();
+
+  if (grantNames.length === 0) {
+    body.innerHTML = `
+      <tr>
+        <td colspan="4">No payroll records found.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  let totalSessions = 0;
+  let totalHours = 0;
+  let totalPayroll = 0;
+
+  grantNames.forEach(grant => {
+    const values = grants[grant];
+
+    totalSessions += values.sessions;
+    totalHours += values.hours;
+    totalPayroll += values.payroll;
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${grant}</td>
+      <td>${values.sessions}</td>
+      <td>${values.hours.toFixed(2)}</td>
+      <td>$${values.payroll.toFixed(2)}</td>
+    `;
+
+    body.appendChild(row);
+  });
+
+  const totalRow = document.createElement("tr");
+
+  totalRow.innerHTML = `
+    <td><strong>TOTAL</strong></td>
+    <td><strong>${totalSessions}</strong></td>
+    <td><strong>${totalHours.toFixed(2)}</strong></td>
+    <td><strong>$${totalPayroll.toFixed(2)}</strong></td>
+  `;
+
+  body.appendChild(totalRow);
 }
 
 async function deletePayrollEntry(sessionID) {
