@@ -67,8 +67,9 @@ async function loadPayroll() {
 
   console.log("Payroll loaded:", payroll);
 
-loadSummaryCards(payroll);
-loadGrantTotals(payroll);
+  loadSummaryCards(payroll);
+  loadGrantTotals(payroll);
+  loadPayrollTable(payroll);
 
 }
 
@@ -172,6 +173,66 @@ function loadGrantTotals(payroll) {
   `;
 
   body.appendChild(totalRow);
+}
+
+function loadPayrollTable(payroll) {
+  const body = document.getElementById("payrollDetailBody");
+
+  body.innerHTML = "";
+
+  if (payroll.length === 0) {
+    body.innerHTML = `
+      <tr>
+        <td colspan="11">No payroll records found.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  const sortValue = sortBy.value;
+
+  payroll.sort((a, b) => {
+    switch (sortValue) {
+      case "coach":
+        return String(a.CoachName || "").localeCompare(String(b.CoachName || ""));
+
+      case "grant":
+        return String(a.Fund || "").localeCompare(String(b.Fund || ""));
+
+      case "hours":
+        return Number(b.PayHours || 0) - Number(a.PayHours || 0);
+
+      case "pay":
+        return Number(b.PayAmount || 0) - Number(a.PayAmount || 0);
+
+      case "date":
+      default:
+        return new Date(a.Date) - new Date(b.Date);
+    }
+  });
+
+  payroll.forEach(session => {
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${session.CoachName || ""}</td>
+      <td>${formatDateOnly(session.Date)}</td>
+      <td>${session.Fund || "Unassigned"}</td>
+      <td>${session.ProgramType || ""}</td>
+      <td>${session.PayRule || ""}</td>
+      <td>${session.School || ""}</td>
+      <td>${Number(session.PayHours || 0).toFixed(2)}</td>
+      <td>$${Number(session.PayRate || 0).toFixed(2)}</td>
+      <td>$${Number(session.PayAmount || 0).toFixed(2)}</td>
+      <td>${session.Status || ""}</td>
+      <td>
+        <button onclick="editPayrollEntry('${session.SessionID}')">Edit</button>
+        <button onclick="deletePayrollEntry('${session.SessionID}')">Delete</button>
+      </td>
+    `;
+
+    body.appendChild(row);
+  });
 }
 
 async function deletePayrollEntry(sessionID) {
