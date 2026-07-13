@@ -73,8 +73,6 @@ async function loadPayroll() {
 
 }
 
-}
-
 function loadSummaryCards(payroll) {
 
   const coaches = new Set();
