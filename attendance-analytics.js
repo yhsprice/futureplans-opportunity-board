@@ -38,6 +38,9 @@ const locationSummary =
 const attendanceTableBody =
   document.getElementById("attendanceTableBody");
 
+const populationFilter =
+  document.getElementById("populationFilter");
+
 /* =========================================================
    STORED PAGE DATA
 ========================================================= */
@@ -446,19 +449,30 @@ function setDropdownOptions(
 }
 
 function populateRegionFilter() {
+
   const currentValue =
     regionFilter.value;
 
- const fiscalRows =
-  getCoachingRows(
-    filterByFiscalYear(
-      allAttendanceRows
-    )
-  );
+  let rows =
+    getCoachingRows(
+      filterByFiscalYear(
+        allAttendanceRows
+      )
+    );
+
+  // Filter by Population
+  const selectedPopulation =
+    populationFilter.value;
+
+  if (selectedPopulation) {
+    rows = rows.filter(row =>
+      cleanText(row.ProgramType) === selectedPopulation
+    );
+  }
 
   const regions =
     uniqueSorted(
-      fiscalRows.map(row =>
+      rows.map(row =>
         row.ReportRegion
       )
     );
@@ -578,6 +592,9 @@ function getFilteredRows() {
       )
     );
 
+  const selectedPopulation =
+    populationFilter.value;
+
   const selectedRegion =
     regionFilter.value;
 
@@ -586,6 +603,12 @@ function getFilteredRows() {
 
   const selectedLocation =
     locationFilter.value;
+
+  if (selectedPopulation) {
+    rows = rows.filter(row =>
+      cleanText(row.ProgramType) === selectedPopulation
+    );
+  }
 
   if (selectedRegion) {
     rows = rows.filter(row =>
