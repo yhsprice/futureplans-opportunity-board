@@ -48,11 +48,15 @@ const submittedRequestIDs = new Set(
     .filter(Boolean)
 );
     const myRequests = requests
-      .filter(r =>
-  String(r.PersonID) === String(currentPersonID) &&
-  (r.Status === "Approved" || r.Status === "Pending Approval") &&
-  !submittedRequestIDs.has(String(r.RequestID || "").trim())
-)
+  .filter(r => {
+    const requestID = String(r.RequestID || "").trim();
+
+    return (
+      String(r.PersonID) === String(currentPersonID) &&
+      (r.Status === "Approved" || r.Status === "Pending Approval") &&
+      !submittedRequestIDs.has(requestID)
+    );
+  })
       .sort((a, b) => {
         const dateA = new Date(`${a.Date} ${a.StartTime}`);
         const dateB = new Date(`${b.Date} ${b.StartTime}`);
