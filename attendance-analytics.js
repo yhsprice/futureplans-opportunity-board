@@ -188,6 +188,7 @@ function getOutcome(row) {
 
 function getReason(row) {
   return cleanText(
+    row.CancellationReason ||
     row.OutcomeReason ||
     row.Reason
   );
@@ -507,6 +508,17 @@ function getFilteredRows() {
     filterByFiscalYear(
       allAttendanceRows
     );
+
+  rows = rows.filter(row => {
+  const payRule = cleanText(row.PayRule);
+  const programType = cleanText(row.ProgramType);
+
+  return (
+    payRule === "Regular Coaching" ||
+    programType === "Youth" ||
+    programType === "Adult"
+  );
+});
 
   const selectedRegion =
     regionFilter.value;
