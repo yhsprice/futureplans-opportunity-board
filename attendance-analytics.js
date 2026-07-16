@@ -606,17 +606,21 @@ function populateLocationFilter() {
 
 function getCoachingRows(rows) {
   return rows.filter(row => {
-    const payRule = cleanText(row.PayRule);
-    const programType = cleanText(row.ProgramType);
-    const school = cleanText(row.School);
+    const payRule =
+      cleanText(row.PayRule).toLowerCase();
+
+    const programType =
+      cleanText(row.ProgramType).toLowerCase();
 
     const isMeetingOrTraining =
-      programType === "Meeting" ||
-      programType === "Professional Development" ||
-      payRule === "Meeting" ||
-      payRule === "Prof Development";
+      programType.includes("meeting") ||
+      programType.includes("professional development") ||
+      programType.includes("training") ||
+      payRule.includes("meeting") ||
+      payRule.includes("prof development") ||
+      payRule.includes("training");
 
-    return !isMeetingOrTraining && school !== "";
+    return !isMeetingOrTraining;
   });
 }
 
