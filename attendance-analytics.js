@@ -50,17 +50,19 @@ async function loadAttendanceAnalytics() {
     console.log("Attendance analytics rows:", rows);
 
     if (rows && rows.success === false) {
-  throw new Error(rows.message || "Apps Script returned an error.");
-}
+      throw new Error(
+        rows.message || "Apps Script returned an error."
+      );
+    }
 
-if (!Array.isArray(rows)) {
-  throw new Error(
-    "Attendance Analytics did not return a list of rows."
-  );
-}
+    if (!Array.isArray(rows)) {
+      throw new Error(
+        "Attendance Analytics did not return a list of rows."
+      );
+    }
 
     analyticsMessage.textContent =
-  `Something went wrong: ${error.message}`;
+      `${rows.length} attendance record(s) loaded.`;
 
   } catch (error) {
     console.error(
@@ -69,8 +71,7 @@ if (!Array.isArray(rows)) {
     );
 
     analyticsMessage.textContent =
-      "Something went wrong loading attendance data.";
+      `Something went wrong: ${error.message}`;
   }
 }
-
 loadAttendanceAnalytics();
