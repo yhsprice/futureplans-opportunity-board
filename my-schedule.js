@@ -1,5 +1,32 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
 
+const submittingRequestIDs = new Set();
+
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const callbackName =
+      "jsonp_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+
+    const script = document.createElement("script");
+
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      script.remove();
+      resolve(data);
+    };
+
+    script.src = `${url}&callback=${callbackName}`;
+
+    script.onerror = function(error) {
+      delete window[callbackName];
+      script.remove();
+      reject(error);
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
 const container = document.getElementById("scheduleList");
 const currentUser = getCurrentUser();
 let currentPersonID = currentUser.PersonID;
@@ -8,14 +35,24 @@ async function loadSchedule() {
   container.innerHTML = "<p>Loading schedule...</p>";
 
   try {
-    const response = await fetch(API_URL + "?action=getRequests");
-    const requests = await response.json();
+    const [requests, completedSessions] = await Promise.all([
+  jsonp(`${API_URL}?action=getRequests`),
+  jsonp(`${API_URL}?action=getCompletedSessions`)
+]);
 
+const submittedRequestIDs = new Set(
+  completedSessions
+    .map(session =>
+      String(session["Original Request ID"] || "").trim()
+    )
+    .filter(Boolean)
+);
     const myRequests = requests
       .filter(r =>
-        String(r.PersonID) === String(currentPersonID) &&
-        (r.Status === "Approved" || r.Status === "Pending Approval")
-      )
+  String(r.PersonID) === String(currentPersonID) &&
+  (r.Status === "Approved" || r.Status === "Pending Approval") &&
+  !submittedRequestIDs.has(String(r.RequestID || "").trim())
+)
       .sort((a, b) => {
         const dateA = new Date(`${a.Date} ${a.StartTime}`);
         const dateB = new Date(`${b.Date} ${b.StartTime}`);
@@ -208,18 +245,45 @@ function toggleScheduleOutcomeFields(requestID) {
 }
 
 function submitScheduleForPay(requestID) {
-  const outcome =
-    document.getElementById(`scheduleOutcome_${requestID}`).value;
+  if (submittingRequestIDs.has(requestID)) {
+    return;
+  }
 
-  const reason =
-    document.getElementById(`scheduleReason_${requestID}`).value;
+  const outcomeField =
+    document.getElementById(`scheduleOutcome_${requestID}`);
 
-  const details =
-    document.getElementById(`scheduleDetails_${requestID}`).value.trim();
+  const reasonField =
+    document.getElementById(`scheduleReason_${requestID}`);
+
+  const detailsField =
+    document.getElementById(`scheduleDetails_${requestID}`);
+
+  if (!outcomeField || !reasonField || !detailsField) {
+    alert("The payroll submission form could not be found.");
+    return;
+  }
+
+  const outcome = outcomeField.value;
+  const reason = reasonField.value;
+  const details = detailsField.value.trim();
 
   if (outcome !== "Completed" && !reason) {
     alert("Please select a reason.");
     return;
+  }
+
+  const submissionCard = outcomeField.closest(".dashboard-card");
+  const submitButton = submissionCard
+    ? submissionCard.querySelector(
+        `button[onclick="submitScheduleForPay('${requestID}')"]`
+      )
+    : null;
+
+  submittingRequestIDs.add(requestID);
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
   }
 
   const url = `${API_URL}?action=completeRequest`
@@ -231,16 +295,28 @@ function submitScheduleForPay(requestID) {
   fetch(url)
     .then(response => response.json())
     .then(result => {
-      if (result.success) {
-        alert("Submitted for pay.");
-        loadSchedule();
-      } else {
-        alert(result.message || "Something went wrong.");
+      if (!result.success) {
+        throw new Error(result.message || "Something went wrong.");
       }
+
+      if (submissionCard) {
+        submissionCard.remove();
+      }
+
+      alert("Submitted for pay.");
+
+      return loadSchedule();
     })
     .catch(error => {
       console.error(error);
-      alert("Something went wrong submitting this appointment for pay.");
+      alert(error.message || "Something went wrong submitting this appointment for pay.");
+
+      submittingRequestIDs.delete(requestID);
+
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit for Pay";
+      }
     });
 }
 
