@@ -49,14 +49,18 @@ async function loadAttendanceAnalytics() {
 
     console.log("Attendance analytics rows:", rows);
 
-    if (!Array.isArray(rows)) {
-      throw new Error(
-        "Attendance Analytics did not return a list of rows."
-      );
-    }
+    if (rows && rows.success === false) {
+  throw new Error(rows.message || "Apps Script returned an error.");
+}
+
+if (!Array.isArray(rows)) {
+  throw new Error(
+    "Attendance Analytics did not return a list of rows."
+  );
+}
 
     analyticsMessage.textContent =
-      `${rows.length} attendance record(s) loaded.`;
+  `Something went wrong: ${error.message}`;
 
   } catch (error) {
     console.error(
