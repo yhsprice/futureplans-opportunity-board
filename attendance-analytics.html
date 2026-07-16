@@ -184,10 +184,58 @@
    <div id="summaryCards" class="attendance-summary-grid"></div>
 
     <div class="dashboard-card attendance-insights-card">
-  <h2>Quick Insights</h2>
+      <h2>Quick Insights</h2>
   <div id="quickInsights"></div>
 </div>
 
+<div class="dashboard-card" style="margin-top:20px;">
+  <div class="attendance-section-heading">
+    <div>
+      <h2>Location Performance</h2>
+      <p>
+        Compare coaching volume, attendance issues, and completion rates by location.
+      </p>
+    </div>
+
+    <div class="attendance-minimum-filter">
+      <label for="minimumAppointmentsFilter">
+        Minimum Appointments
+      </label>
+
+      <select id="minimumAppointmentsFilter">
+        <option value="1">1 or more</option>
+        <option value="5" selected>5 or more</option>
+        <option value="10">10 or more</option>
+        <option value="20">20 or more</option>
+        <option value="50">50 or more</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Population</th>
+          <th>Total</th>
+          <th>Completed</th>
+          <th>No Show</th>
+          <th>Absent</th>
+          <th>Participant Cancelled</th>
+          <th>Location Cancelled</th>
+          <th>Issues</th>
+          <th>Completion Rate</th>
+          <th>Issue Rate</th>
+          <th>Paid Hours</th>
+        </tr>
+      </thead>
+
+      <tbody id="locationPerformanceBody"></tbody>
+    </table>
+  </div>
+</div>
+    
     <div class="dashboard-card" style="margin-top:20px;">
       <h2>Outcome Breakdown</h2>
 
