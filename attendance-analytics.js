@@ -7,16 +7,45 @@ showManagerLinksOnly();
 const analyticsMessage =
   document.getElementById("analyticsMessage");
 
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const callbackName =
+      "attendanceJsonp_" +
+      Date.now() +
+      "_" +
+      Math.floor(Math.random() * 10000);
+
+    const script = document.createElement("script");
+
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      script.remove();
+      resolve(data);
+    };
+
+    script.src =
+      url +
+      "&callback=" +
+      encodeURIComponent(callbackName);
+
+    script.onerror = function(error) {
+      delete window[callbackName];
+      script.remove();
+      reject(error);
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
 async function loadAttendanceAnalytics() {
   analyticsMessage.textContent =
     "Loading attendance data...";
 
   try {
-    const response = await fetch(
+    const rows = await jsonp(
       `${API_URL}?action=getAttendanceAnalytics`
     );
-
-    const rows = await response.json();
 
     console.log("Attendance analytics rows:", rows);
 
