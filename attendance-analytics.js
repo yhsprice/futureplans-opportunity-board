@@ -357,38 +357,54 @@ function populateFiscalYears(rows) {
 }
 
 function filterByFiscalYear(rows) {
-  const fiscalYear =
+  const selectedFiscalYear =
     Number(fiscalYearFilter.value);
 
-  const startDate =
-    new Date(
-      fiscalYear,
-      6,
-      1,
-      0,
-      0,
-      0
-    );
-
-  const endDate =
-    new Date(
-      fiscalYear + 1,
-      5,
-      30,
-      23,
-      59,
-      59
-    );
-
   return rows.filter(row => {
-    const rowDate =
-      parseRecordDate(row.Date);
+    const rawDate =
+      String(row.Date || "").trim();
 
-    return (
-      rowDate &&
-      rowDate >= startDate &&
-      rowDate <= endDate
-    );
+    if (!rawDate) {
+      return false;
+    }
+
+    let year;
+    let month;
+
+    /*
+      Apps Script ISO format:
+      2026-07-02T04:00:00.000Z
+    */
+    const isoMatch =
+      rawDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+    if (isoMatch) {
+      year = Number(isoMatch[1]);
+      month = Number(isoMatch[2]);
+    } else {
+      /*
+        Standard format:
+        7/2/2026
+      */
+      const standardMatch =
+        rawDate.match(
+          /^(\d{1,2})\/(\d{1,2})\/(\d{4})/
+        );
+
+      if (!standardMatch) {
+        return false;
+      }
+
+      month = Number(standardMatch[1]);
+      year = Number(standardMatch[3]);
+    }
+
+    const rowFiscalYear =
+      month >= 7
+        ? year
+        : year - 1;
+
+    return rowFiscalYear === selectedFiscalYear;
   });
 }
 
