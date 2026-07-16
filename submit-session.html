@@ -124,6 +124,42 @@
         <option value="0.25">0.25</option>
       </select>
 
+      <p><strong>Appointment Outcome</strong></p>
+<select id="appointmentOutcome">
+  <option value="Completed">Completed</option>
+  <option value="Student Absent">Student Absent</option>
+  <option value="Student Cancelled">Student Cancelled</option>
+  <option value="School Cancelled">School Cancelled</option>
+  <option value="Coach Cancelled">Coach Cancelled</option>
+  <option value="School Closed">School Closed</option>
+  <option value="Technical Issue">Technical Issue</option>
+  <option value="Other">Other</option>
+</select>
+
+<div id="outcomeReasonArea" style="display:none;">
+  <p><strong>Reason</strong></p>
+  <select id="outcomeReason">
+    <option value="">Select Reason</option>
+    <option value="Weather">Weather</option>
+    <option value="Illness">Illness</option>
+    <option value="School Event">School Event</option>
+    <option value="Testing">Testing</option>
+    <option value="Transportation">Transportation</option>
+    <option value="Behavior">Behavior</option>
+    <option value="Parent Request">Parent Request</option>
+    <option value="Scheduling Conflict">Scheduling Conflict</option>
+    <option value="Technical Issue">Technical Issue</option>
+    <option value="Unknown">Unknown</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <p><strong>Additional Details</strong></p>
+  <textarea
+    id="outcomeDetails"
+    placeholder="Optional explanation"
+  ></textarea>
+</div>
+
       <p><strong>Notes</strong></p>
       <textarea id="notes" placeholder="Optional notes"></textarea>
 
@@ -139,7 +175,7 @@
 </div>
 
 <script src="auth.js"></script>
-<script src="submit-session.js"></script>
+<script src="submit-session.js?v=2"></script>
 
 </body>
 </html>
