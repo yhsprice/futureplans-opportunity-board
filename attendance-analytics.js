@@ -47,6 +47,9 @@ const locationPerformanceBody =
 const minimumAppointmentsFilter =
   document.getElementById("minimumAppointmentsFilter");
 
+const monthlyTrendsBody =
+  document.getElementById("monthlyTrendsBody");
+
 /* =========================================================
    STORED PAGE DATA
 ========================================================= */
@@ -1421,6 +1424,153 @@ function renderLocationPerformance(rows) {
     `).join("");
 }
 
+function getFiscalMonthNumber(value) {
+  const rawDate =
+    String(value || "").trim();
+
+  if (!rawDate) {
+    return null;
+  }
+
+  let month;
+
+  const isoMatch =
+    rawDate.match(
+      /^(\d{4})-(\d{2})-(\d{2})/
+    );
+
+  if (isoMatch) {
+    month = Number(isoMatch[2]);
+  } else {
+    const standardMatch =
+      rawDate.match(
+        /^(\d{1,2})\/(\d{1,2})\/(\d{4})/
+      );
+
+    if (!standardMatch) {
+      return null;
+    }
+
+    month = Number(standardMatch[1]);
+  }
+
+  /*
+    Fiscal year begins in July.
+
+    July = 1
+    August = 2
+    ...
+    June = 12
+  */
+  return month >= 7
+    ? month - 6
+    : month + 6;
+}
+
+function getFiscalMonthLabel(fiscalMonth) {
+  const labels = [
+    "",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June"
+  ];
+
+  return labels[fiscalMonth] || "";
+}
+
+function renderMonthlyTrends(rows) {
+  const monthGroups = {};
+
+  for (let fiscalMonth = 1; fiscalMonth <= 12; fiscalMonth++) {
+    monthGroups[fiscalMonth] = [];
+  }
+
+  rows.forEach(row => {
+    const fiscalMonth =
+      getFiscalMonthNumber(row.Date);
+
+    if (
+      fiscalMonth &&
+      monthGroups[fiscalMonth]
+    ) {
+      monthGroups[fiscalMonth].push(row);
+    }
+  });
+
+  monthlyTrendsBody.innerHTML =
+    Object.entries(monthGroups)
+      .map(([monthNumber, monthRows]) => {
+        const summary =
+          getSummary(monthRows);
+
+        const issueRate =
+          formatPercent(
+            summary.attendanceIssues,
+            summary.totalAppointments
+          );
+
+        return `
+          <tr>
+            <td>
+              ${getFiscalMonthLabel(
+                Number(monthNumber)
+              )}
+            </td>
+
+            <td>
+              ${summary.totalAppointments}
+            </td>
+
+            <td>
+              ${summary.completed}
+            </td>
+
+            <td>
+              ${summary.cancelNoShow}
+            </td>
+
+            <td>
+              ${summary.participantAbsent}
+            </td>
+
+            <td>
+              ${summary.participantCancelled}
+            </td>
+
+            <td>
+              ${summary.locationCancelled}
+            </td>
+
+            <td>
+              ${summary.attendanceIssues}
+            </td>
+
+            <td>
+              ${summary.completionRate}
+            </td>
+
+            <td>
+              ${issueRate}
+            </td>
+
+            <td>
+              ${summary.totalHours.toFixed(2)}
+            </td>
+          </tr>
+        `;
+      })
+      .join("");
+}
+
 function renderDashboard() {
   const rows =
     getFilteredRows();
@@ -1432,6 +1582,7 @@ function renderDashboard() {
   renderLocationSummary(rows);
   renderAppointmentHistory(rows);
   renderLocationPerformance(rows);
+  renderMonthlyTrends(rows);
 }
 
 /* =========================================================
