@@ -123,3 +123,23 @@ const outcomeDetails =
       }
     });
 }
+
+const appointmentOutcome = document.getElementById("appointmentOutcome");
+const outcomeSection = document.getElementById("outcomeSection");
+const outcomeReason = document.getElementById("outcomeReason");
+const outcomeDetails = document.getElementById("outcomeDetails");
+
+function updateOutcomeSection() {
+  const outcome = appointmentOutcome.value;
+
+  if (outcome && outcome !== "Completed") {
+    outcomeSection.style.display = "block";
+  } else {
+    outcomeSection.style.display = "none";
+    outcomeReason.value = "";
+    outcomeDetails.value = "";
+  }
+}
+
+appointmentOutcome.addEventListener("change", updateOutcomeSection);
+updateOutcomeSection();
