@@ -512,6 +512,20 @@ function getFilteredRows() {
   rows = rows.filter(row => {
   const payRule = cleanText(row.PayRule);
   const programType = cleanText(row.ProgramType);
+  const school = cleanText(row.School);
+
+  const isMeetingOrTraining =
+    programType === "Meeting" ||
+    programType === "Professional Development" ||
+    payRule === "Meeting" ||
+    payRule === "Prof Development";
+
+  return !isMeetingOrTraining && school !== "";
+});
+
+  rows = rows.filter(row => {
+  const payRule = cleanText(row.PayRule);
+  const programType = cleanText(row.ProgramType);
 
   return (
     payRule === "Regular Coaching" ||
