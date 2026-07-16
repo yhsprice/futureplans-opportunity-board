@@ -629,74 +629,140 @@ function addManualGridRow(copyFromLast = true) {
   const row = document.createElement("tr");
 
   row.innerHTML = `
-    <td>
-      <input class="grid-coach" list="manualCoachGridList" placeholder="Coach">
-    </td>
+  <td>
+    <input
+      class="grid-coach"
+      list="manualCoachGridList"
+      placeholder="Coach"
+      autocomplete="off"
+    >
+  </td>
 
-    <td>
-      <input class="grid-date" type="date" value="${previous ? previous.date : ""}">
-    </td>
+  <td>
+    <input
+      class="grid-date"
+      type="date"
+      value="${previous ? previous.date : ""}"
+    >
+  </td>
 
-    <td>
-      <select class="grid-program">
-        <option value="">Program</option>
-        <option value="Youth">Youth</option>
-        <option value="Adult">Adult</option>
-        <option value="Summer Program">Summer Program</option>
-        <option value="Professional Development">Professional Development</option>
-        <option value="Meeting">Meeting</option>
-        <option value="Other">Other</option>
-      </select>
-    </td>
+  <td>
+    <select class="grid-program">
+      <option value="">Program</option>
+      <option value="Youth">Youth</option>
+      <option value="Adult">Adult</option>
+      <option value="Summer Program">Summer Program</option>
+      <option value="Professional Development">Professional Development</option>
+      <option value="Meeting">Meeting</option>
+      <option value="Other">Other</option>
+    </select>
+  </td>
 
-    <td>
-      <select class="grid-fund">
-        <option value="">Fund</option>
-        <option value="Grit">Grit</option>
-        <option value="NW OH">NW OH</option>
-        <option value="SW OH">SW OH</option>
-      </select>
-    </td>
+  <td>
+    <select class="grid-fund">
+      <option value="">Fund</option>
+      <option value="Grit">Grit</option>
+      <option value="NW OH">NW OH</option>
+      <option value="SW OH">SW OH</option>
+    </select>
+  </td>
 
-    <td>
-      <select class="grid-service">
-        <option value="">Service</option>
-        <option value="Coaching">Coaching</option>
-        <option value="Revolution">Revolution</option>
-        <option value="Training">Training</option>
-        <option value="Shadowing">Shadowing</option>
-        <option value="Administrative">Administrative</option>
-        <option value="Other">Other</option>
-      </select>
-    </td>
+  <td>
+    <select class="grid-service">
+      <option value="">Service</option>
+      <option value="Coaching">Coaching</option>
+      <option value="Revolution">Revolution</option>
+      <option value="Training">Training</option>
+      <option value="Shadowing">Shadowing</option>
+      <option value="Administrative">Administrative</option>
+      <option value="Other">Other</option>
+    </select>
+  </td>
 
-    <td>
-      <input class="grid-hours" type="number" step="0.25" min="0" placeholder="Hours" value="${previous ? previous.hours : ""}">
-    </td>
+  <td>
+    <input
+      class="grid-hours"
+      type="number"
+      step="0.25"
+      min="0"
+      placeholder="Hours"
+      value="${previous ? previous.hours : ""}"
+    >
+  </td>
 
-    <td>
-      <input class="grid-school" placeholder="School / Agency" value="${previous ? previous.school : ""}">
-    </td>
+  <td>
+    <input
+      class="grid-school"
+      placeholder="School / Agency"
+      value="${previous ? previous.school : ""}"
+    >
+  </td>
 
-    <td>
-      <input class="grid-notes" placeholder="Notes" value="${previous ? previous.notes : ""}">
-    </td>
+  <td>
+    <select class="grid-outcome">
+      <option value="Completed">Completed</option>
+      <option value="Student Absent">Student Absent</option>
+      <option value="Student Cancelled">Student Cancelled</option>
+      <option value="School Cancelled">School Cancelled</option>
+      <option value="Coach Cancelled">Coach Cancelled</option>
+      <option value="School Closed">School Closed</option>
+      <option value="Technical Issue">Technical Issue</option>
+      <option value="Other">Other</option>
+    </select>
+  </td>
 
-    <td>
-      <button onclick="this.closest('tr').remove()">Remove</button>
-    </td>
-  `;
+  <td>
+    <select class="grid-reason" disabled>
+      <option value="">Reason</option>
+      <option value="Weather">Weather</option>
+      <option value="Illness">Illness</option>
+      <option value="School Event">School Event</option>
+      <option value="Testing">Testing</option>
+      <option value="Transportation">Transportation</option>
+      <option value="Behavior">Behavior</option>
+      <option value="Parent Request">Parent Request</option>
+      <option value="Scheduling Conflict">Scheduling Conflict</option>
+      <option value="Technical Issue">Technical Issue</option>
+      <option value="Unknown">Unknown</option>
+      <option value="Other">Other</option>
+    </select>
+  </td>
 
-  body.appendChild(row);
+  <td>
+    <textarea
+      class="grid-outcome-details"
+      placeholder="Optional details"
+      rows="2"
+      disabled
+    ></textarea>
+  </td>
 
-  if (previous) {
-    row.querySelector(".grid-program").value = previous.programType;
-    row.querySelector(".grid-fund").value = previous.fund;
-    row.querySelector(".grid-service").value = previous.serviceType;
+  <td>
+    <button type="button" class="grid-duplicate-btn">Duplicate</button>
+    <button type="button" class="grid-remove-btn">Remove</button>
+  </td>
+`;
+
+const outcome = row.querySelector(".grid-outcome");
+const reason = row.querySelector(".grid-reason");
+const details = row.querySelector(".grid-outcome-details");
+
+function updateOutcomeFields() {
+  const completed = outcome.value === "Completed";
+
+  reason.disabled = completed;
+  details.disabled = completed;
+
+  if (completed) {
+    reason.value = "";
+    details.value = "";
   }
-
-  row.querySelector(".grid-coach").focus();
 }
+
+outcome.addEventListener("change", updateOutcomeFields);
+updateOutcomeFields();
+
+body.appendChild(row);
 
 function clearManualGrid() {
   if (!confirm("Clear all manual payroll rows?")) return;
