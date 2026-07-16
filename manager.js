@@ -786,24 +786,41 @@ function submitManualGrid() {
 
   rows.forEach(row => {
     entries.push({
-      userName: row.querySelector(".grid-coach").value.trim(),
-      date: row.querySelector(".grid-date").value,
-      programType: row.querySelector(".grid-program").value,
-      fund: row.querySelector(".grid-fund").value,
-      serviceType: row.querySelector(".grid-service").value,
-      hours: row.querySelector(".grid-hours").value,
-      school: row.querySelector(".grid-school").value.trim(),
-      notes: row.querySelector(".grid-notes").value.trim()
-    });
+  userName: row.querySelector(".grid-coach").value.trim(),
+  date: row.querySelector(".grid-date").value,
+  programType: row.querySelector(".grid-program").value,
+  fund: row.querySelector(".grid-fund").value,
+  serviceType: row.querySelector(".grid-service").value,
+  hours: row.querySelector(".grid-hours").value,
+  school: row.querySelector(".grid-school").value.trim(),
+
+  appointmentOutcome: row.querySelector(".grid-outcome").value,
+  outcomeReason: row.querySelector(".grid-reason").value,
+  outcomeDetails: row.querySelector(".grid-outcome-details").value.trim()
+});
   });
 
-  const incomplete = entries.some(e =>
-    !e.userName || !e.date || !e.programType || !e.fund || !e.serviceType || !e.hours
-  );
+  const incomplete = entries.some(entry => {
+  const missingRequired =
+    !entry.userName ||
+    !entry.date ||
+    !entry.programType ||
+    !entry.fund ||
+    !entry.serviceType ||
+    !entry.hours ||
+    !entry.appointmentOutcome;
 
-  if (incomplete) {
-  console.log("Grid entries being checked:", entries);
-  alert("One or more rows is missing Coach, Date, Program, Fund, Service, or Hours. Notes are optional.");
+  const missingReason =
+    entry.appointmentOutcome !== "Completed" &&
+    !entry.outcomeReason;
+
+  return missingRequired || missingReason;
+});
+
+ if (incomplete) {
+  alert(
+    "Please complete Coach, Date, Program, Fund, Service, Hours, and Outcome for every row. A Reason is also required when the outcome is not Completed."
+  );
   return;
 }
 
@@ -816,17 +833,23 @@ function submitManualGrid() {
 
   entries.forEach(entry => {
     const params = new URLSearchParams({
-      action: "addManualCompletedSession",
-      approveNow,
-      userName: entry.userName,
-      date: entry.date,
-      programType: entry.programType,
-      fund: entry.fund,
-      serviceType: entry.serviceType,
-      hours: entry.hours,
-      school: entry.school,
-      notes: entry.notes
-    });
+  action: "addManualCompletedSession",
+  approveNow,
+  userName: entry.userName,
+  date: entry.date,
+  programType: entry.programType,
+  fund: entry.fund,
+  serviceType: entry.serviceType,
+  hours: entry.hours,
+  school: entry.school,
+
+  appointmentOutcome: entry.appointmentOutcome,
+  outcomeReason: entry.outcomeReason,
+  outcomeDetails: entry.outcomeDetails,
+
+  paidWithoutService:
+    entry.appointmentOutcome === "Completed" ? "No" : "Yes"
+});
 
     fetch(API_URL, {
       method: "POST",
