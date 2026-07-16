@@ -227,8 +227,7 @@ async function loadReleaseRequests() {
   releaseRequestList.innerHTML = "<p>Loading release requests...</p>";
 
   try {
-    const response = await fetch(`${API_URL}?action=getRequests`);
-    const requests = await response.json();
+    const requests = await jsonp(`${API_URL}?action=getRequests`);
 
     const releaseRequests = requests.filter(request =>
       request.ReleaseRequested === "Yes" &&
@@ -270,7 +269,7 @@ async function loadReleaseRequests() {
       <td style="padding:8px;">${formatDateOnly(request.Date)}</td>
       <td style="padding:8px;">${request.StartTime} - ${request.EndTime}</td>
       <td style="padding:8px;">${request.ReleaseReason || ""}</td>
-      <td style="padding:8px;">${formatDateTime(request.ReleaseRequestedAt)}</td>
+      <th style="padding:8px;">Requested</th>
 
       <td style="padding:8px;">
         <button onclick="approveRelease('${request.RequestID}')">
