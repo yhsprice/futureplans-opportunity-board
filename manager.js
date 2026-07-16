@@ -229,9 +229,15 @@ async function loadReleaseRequests() {
   try {
     const requests = await jsonp(`${API_URL}?action=getRequests`);
 
+    console.log("Release request data:", requests);
+
+    if (!Array.isArray(requests)) {
+      throw new Error("getRequests did not return an array.");
+    }
+
     const releaseRequests = requests.filter(request =>
-      request.ReleaseRequested === "Yes" &&
-      request.ReleaseStatus === "Pending Review"
+      String(request.ReleaseRequested || "").trim() === "Yes" &&
+      String(request.ReleaseStatus || "").trim() === "Pending Review"
     );
 
     if (releaseRequests.length === 0) {
@@ -254,7 +260,7 @@ async function loadReleaseRequests() {
               <th style="text-align:left; padding:8px;">Date</th>
               <th style="text-align:left; padding:8px;">Time</th>
               <th style="text-align:left; padding:8px;">Reason</th>
-              <td style="padding:8px;">${formatDateTime(request.ReleaseRequestedAt)}</td>
+              <th style="text-align:left; padding:8px;">Requested</th>
               <th style="text-align:left; padding:8px;">Actions</th>
             </tr>
           </thead>
@@ -262,27 +268,38 @@ async function loadReleaseRequests() {
     `;
 
     releaseRequests.forEach(request => {
-  html += `
-    <tr>
-      <td style="padding:8px;">${request.CoachName}</td>
-      <td style="padding:8px;">${request.School}</td>
-      <td style="padding:8px;">${formatDateOnly(request.Date)}</td>
-      <td style="padding:8px;">${request.StartTime} - ${request.EndTime}</td>
-      <td style="padding:8px;">${request.ReleaseReason || ""}</td>
-      <th style="padding:8px;">Requested</th>
+      let requestedAt = "";
 
-      <td style="padding:8px;">
-        <button onclick="approveRelease('${request.RequestID}')">
-  Approve Release
-</button>
+      if (request.ReleaseRequestedAt) {
+        const requestedDate = new Date(request.ReleaseRequestedAt);
 
-<button onclick="recordCallOff('${request.RequestID}')">
-  Record Call-Off
-</button>
-      </td>
-    </tr>
-  `;
-});
+        requestedAt = isNaN(requestedDate.getTime())
+          ? request.ReleaseRequestedAt
+          : requestedDate.toLocaleString();
+      }
+
+      html += `
+        <tr>
+          <td style="padding:8px;">${request.CoachName || ""}</td>
+          <td style="padding:8px;">${request.School || ""}</td>
+          <td style="padding:8px;">${formatDateOnly(request.Date)}</td>
+          <td style="padding:8px;">
+            ${request.StartTime || ""} - ${request.EndTime || ""}
+          </td>
+          <td style="padding:8px;">${request.ReleaseReason || ""}</td>
+          <td style="padding:8px;">${requestedAt}</td>
+          <td style="padding:8px;">
+            <button onclick="approveRelease('${request.RequestID}')">
+              Approve Release
+            </button>
+
+            <button onclick="recordCallOff('${request.RequestID}')">
+              Record Call-Off
+            </button>
+          </td>
+        </tr>
+      `;
+    });
 
     html += `
           </tbody>
@@ -293,8 +310,9 @@ async function loadReleaseRequests() {
     releaseRequestList.innerHTML = html;
 
   } catch (error) {
-    releaseRequestList.innerHTML = "<p>Something went wrong loading release requests.</p>";
-    console.error(error);
+    console.error("Release request loading error:", error);
+    releaseRequestList.innerHTML =
+      "<p>Something went wrong loading release requests.</p>";
   }
 }
 
