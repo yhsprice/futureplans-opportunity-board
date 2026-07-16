@@ -173,17 +173,36 @@ function getRowHours(row) {
 }
 
 function getOutcome(row) {
-  const outcome = cleanText(
+  const savedOutcome = cleanText(
     row.AppointmentOutcome ||
     row.Outcome
   );
 
+  if (savedOutcome) {
+    return savedOutcome;
+  }
+
+  const historicalText = cleanText(
+    [
+      row.CancellationReason,
+      row.OutcomeDetails,
+      row.Notes
+    ].join(" ")
+  ).toLowerCase();
+
+  if (
+    historicalText.includes("no show") ||
+    historicalText.includes("no-show") ||
+    historicalText.includes("noshow")
+  ) {
+    return "Cancel-No Show";
+  }
+
   /*
-    Older payroll records may not have an outcome.
-    Treat those records as completed coaching because
-    they existed before outcome tracking was added.
+    Older records without any cancellation wording
+    are treated as completed.
   */
-  return outcome || "Completed";
+  return "Completed";
 }
 
 function getReason(row) {
@@ -578,6 +597,12 @@ function getSummary(rows) {
   const totalAppointments =
     rows.length;
 
+  const cancelNoShow =
+  countOutcome(
+    rows,
+    "Cancel-No Show"
+  );
+
   const completed =
     countOutcome(
       rows,
@@ -625,8 +650,8 @@ function getSummary(rows) {
     schoolCancelled;
 
   const attendanceIssues =
-    totalAppointments -
-    completed;
+  totalAppointments -
+  completed;
 
   const totalHours =
     rows.reduce(
@@ -639,6 +664,7 @@ function getSummary(rows) {
     totalAppointments,
     completed,
     studentAbsent,
+    cancelNoShow,
     studentCancelled,
     schoolCancelled,
     schoolClosed,
@@ -695,6 +721,11 @@ function renderSummaryCards(rows) {
     <div class="dashboard-card">
       <h3>Student Absent</h3>
       <h1>${summary.studentAbsent}</h1>
+    </div>
+
+    <div class="dashboard-card">
+      <h3>Cancel-No Show</h3>
+      <h1>${summary.cancelNoShow}</h1>
     </div>
 
     <div class="dashboard-card">
@@ -767,14 +798,16 @@ function renderOutcomeBreakdown(rows) {
     groupByOutcome(rows);
 
   const outcomes = [
-    "Completed",
-    "Student Absent",
-    "Student Cancelled",
-    "School Cancelled",
-    "School Closed",
-    "Technical Issue",
-    "Other"
-  ];
+    const outcomes = [
+  "Completed",
+  "Student Absent",
+  "Cancel-No Show",
+  "Student Cancelled",
+  "School Cancelled",
+  "School Closed",
+  "Technical Issue",
+  "Other"
+];
 
   outcomeBreakdown.innerHTML = `
     <table class="modern-table">
