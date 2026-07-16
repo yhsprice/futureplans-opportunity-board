@@ -110,65 +110,69 @@
       ></div>
     </div>
 
-    <div class="dashboard-card">
+    <div class="dashboard-card attendance-filters">
 
-      <h2>Filters</h2>
+  <h2>Filters</h2>
 
-      <div
-        style="
-          display:flex;
-          gap:18px;
-          flex-wrap:wrap;
-          align-items:end;
-        "
-      >
+  <div class="attendance-filter-grid">
 
-        <div>
-          <p><strong>Fiscal Year</strong></p>
+    <div class="attendance-filter">
+      <label for="fiscalYearFilter">
+        Fiscal Year
+      </label>
 
-          <select id="fiscalYearFilter">
-            <option value="2026">
-              FY 2026–2027
-            </option>
-          </select>
-        </div>
-
-        <div>
-  <p><strong>Population</strong></p>
-
- <select id="populationFilter">
-  <option value="Both" selected>Both</option>
-  <option value="Youth">Youth</option>
-  <option value="Adult">Adult</option>
-</select>
-        
-        <div>
-          <p><strong>Region</strong></p>
-
-          <select id="regionFilter">
-            <option value="">All Regions</option>
-          </select>
-        </div>
-
-        <div>
-          <p><strong>County</strong></p>
-
-          <select id="countyFilter">
-            <option value="">All Counties</option>
-          </select>
-        </div>
-
-        <div>
-          <p><strong>Location</strong></p>
-
-          <select id="locationFilter">
-            <option value="">All Locations</option>
-          </select>
-        </div>
-
-      </div>
-
+      <select id="fiscalYearFilter">
+        <option value="2026">
+          FY 2026–2027
+        </option>
+      </select>
     </div>
+
+    <div class="attendance-filter">
+      <label for="populationFilter">
+        Population
+      </label>
+
+      <select id="populationFilter">
+        <option value="Both" selected>Both</option>
+        <option value="Youth">Youth</option>
+        <option value="Adult">Adult</option>
+      </select>
+    </div>
+
+    <div class="attendance-filter">
+      <label for="regionFilter">
+        Region
+      </label>
+
+      <select id="regionFilter">
+        <option value="">All Regions</option>
+      </select>
+    </div>
+
+    <div class="attendance-filter">
+      <label for="countyFilter">
+        County
+      </label>
+
+      <select id="countyFilter">
+        <option value="">All Counties</option>
+      </select>
+    </div>
+
+    <div class="attendance-filter">
+      <label for="locationFilter">
+        Location
+      </label>
+
+      <select id="locationFilter">
+        <option value="">All Locations</option>
+      </select>
+    </div>
+
+  </div>
+
+</div>
 
     <div
       id="analyticsMessage"
@@ -177,15 +181,7 @@
       Loading attendance data...
     </div>
 
-    <div
-      id="summaryCards"
-      style="
-        display:grid;
-        grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
-        gap:16px;
-        margin-top:20px;
-      "
-    ></div>
+   <div id="summaryCards" class="attendance-summary-grid"></div>
 
     <div class="dashboard-card" style="margin-top:20px;">
       <h2>Outcome Breakdown</h2>
