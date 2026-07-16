@@ -5,6 +5,37 @@ const currentUser = getCurrentUser();
 const personIDField = document.getElementById("personID");
 const dateField = document.getElementById("date");
 const submitButton = document.getElementById("submitButton");
+const appointmentOutcomeField =
+  document.getElementById("appointmentOutcome");
+
+const outcomeReasonArea =
+  document.getElementById("outcomeReasonArea");
+
+const outcomeReasonField =
+  document.getElementById("outcomeReason");
+
+const outcomeDetailsField =
+  document.getElementById("outcomeDetails");
+
+function updateOutcomeFields() {
+  const completed =
+    appointmentOutcomeField.value === "Completed";
+
+  outcomeReasonArea.style.display =
+    completed ? "none" : "block";
+
+  if (completed) {
+    outcomeReasonField.value = "";
+    outcomeDetailsField.value = "";
+  }
+}
+
+appointmentOutcomeField.addEventListener(
+  "change",
+  updateOutcomeFields
+);
+
+updateOutcomeFields();
 
 let isSubmitting = false;
 
@@ -35,6 +66,14 @@ function submitSession() {
   const notes = document.getElementById("notes").value.trim();
   const payRule = document.getElementById("payRule").value;
   const revolutionTier = document.getElementById("revolutionTier").value;
+  const appointmentOutcome =
+  appointmentOutcomeField.value;
+
+const outcomeReason =
+  outcomeReasonField.value;
+
+const outcomeDetails =
+  outcomeDetailsField.value.trim();
 
   if (!personID || !date || !programType || !fund || !payRule || !revolutionTier) {
     alert("Please complete Date, Program Type, Fund, Service Type, and Hours.");
@@ -57,6 +96,9 @@ function submitSession() {
     + `&payRule=${encodeURIComponent(payRule)}`
     + `&revolutionTier=${encodeURIComponent(revolutionTier)}`
     + `&notes=${encodeURIComponent(notes)}`;
+    + `&appointmentOutcome=${encodeURIComponent(appointmentOutcome)}`
+    + `&outcomeReason=${encodeURIComponent(outcomeReason)}`
+    + `&outcomeDetails=${encodeURIComponent(outcomeDetails)}`;
 
   fetch(url)
     .then(response => response.json())
