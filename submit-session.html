@@ -106,67 +106,52 @@
         <option value="Other">Other</option>
       </select>
 
-      <p><strong>Hours</strong></p>
-      <select id="revolutionTier">
-        <option value="">Hours</option>
-        <option value="3.50">3.50</option>
-        <option value="1.75">1.75</option>
-        <option value="1.50">1.50</option>
-        <option value="1.25">1.25</option>
-        <option value="1.00">1.00</option>
-        <option value="0.75">0.75</option>
-        <option value="0.50">0.50</option>
-        <option value="0.25">0.25</option>
-      </select>
-
      <p><strong>Hours</strong></p>
 <select id="revolutionTier">
-    <option value="">Hours</option>
-    <option value="2.00">2.00</option>
-    <option value="1.75">1.75</option>
-    <option value="1.50">1.50</option>
-    <option value="1.25">1.25</option>
-    <option value="1.00">1.00</option>
-    <option value="0.75">0.75</option>
-    <option value="0.50">0.50</option>
-    <option value="0.25">0.25</option>
+  <option value="">Hours</option>
+  <option value="3.50">3.50</option>
+  <option value="2.00">2.00</option>
+  <option value="1.75">1.75</option>
+  <option value="1.50">1.50</option>
+  <option value="1.25">1.25</option>
+  <option value="1.00">1.00</option>
+  <option value="0.75">0.75</option>
+  <option value="0.50">0.50</option>
+  <option value="0.25">0.25</option>
 </select>
 
 <p><strong>Appointment Outcome</strong></p>
 <select id="appointmentOutcome">
-    <option value="">Select Outcome</option>
-    <option value="Completed">Completed</option>
-    <option value="Student Absent">Student Absent</option>
-    <option value="Student Cancelled">Student Cancelled</option>
-    <option value="School Cancelled">School Cancelled</option>
-    <option value="School Closed">School Closed</option>
-    <option value="Technical Issue">Technical Issue</option>
-    <option value="Other">Other</option>
+  <option value="">Select Outcome</option>
+  <option value="Completed">Completed</option>
+  <option value="Student Absent">Student Absent</option>
+  <option value="Student Cancelled">Student Cancelled</option>
+  <option value="School Cancelled">School Cancelled</option>
+  <option value="School Closed">School Closed</option>
+  <option value="Technical Issue">Technical Issue</option>
+  <option value="Other">Other</option>
 </select>
 
 <div id="outcomeSection" style="display:none;">
+  <p><strong>Reason</strong></p>
 
-    <p><strong>Reason</strong></p>
+  <select id="outcomeReason">
+    <option value="">Select Reason</option>
+    <option value="Weather">Weather</option>
+    <option value="Student Illness">Student Illness</option>
+    <option value="School Event">School Event</option>
+    <option value="State Testing">State Testing</option>
+    <option value="Transportation">Transportation</option>
+    <option value="Behavior">Behavior</option>
+    <option value="Parent Request">Parent Request</option>
+    <option value="Scheduling Conflict">Scheduling Conflict</option>
+    <option value="Technical Issue">Technical Issue</option>
+    <option value="Other">Other</option>
+  </select>
 
-    <select id="outcomeReason">
-        <option value="">Select Reason</option>
-        <option value="Weather">Weather</option>
-        <option value="Student Illness">Student Illness</option>
-        <option value="School Event">School Event</option>
-        <option value="State Testing">State Testing</option>
-        <option value="Transportation">Transportation</option>
-        <option value="Behavior">Behavior</option>
-        <option value="Parent Request">Parent Request</option>
-        <option value="Scheduling Conflict">Scheduling Conflict</option>
-        <option value="Technical Issue">Technical Issue</option>
-        <option value="Other">Other</option>
-    </select>
-
-    <p><strong>Details</strong></p>
-
-    <textarea id="outcomeDetails" placeholder="Optional details..."></textarea>
-
-</div>  
+  <p><strong>Details</strong></p>
+  <textarea id="outcomeDetails" placeholder="Optional details..."></textarea>
+</div>
   
       <p><strong>Notes</strong></p>
       <textarea id="notes" placeholder="Optional notes"></textarea>
