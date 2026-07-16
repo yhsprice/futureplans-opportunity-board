@@ -645,9 +645,10 @@ function getSummary(rows) {
       "Other"
     );
 
-  const cancellationTotal =
-    studentCancelled +
-    schoolCancelled;
+ const cancellationTotal =
+  cancelNoShow +
+  studentCancelled +
+  schoolCancelled;
 
   const attendanceIssues =
   totalAppointments -
@@ -1219,6 +1220,15 @@ async function loadAttendanceAnalytics() {
       enrichAttendanceRows(
         attendanceResponse
       );
+
+    console.table(
+  allAttendanceRows.map(row => ({
+    School: row.School,
+    ReportLocation: row.ReportLocation,
+    County: row.ReportCounty,
+    Region: row.ReportRegion
+  }))
+);
 
     console.log(
       "Attendance records:",
