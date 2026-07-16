@@ -482,11 +482,11 @@ function populateRegionFilter() {
   const selectedPopulation =
     populationFilter.value;
 
-  if (selectedPopulation) {
-    rows = rows.filter(row =>
-      getPopulation(row) === selectedPopulation
-    );
-  }
+ if (selectedPopulation !== "Both") {
+  rows = rows.filter(row =>
+    getPopulation(row) === selectedPopulation
+  );
+}
 
   const regions =
     uniqueSorted(
@@ -520,11 +520,11 @@ function populateCountyFilter() {
       )
     );
 
-  if (selectedPopulation) {
-    rows = rows.filter(row =>
-      getPopulation(row) === selectedPopulation
-    );
-  }
+  if (selectedPopulation !== "Both") {
+  rows = rows.filter(row =>
+    getPopulation(row) === selectedPopulation
+  );
+}
 
   if (selectedRegion) {
     rows = rows.filter(row =>
@@ -567,11 +567,11 @@ function populateLocationFilter() {
       )
     );
 
-  if (selectedPopulation) {
-    rows = rows.filter(row =>
-      getPopulation(row) === selectedPopulation
-    );
-  }
+ if (selectedPopulation !== "Both") {
+  rows = rows.filter(row =>
+    getPopulation(row) === selectedPopulation
+  );
+}
 
   if (selectedRegion) {
     rows = rows.filter(row =>
@@ -640,11 +640,11 @@ function getFilteredRows() {
   const selectedLocation =
     locationFilter.value;
 
-  if (selectedPopulation) {
-    rows = rows.filter(row =>
-      cleanText(row.ProgramType) === selectedPopulation
-    );
-  }
+ if (selectedPopulation !== "Both") {
+  rows = rows.filter(row =>
+    getPopulation(row) === selectedPopulation
+  );
+}
 
   if (selectedRegion) {
     rows = rows.filter(row =>
@@ -793,6 +793,49 @@ function renderSummaryCards(rows) {
   const summary =
     getSummary(rows);
 
+  const selectedPopulation =
+    populationFilter.value;
+
+  let absentLabel =
+    "Participant Absent";
+
+  let cancelledLabel =
+    "Participant Cancelled";
+
+  let locationCancelledLabel =
+    "Location Cancelled";
+
+  let locationClosedLabel =
+    "Location Closed";
+
+  if (selectedPopulation === "Youth") {
+    absentLabel =
+      "Student Absent";
+
+    cancelledLabel =
+      "Student Cancelled";
+
+    locationCancelledLabel =
+      "School Cancelled";
+
+    locationClosedLabel =
+      "School Closed";
+  }
+
+  if (selectedPopulation === "Adult") {
+    absentLabel =
+      "Adult Absent";
+
+    cancelledLabel =
+      "Adult Cancelled";
+
+    locationCancelledLabel =
+      "Agency Cancelled";
+
+    locationClosedLabel =
+      "Agency Closed";
+  }
+
   summaryCards.innerHTML = `
     <div class="dashboard-card">
       <h3>Total Appointments</h3>
@@ -810,7 +853,7 @@ function renderSummaryCards(rows) {
     </div>
 
     <div class="dashboard-card">
-      <h3>Participant Absent</h3>
+      <h3>${absentLabel}</h3>
       <h1>${summary.participantAbsent}</h1>
     </div>
 
@@ -820,17 +863,17 @@ function renderSummaryCards(rows) {
     </div>
 
     <div class="dashboard-card">
-      <h3>Participant Cancelled</h3>
+      <h3>${cancelledLabel}</h3>
       <h1>${summary.participantCancelled}</h1>
     </div>
 
     <div class="dashboard-card">
-      <h3>Location Cancelled</h3>
+      <h3>${locationCancelledLabel}</h3>
       <h1>${summary.locationCancelled}</h1>
     </div>
 
     <div class="dashboard-card">
-      <h3>Location Closed</h3>
+      <h3>${locationClosedLabel}</h3>
       <h1>${summary.locationClosed}</h1>
     </div>
 
