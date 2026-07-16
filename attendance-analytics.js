@@ -178,6 +178,21 @@ function getOutcome(row) {
     row.Outcome
   );
 
+  const normalizedOutcome =
+    savedOutcome
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+
+  // Standardize all no-show variations.
+  if (
+    normalizedOutcome === "noshow" ||
+    normalizedOutcome === "cancelnoshow" ||
+    normalizedOutcome === "cancellednoshow" ||
+    normalizedOutcome === "cancelednoshow"
+  ) {
+    return "Cancel-No Show";
+  }
+
   if (savedOutcome) {
     return savedOutcome;
   }
@@ -198,13 +213,8 @@ function getOutcome(row) {
     return "Cancel-No Show";
   }
 
-  /*
-    Older records without any cancellation wording
-    are treated as completed.
-  */
   return "Completed";
 }
-
 function getReason(row) {
   return cleanText(
     row.CancellationReason ||
