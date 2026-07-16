@@ -1,43 +1,29 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
 
 const currentUser = getCurrentUser();
 
 const personIDField = document.getElementById("personID");
 const dateField = document.getElementById("date");
-const submitButton = document.getElementById("submitButton");
+const schoolField = document.getElementById("school");
+const programTypeField = document.getElementById("programType");
+const fundField = document.getElementById("fund");
+const payRuleField = document.getElementById("payRule");
+const hoursField = document.getElementById("revolutionTier");
 const appointmentOutcomeField =
   document.getElementById("appointmentOutcome");
-
-const outcomeReasonArea =
-  document.getElementById("outcomeReasonArea");
-
-const outcomeReasonField =
-  document.getElementById("outcomeReason");
-
-const outcomeDetailsField =
-  document.getElementById("outcomeDetails");
-
-function updateOutcomeFields() {
-  const completed =
-    appointmentOutcomeField.value === "Completed";
-
-  outcomeReasonArea.style.display =
-    completed ? "none" : "block";
-
-  if (completed) {
-    outcomeReasonField.value = "";
-    outcomeDetailsField.value = "";
-  }
-}
-
-appointmentOutcomeField.addEventListener(
-  "change",
-  updateOutcomeFields
-);
-
-updateOutcomeFields();
+const outcomeSection = document.getElementById("outcomeSection");
+const outcomeReasonField = document.getElementById("outcomeReason");
+const outcomeDetailsField = document.getElementById("outcomeDetails");
+const notesField = document.getElementById("notes");
+const submitButton = document.getElementById("submitButton");
 
 let isSubmitting = false;
+
+if (!currentUser || !currentUser.PersonID) {
+  alert("Please log in again.");
+  window.location.href = "login.html";
+}
 
 if (personIDField) {
   personIDField.value = currentUser.PersonID;
@@ -45,60 +31,102 @@ if (personIDField) {
 
 if (dateField && !dateField.value) {
   const today = new Date();
-  const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+
+  const localDate = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60000
+  )
     .toISOString()
     .split("T")[0];
 
   dateField.value = localDate;
 }
 
+function updateOutcomeSection() {
+  const outcome = appointmentOutcomeField.value;
+  const needsReason = outcome !== "" && outcome !== "Completed";
+
+  outcomeSection.style.display = needsReason ? "block" : "none";
+
+  if (!needsReason) {
+    outcomeReasonField.value = "";
+    outcomeDetailsField.value = "";
+  }
+}
+
+appointmentOutcomeField.addEventListener(
+  "change",
+  updateOutcomeSection
+);
+
+updateOutcomeSection();
+
 showUserBanner();
 showManagerLinksOnly();
 
 function submitSession() {
-  if (isSubmitting) return;
+  if (isSubmitting) {
+    return;
+  }
 
   const personID = currentUser.PersonID;
-  const school = document.getElementById("school").value.trim();
-  const date = document.getElementById("date").value;
-  const programType = document.getElementById("programType").value;
-  const fund = document.getElementById("fund").value;
-  const notes = document.getElementById("notes").value.trim();
-  const payRule = document.getElementById("payRule").value;
-  const revolutionTier = document.getElementById("revolutionTier").value;
-  const appointmentOutcome =
-  appointmentOutcomeField.value;
+  const school = schoolField.value.trim();
+  const date = dateField.value;
+  const programType = programTypeField.value;
+  const fund = fundField.value;
+  const payRule = payRuleField.value;
+  const revolutionTier = hoursField.value;
+  const appointmentOutcome = appointmentOutcomeField.value;
+  const outcomeReason = outcomeReasonField.value;
+  const outcomeDetails = outcomeDetailsField.value.trim();
+  const notes = notesField.value.trim();
 
-const outcomeReason =
-  outcomeReasonField.value;
+  if (
+    !personID ||
+    !date ||
+    !programType ||
+    !fund ||
+    !payRule ||
+    !revolutionTier ||
+    !appointmentOutcome
+  ) {
+    alert(
+      "Please complete Date, Program Type, Fund, Service Type, Hours, and Appointment Outcome."
+    );
+    return;
+  }
 
-const outcomeDetails =
-  outcomeDetailsField.value.trim();
-
-  if (!personID || !date || !programType || !fund || !payRule || !revolutionTier) {
-    alert("Please complete Date, Program Type, Fund, Service Type, and Hours.");
+  if (
+    appointmentOutcome !== "Completed" &&
+    !outcomeReason
+  ) {
+    alert(
+      "Please select a reason for the appointment outcome."
+    );
     return;
   }
 
   isSubmitting = true;
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
 
-  if (submitButton) {
-    submitButton.disabled = true;
-    submitButton.textContent = "Submitting...";
-  }
+  const params = new URLSearchParams({
+    action: "submitSession",
+    personID,
+    school,
+    date,
+    programType,
+    fund,
+    payRule,
+    revolutionTier,
+    appointmentOutcome,
+    outcomeReason,
+    outcomeDetails,
+    notes,
+    paidWithoutService:
+      appointmentOutcome === "Completed" ? "No" : "Yes"
+  });
 
-  const url = `${API_URL}?action=submitSession`
-    + `&personID=${encodeURIComponent(personID)}`
-    + `&school=${encodeURIComponent(school)}`
-    + `&date=${encodeURIComponent(date)}`
-    + `&programType=${encodeURIComponent(programType)}`
-    + `&fund=${encodeURIComponent(fund)}`
-    + `&payRule=${encodeURIComponent(payRule)}`
-    + `&revolutionTier=${encodeURIComponent(revolutionTier)}`
-    + `&notes=${encodeURIComponent(notes)}`;
-    + `&appointmentOutcome=${encodeURIComponent(appointmentOutcome)}`
-    + `&outcomeReason=${encodeURIComponent(outcomeReason)}`
-    + `&outcomeDetails=${encodeURIComponent(outcomeDetails)}`;
+  const url = `${API_URL}?${params.toString()}`;
 
   fetch(url)
     .then(response => response.json())
@@ -111,35 +139,12 @@ const outcomeDetails =
       }
     })
     .catch(error => {
+      console.error("Submit time error:", error);
       alert("Something went wrong submitting the time.");
-      console.error(error);
     })
     .finally(() => {
       isSubmitting = false;
-
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.textContent = "Submit Time";
-      }
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit Time";
     });
 }
-
-const appointmentOutcome = document.getElementById("appointmentOutcome");
-const outcomeSection = document.getElementById("outcomeSection");
-const outcomeReason = document.getElementById("outcomeReason");
-const outcomeDetails = document.getElementById("outcomeDetails");
-
-function updateOutcomeSection() {
-  const outcome = appointmentOutcome.value;
-
-  if (outcome && outcome !== "Completed") {
-    outcomeSection.style.display = "block";
-  } else {
-    outcomeSection.style.display = "none";
-    outcomeReason.value = "";
-    outcomeDetails.value = "";
-  }
-}
-
-appointmentOutcome.addEventListener("change", updateOutcomeSection);
-updateOutcomeSection();
