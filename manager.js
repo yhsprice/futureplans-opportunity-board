@@ -228,6 +228,7 @@ async function loadReleaseRequests() {
 
   try {
     const requests = await jsonp(`${API_URL}?action=getRequests`);
+    alert(JSON.stringify(requests));
 
     console.log("Release request data:", requests);
 
