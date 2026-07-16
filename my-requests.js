@@ -100,10 +100,9 @@ async function loadMyRequests() {
 
     myRequestList.innerHTML = "";
 
-    renderSection("Waiting for Approval", waitingApproval, false);
-    renderMeetingSection("Meetings / Professional Development Waiting for Approval", meetingRequestsWaitingApproval);
-    renderSection("Upcoming / Scheduled", upcomingScheduled, true);
-    renderSection("Submitted for Pay", submittedForPay, false);
+    renderSection("Waiting for Approval", waitingApproval);
+    renderSection("Upcoming / Scheduled", upcomingScheduled);
+    renderSection("Submitted for Pay", submittedForPay);
 
   } catch (error) {
     myRequestList.innerHTML = "<p>Something went wrong loading your requests.</p>";
@@ -111,7 +110,7 @@ async function loadMyRequests() {
   }
 }
 
-function renderSection(title, requests, showCompleteButton) {
+function renderSection(title, requests) {
   const section = document.createElement("div");
 
   let html = `<h2>${title} (${requests.length})</h2>`;
@@ -145,12 +144,10 @@ function renderSection(title, requests, showCompleteButton) {
       ? `Yes<br><small>${request.PayrollGeneratedAt || ""}</small>`
       : "No";
 
-    const action = showCompleteButton
-      ? `<button onclick="completeRequest('${request.RequestID}')">Submit for Pay</button>`
-      : request.PayrollGenerated === "Yes"
-        ? `<strong>Submitted</strong>`
-        : "";
-
+   const action = request.PayrollGenerated === "Yes"
+    ? "<strong>Submitted</strong>"
+    : "";
+    
     html += `
       <tr>
         <td style="padding:8px; white-space:nowrap;">${formatDateOnly(request.Date)}</td>
@@ -219,31 +216,6 @@ function renderMeetingSection(title, sessions) {
 
   section.innerHTML = html;
   myRequestList.appendChild(section);
-}
-
-function completeRequest(requestID) {
-  const confirmComplete = confirm(
-    "Submit this completed opportunity for pay approval?"
-  );
-
-  if (!confirmComplete) {
-    return;
-  }
-
-  fetch(`${API_URL}?action=completeRequest&requestID=${encodeURIComponent(requestID)}`)
-    .then(response => response.json())
-    .then(result => {
-      if (result.success) {
-        alert("Submitted for pay approval.");
-        loadMyRequests();
-      } else {
-        alert(result.message || "Something went wrong.");
-      }
-    })
-    .catch(error => {
-      alert("Something went wrong submitting the completed session.");
-      console.error(error);
-    });
 }
 
 showUserBanner();
