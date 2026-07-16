@@ -305,7 +305,7 @@ function loadPayrollTable(payroll) {
   if (payroll.length === 0) {
     body.innerHTML = `
       <tr>
-        <td colspan="11">No payroll records found.</td>
+        <td colspan="14">No payroll records found.</td>
       </tr>
     `;
     return;
@@ -343,6 +343,9 @@ function loadPayrollTable(payroll) {
       <td>${session.ProgramType || ""}</td>
       <td>${session.PayRule || ""}</td>
       <td>${session.School || ""}</td>
+      <td>${session.AppointmentOutcome || "Completed"}</td>
+      <td>${session.OutcomeReason || ""}</td>
+      <td>${session.OutcomeDetails || ""}</td>
       <td>${Number(session.PayHours || 0).toFixed(2)}</td>
       <td>$${Number(session.PayRate || 0).toFixed(2)}</td>
       <td>$${Number(session.PayAmount || 0).toFixed(2)}</td>
