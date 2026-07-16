@@ -50,6 +50,9 @@ const minimumAppointmentsFilter =
 const monthlyTrendsBody =
   document.getElementById("monthlyTrendsBody");
 
+const attendanceWatchList =
+  document.getElementById("attendanceWatchList");
+
 /* =========================================================
    STORED PAGE DATA
 ========================================================= */
@@ -1571,18 +1574,177 @@ function renderMonthlyTrends(rows) {
       .join("");
 }
 
+function renderAttendanceWatchList(rows) {
+
+  const grouped = {};
+
+  rows.forEach(row => {
+
+    const location =
+      cleanText(row.ReportLocation) ||
+      "Unmapped Location";
+
+    if (!grouped[location]) {
+      grouped[location] = [];
+    }
+
+    grouped[location].push(row);
+
+  });
+
+  const watchItems = [];
+
+  Object.entries(grouped).forEach(([location, locationRows]) => {
+
+    const summary =
+      getSummary(locationRows);
+
+    const issueRate =
+      summary.totalAppointments === 0
+        ? 0
+        : (summary.attendanceIssues /
+            summary.totalAppointments) * 100;
+
+    let priority = "";
+    let reason = "";
+
+    if (
+      summary.cancelNoShow >= 3
+    ) {
+
+      priority = "🔴 High";
+
+      reason =
+        `${summary.cancelNoShow} No Shows`;
+
+    }
+
+    else if (
+      issueRate >= 20
+    ) {
+
+      priority = "🔴 High";
+
+      reason =
+        `${issueRate.toFixed(1)}% attendance issues`;
+
+    }
+
+    else if (
+      summary.participantAbsent >= 3
+    ) {
+
+      priority = "🟡 Medium";
+
+      reason =
+        `${summary.participantAbsent} absences`;
+
+    }
+
+    else if (
+      summary.completed > 0 &&
+      summary.attendanceIssues === 0
+    ) {
+
+      priority = "🟢 Excellent";
+
+      reason =
+        "Perfect attendance";
+
+    }
+
+    if (priority) {
+
+      watchItems.push({
+
+        priority,
+
+        location,
+
+        reason,
+
+        appointments:
+          summary.totalAppointments
+
+      });
+
+    }
+
+  });
+
+  if (!watchItems.length) {
+
+    attendanceWatchList.innerHTML = `
+      <p>
+        No locations currently require attention.
+      </p>
+    `;
+
+    return;
+
+  }
+
+  watchItems.sort((a, b) =>
+    b.appointments - a.appointments
+  );
+
+  attendanceWatchList.innerHTML = `
+    <table class="modern-table">
+
+      <thead>
+
+        <tr>
+
+          <th>Priority</th>
+
+          <th>Location</th>
+
+          <th>Reason</th>
+
+          <th>Appointments</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+      ${watchItems.map(item => `
+
+        <tr>
+
+          <td>${item.priority}</td>
+
+          <td>${escapeHtml(item.location)}</td>
+
+          <td>${escapeHtml(item.reason)}</td>
+
+          <td>${item.appointments}</td>
+
+        </tr>
+
+      `).join("")}
+
+      </tbody>
+
+    </table>
+  `;
+
+}
+
 function renderDashboard() {
   const rows =
     getFilteredRows();
 
   renderSummaryCards(rows);
   renderQuickInsights(rows);
+  renderAttendanceWatchList(rows);
   renderOutcomeBreakdown(rows);
   renderReasonBreakdown(rows);
   renderLocationSummary(rows);
   renderAppointmentHistory(rows);
   renderLocationPerformance(rows);
-  renderMonthlyTrends(rows);
+  renderMonthlyTrends(rows);  
 }
 
 /* =========================================================
