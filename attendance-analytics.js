@@ -1206,11 +1206,91 @@ function renderAppointmentHistory(rows) {
    RENDER CURRENT PAGE
 ========================================================= */
 
+function renderQuickInsights(rows) {
+  const summary = getSummary(rows);
+
+  if (!rows.length) {
+    quickInsights.innerHTML = `
+      <p>No attendance data is available for the selected filters.</p>
+    `;
+    return;
+  }
+
+  const population =
+    populationFilter.value === "Both"
+      ? "both populations"
+      : populationFilter.value.toLowerCase();
+
+  const issueRate =
+    formatPercent(
+      summary.attendanceIssues,
+      summary.totalAppointments
+    );
+
+  const averageHours =
+    summary.totalAppointments === 0
+      ? "0.00"
+      : (
+          summary.totalHours /
+          summary.totalAppointments
+        ).toFixed(2);
+
+  let primaryIssue = "No attendance issues recorded";
+  let primaryIssueTotal = 0;
+
+  const issueOptions = [
+    ["No Show", summary.cancelNoShow],
+    ["Participant Absent", summary.participantAbsent],
+    ["Participant Cancelled", summary.participantCancelled],
+    ["Location Cancelled", summary.locationCancelled],
+    ["Location Closed", summary.locationClosed],
+    ["Technical Issue", summary.technicalIssue],
+    ["Other", summary.other]
+  ];
+
+  issueOptions.forEach(([label, total]) => {
+    if (total > primaryIssueTotal) {
+      primaryIssue = label;
+      primaryIssueTotal = total;
+    }
+  });
+
+  quickInsights.innerHTML = `
+    <div class="attendance-insight-grid">
+
+      <div class="attendance-insight-item">
+        <strong>${summary.completionRate}</strong>
+        <span>Completion rate for ${population}</span>
+      </div>
+
+      <div class="attendance-insight-item">
+        <strong>${issueRate}</strong>
+        <span>Appointments with an attendance issue</span>
+      </div>
+
+      <div class="attendance-insight-item">
+        <strong>${escapeHtml(primaryIssue)}</strong>
+        <span>
+          Most common issue
+          ${primaryIssueTotal > 0 ? `(${primaryIssueTotal})` : ""}
+        </span>
+      </div>
+
+      <div class="attendance-insight-item">
+        <strong>${averageHours}</strong>
+        <span>Average paid hours per appointment</span>
+      </div>
+
+    </div>
+  `;
+}
+
 function renderDashboard() {
   const rows =
     getFilteredRows();
 
   renderSummaryCards(rows);
+  renderQuickInsights(rows);
   renderOutcomeBreakdown(rows);
   renderReasonBreakdown(rows);
   renderLocationSummary(rows);
