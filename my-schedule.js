@@ -50,6 +50,7 @@ async function loadSchedule() {
               <th style="text-align:left; padding:8px;">COP</th>
               <th style="text-align:left; padding:8px;">Status</th>
               <th style="text-align:left; padding:8px;">Release</th>
+              <th style="text-align:left; padding:8px;">Submit for Pay</th>
             </tr>
           </thead>
           <tbody>
@@ -71,6 +72,13 @@ async function loadSchedule() {
             ${releaseRequested
               ? `<strong>Release requested</strong><br><small>${request.ReleaseStatus || "Pending Review"}</small>`
               : `<button onclick="requestRelease('${request.RequestID}')">Request Release</button>`
+            }
+          </td>
+
+          <td style="padding:8px;">
+            ${request.Status === "Approved"
+              ? `<button onclick="openPaySubmission('${request.RequestID}')">Submit for Pay</button>`
+              : `<small>Available after approval</small>`
             }
           </td>
         </tr>
@@ -126,6 +134,113 @@ function requestRelease(requestID) {
     .catch(error => {
       alert("Something went wrong submitting the release request.");
       console.error(error);
+    });
+}
+
+function openPaySubmission(requestID) {
+  const row = document.createElement("div");
+
+  row.className = "dashboard-card";
+
+  row.innerHTML = `
+    <h3>Submit Appointment for Pay</h3>
+
+    <p><strong>Appointment Outcome</strong></p>
+    <select id="scheduleOutcome_${requestID}" onchange="toggleScheduleOutcomeFields('${requestID}')">
+      <option value="Completed">Completed</option>
+      <option value="Student Absent">Student Absent</option>
+      <option value="Student Cancelled">Student Cancelled</option>
+      <option value="School Cancelled">School Cancelled</option>
+      <option value="School Closed">School Closed</option>
+      <option value="Technical Issue">Technical Issue</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <div id="scheduleReasonArea_${requestID}" style="display:none;">
+      <p><strong>Reason</strong></p>
+
+      <select id="scheduleReason_${requestID}">
+        <option value="">Select Reason</option>
+        <option value="Weather">Weather</option>
+        <option value="Student Illness">Student Illness</option>
+        <option value="School Event">School Event</option>
+        <option value="State Testing">State Testing</option>
+        <option value="Transportation">Transportation</option>
+        <option value="Behavior">Behavior</option>
+        <option value="Parent Request">Parent Request</option>
+        <option value="Scheduling Conflict">Scheduling Conflict</option>
+        <option value="Technical Issue">Technical Issue</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <p><strong>Details</strong></p>
+      <textarea
+        id="scheduleDetails_${requestID}"
+        placeholder="Optional details"
+      ></textarea>
+    </div>
+
+    <br><br>
+
+    <button onclick="submitScheduleForPay('${requestID}')">
+      Submit for Pay
+    </button>
+
+    <button onclick="this.closest('.dashboard-card').remove()">
+      Cancel
+    </button>
+  `;
+
+  container.prepend(row);
+}
+
+function toggleScheduleOutcomeFields(requestID) {
+  const outcome = document.getElementById(`scheduleOutcome_${requestID}`).value;
+  const reasonArea = document.getElementById(`scheduleReasonArea_${requestID}`);
+
+  reasonArea.style.display =
+    outcome === "Completed" ? "none" : "block";
+
+  if (outcome === "Completed") {
+    document.getElementById(`scheduleReason_${requestID}`).value = "";
+    document.getElementById(`scheduleDetails_${requestID}`).value = "";
+  }
+}
+
+function submitScheduleForPay(requestID) {
+  const outcome =
+    document.getElementById(`scheduleOutcome_${requestID}`).value;
+
+  const reason =
+    document.getElementById(`scheduleReason_${requestID}`).value;
+
+  const details =
+    document.getElementById(`scheduleDetails_${requestID}`).value.trim();
+
+  if (outcome !== "Completed" && !reason) {
+    alert("Please select a reason.");
+    return;
+  }
+
+  const url = `${API_URL}?action=completeRequest`
+    + `&requestID=${encodeURIComponent(requestID)}`
+    + `&appointmentOutcome=${encodeURIComponent(outcome)}`
+    + `&outcomeReason=${encodeURIComponent(reason)}`
+    + `&outcomeDetails=${encodeURIComponent(details)}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert("Submitted for pay.");
+        loadSchedule();
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Something went wrong submitting this appointment for pay.");
     });
 }
 
