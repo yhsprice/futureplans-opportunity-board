@@ -932,18 +932,40 @@ function groupByOutcome(rows) {
 }
 
 function renderOutcomeBreakdown(rows) {
-  const totals =
-    groupByOutcome(rows);
+  const summary =
+    getSummary(rows);
+
+  const selectedPopulation =
+    populationFilter.value;
+
+  let absentLabel = "Participant Absent";
+  let cancelledLabel = "Participant Cancelled";
+  let locationCancelledLabel = "Location Cancelled";
+  let locationClosedLabel = "Location Closed";
+
+  if (selectedPopulation === "Youth") {
+    absentLabel = "Student Absent";
+    cancelledLabel = "Student Cancelled";
+    locationCancelledLabel = "School Cancelled";
+    locationClosedLabel = "School Closed";
+  }
+
+  if (selectedPopulation === "Adult") {
+    absentLabel = "Adult Absent";
+    cancelledLabel = "Adult Cancelled";
+    locationCancelledLabel = "Agency Cancelled";
+    locationClosedLabel = "Agency Closed";
+  }
 
   const outcomes = [
-    "Completed",
-    "Student Absent",
-    "Cancel-No Show",
-    "Student Cancelled",
-    "School Cancelled",
-    "School Closed",
-    "Technical Issue",
-    "Other"
+    ["Completed", summary.completed],
+    [absentLabel, summary.participantAbsent],
+    ["No Show", summary.cancelNoShow],
+    [cancelledLabel, summary.participantCancelled],
+    [locationCancelledLabel, summary.locationCancelled],
+    [locationClosedLabel, summary.locationClosed],
+    ["Technical Issue", summary.technicalIssue],
+    ["Other", summary.other]
   ];
 
   outcomeBreakdown.innerHTML = `
@@ -957,18 +979,13 @@ function renderOutcomeBreakdown(rows) {
       </thead>
 
       <tbody>
-        ${outcomes.map(outcome => {
-          const total =
-            totals[outcome] || 0;
-
-          return `
-            <tr>
-              <td>${escapeHtml(outcome)}</td>
-              <td>${total}</td>
-              <td>${formatPercent(total, rows.length)}</td>
-            </tr>
-          `;
-        }).join("")}
+        ${outcomes.map(([label, total]) => `
+          <tr>
+            <td>${escapeHtml(label)}</td>
+            <td>${total}</td>
+            <td>${formatPercent(total, rows.length)}</td>
+          </tr>
+        `).join("")}
       </tbody>
     </table>
   `;
