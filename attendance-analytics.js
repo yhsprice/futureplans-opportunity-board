@@ -489,15 +489,24 @@ function populateCountyFilter() {
   const currentValue =
     countyFilter.value;
 
+  const selectedPopulation =
+    populationFilter.value;
+
   const selectedRegion =
     regionFilter.value;
 
   let rows =
-  getCoachingRows(
-    filterByFiscalYear(
-      allAttendanceRows
-    )
-  );
+    getCoachingRows(
+      filterByFiscalYear(
+        allAttendanceRows
+      )
+    );
+
+  if (selectedPopulation) {
+    rows = rows.filter(row =>
+      cleanText(row.ProgramType) === selectedPopulation
+    );
+  }
 
   if (selectedRegion) {
     rows = rows.filter(row =>
@@ -524,6 +533,9 @@ function populateLocationFilter() {
   const currentValue =
     locationFilter.value;
 
+  const selectedPopulation =
+    populationFilter.value;
+
   const selectedRegion =
     regionFilter.value;
 
@@ -531,11 +543,17 @@ function populateLocationFilter() {
     countyFilter.value;
 
   let rows =
-  getCoachingRows(
-    filterByFiscalYear(
-      allAttendanceRows
-    )
-  );
+    getCoachingRows(
+      filterByFiscalYear(
+        allAttendanceRows
+      )
+    );
+
+  if (selectedPopulation) {
+    rows = rows.filter(row =>
+      cleanText(row.ProgramType) === selectedPopulation
+    );
+  }
 
   if (selectedRegion) {
     rows = rows.filter(row =>
