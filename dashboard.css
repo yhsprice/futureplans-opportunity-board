@@ -678,3 +678,52 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     grid-template-columns: 1fr;
   }
 }
+
+/* Attendance Analytics KPI emphasis */
+
+.attendance-kpi {
+  position: relative;
+  overflow: hidden;
+  border-width: 1px;
+}
+
+.attendance-kpi::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: currentColor;
+  opacity: 0.9;
+}
+
+.attendance-kpi h3,
+.attendance-kpi h1 {
+  position: relative;
+  z-index: 1;
+}
+
+.attendance-kpi h1 {
+  font-size: 36px;
+}
+
+.positive-kpi {
+  color: #69f0ae;
+}
+
+.warning-kpi {
+  color: #ffd166;
+}
+
+.negative-kpi {
+  color: #ff7b8b;
+}
+
+.neutral-kpi {
+  color: #56c7ff;
+}
+
+.attendance-kpi h3 {
+  color: #ffffff;
+}
