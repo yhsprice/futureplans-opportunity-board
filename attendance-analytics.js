@@ -423,10 +423,12 @@ function populateRegionFilter() {
   const currentValue =
     regionFilter.value;
 
-  const fiscalRows =
+ const fiscalRows =
+  getCoachingRows(
     filterByFiscalYear(
       allAttendanceRows
-    );
+    )
+  );
 
   const regions =
     uniqueSorted(
@@ -451,9 +453,11 @@ function populateCountyFilter() {
     regionFilter.value;
 
   let rows =
+  getCoachingRows(
     filterByFiscalYear(
       allAttendanceRows
-    );
+    )
+  );
 
   if (selectedRegion) {
     rows = rows.filter(row =>
@@ -487,9 +491,11 @@ function populateLocationFilter() {
     countyFilter.value;
 
   let rows =
+  getCoachingRows(
     filterByFiscalYear(
       allAttendanceRows
-    );
+    )
+  );
 
   if (selectedRegion) {
     rows = rows.filter(row =>
@@ -522,36 +528,29 @@ function populateLocationFilter() {
    FILTER CURRENT RECORDS
 ========================================================= */
 
+function getCoachingRows(rows) {
+  return rows.filter(row => {
+    const payRule = cleanText(row.PayRule);
+    const programType = cleanText(row.ProgramType);
+    const school = cleanText(row.School);
+
+    const isMeetingOrTraining =
+      programType === "Meeting" ||
+      programType === "Professional Development" ||
+      payRule === "Meeting" ||
+      payRule === "Prof Development";
+
+    return !isMeetingOrTraining && school !== "";
+  });
+}
+
 function getFilteredRows() {
   let rows =
-    filterByFiscalYear(
-      allAttendanceRows
+    getCoachingRows(
+      filterByFiscalYear(
+        allAttendanceRows
+      )
     );
-
-  rows = rows.filter(row => {
-  const payRule = cleanText(row.PayRule);
-  const programType = cleanText(row.ProgramType);
-  const school = cleanText(row.School);
-
-  const isMeetingOrTraining =
-    programType === "Meeting" ||
-    programType === "Professional Development" ||
-    payRule === "Meeting" ||
-    payRule === "Prof Development";
-
-  return !isMeetingOrTraining && school !== "";
-});
-
-  rows = rows.filter(row => {
-  const payRule = cleanText(row.PayRule);
-  const programType = cleanText(row.ProgramType);
-
-  return (
-    payRule === "Regular Coaching" ||
-    programType === "Youth" ||
-    programType === "Adult"
-  );
-});
 
   const selectedRegion =
     regionFilter.value;
@@ -582,7 +581,6 @@ function getFilteredRows() {
 
   return rows;
 }
-
 /* =========================================================
    SUMMARY CALCULATIONS
 ========================================================= */
