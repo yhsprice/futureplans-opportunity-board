@@ -142,7 +142,10 @@ function getRowLocationName(row) {
   return cleanText(
     row.Location ||
     row.School ||
+    row["School / Agency"] ||
+    row["School/Agency"] ||
     row.SchoolName ||
+    row["Location Name"] ||
     row.Account ||
     row.Agency
   );
