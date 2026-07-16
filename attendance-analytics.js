@@ -555,42 +555,19 @@ function getCoachingRows(rows) {
 }
 
 function getFilteredRows() {
-  let rows =
-    getCoachingRows(
-      filterByFiscalYear(
-        allAttendanceRows
-      )
-    );
 
-  const selectedRegion =
-    regionFilter.value;
+  const rows = filterByFiscalYear(allAttendanceRows);
 
-  const selectedCounty =
-    countyFilter.value;
-
-  const selectedLocation =
-    locationFilter.value;
-
-  if (selectedRegion) {
-    rows = rows.filter(row =>
-      row.ReportRegion === selectedRegion
-    );
-  }
-
-  if (selectedCounty) {
-    rows = rows.filter(row =>
-      row.ReportCounty === selectedCounty
-    );
-  }
-
-  if (selectedLocation) {
-    rows = rows.filter(row =>
-      row.ReportLocation === selectedLocation
-    );
-  }
+  console.table(rows.map(r => ({
+    School: r.School,
+    ProgramType: r.ProgramType,
+    PayRule: r.PayRule,
+    Outcome: r.AppointmentOutcome
+  })));
 
   return rows;
 }
+
 /* =========================================================
    SUMMARY CALCULATIONS
 ========================================================= */
