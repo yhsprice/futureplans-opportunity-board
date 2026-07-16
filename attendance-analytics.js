@@ -649,7 +649,6 @@ function getFilteredRows() {
   return rows;
 }
 
-
 /* =========================================================
    SUMMARY CALCULATIONS
 ========================================================= */
@@ -1192,6 +1191,16 @@ function renderDashboard() {
 ========================================================= */
 
 fiscalYearFilter.addEventListener(
+  "change",
+  function() {
+    populateRegionFilter();
+    populateCountyFilter();
+    populateLocationFilter();
+    renderDashboard();
+  }
+);
+
+populationFilter.addEventListener(
   "change",
   function() {
     populateRegionFilter();
