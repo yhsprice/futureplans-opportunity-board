@@ -1,1 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
+  <title>Attendance Analytics</title>
+
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+  <aside class="sidebar">
+
+    <div class="logo" style="text-align:center;">
+      <img
+        src="Future Plans.png"
+        alt="Future Plans"
+        style="max-width:220px; width:100%;"
+      >
+    </div>
+
+    <div class="nav-section-title">Coach</div>
+
+    <a class="nav-link" href="coach-dashboard.html">Coach Dashboard</a>
+    <a class="nav-link" href="index.html">Available Opportunities</a>
+    <a class="nav-link" href="my-requests.html">My Requests</a>
+    <a class="nav-link" href="my-schedule.html">My Schedule</a>
+    <a class="nav-link" href="submit-session.html">Submit Time</a>
+    <a class="nav-link" href="my-payroll.html">My Payroll</a>
+
+    <div class="nav-section-title manager-only">Manager</div>
+
+    <a class="nav-link manager-only" href="manager.html">
+      Manager Dashboard
+    </a>
+
+    <a class="nav-link manager-only" href="manager-calendar.html">
+      Weekly Calendar
+    </a>
+
+    <a class="nav-link manager-only" href="add-opportunity.html">
+      Add Opportunity
+    </a>
+
+    <a class="nav-link manager-only" href="manage-opportunities.html">
+      Manage Opportunities
+    </a>
+
+    <a class="nav-link manager-only" href="payroll.html">
+      Payroll Dashboard
+    </a>
+
+    <a class="nav-link manager-only active" href="attendance-analytics.html">
+      Attendance Analytics
+    </a>
+
+    <a class="nav-link manager-only" href="utilization.html">
+      Coach Utilization
+    </a>
+
+    <div class="nav-section-title">Resources</div>
+
+    <a
+      class="nav-link"
+      target="_blank"
+      href="https://engage.cloud.microsoft/main/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiIxNzgzOTI0ODE3OTIifQ/new"
+    >
+      Viva Engage
+    </a>
+
+    <a
+      class="nav-link"
+      target="_blank"
+      href="https://futureplans4u.github.io/Main-Page-Career-Games/"
+    >
+      Coaching Games
+    </a>
+
+    <a
+      class="nav-link"
+      target="_blank"
+      href="https://futureplans4u.github.io/Main-Page-Career-Games/coaching.html"
+    >
+      Coaching Tools
+    </a>
+
+  </aside>
+
+  <main class="main-content">
+
+    <div class="top-bar">
+      <div>
+        <h1>Attendance Analytics</h1>
+        <p>
+          Review completed coaching, absences, cancellations,
+          reasons, and location trends by fiscal year.
+        </p>
+      </div>
+
+      <div
+        id="userBanner"
+        class="welcome-pill"
+      ></div>
+    </div>
+
+    <div class="dashboard-card">
+
+      <h2>Filters</h2>
+
+      <div
+        style="
+          display:flex;
+          gap:18px;
+          flex-wrap:wrap;
+          align-items:end;
+        "
+      >
+
+        <div>
+          <p><strong>Fiscal Year</strong></p>
+
+          <select id="fiscalYearFilter">
+            <option value="2026">
+              FY 2026–2027
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <p><strong>Region</strong></p>
+
+          <select id="regionFilter">
+            <option value="">All Regions</option>
+          </select>
+        </div>
+
+        <div>
+          <p><strong>County</strong></p>
+
+          <select id="countyFilter">
+            <option value="">All Counties</option>
+          </select>
+        </div>
+
+        <div>
+          <p><strong>Location</strong></p>
+
+          <select id="locationFilter">
+            <option value="">All Locations</option>
+          </select>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      id="analyticsMessage"
+      class="dashboard-card"
+    >
+      Loading attendance data...
+    </div>
+
+    <div
+      id="summaryCards"
+      style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+        gap:16px;
+        margin-top:20px;
+      "
+    ></div>
+
+    <div class="dashboard-card" style="margin-top:20px;">
+      <h2>Outcome Breakdown</h2>
+
+      <div id="outcomeBreakdown"></div>
+    </div>
+
+    <div class="dashboard-card" style="margin-top:20px;">
+      <h2>Reason Breakdown</h2>
+
+      <div id="reasonBreakdown"></div>
+    </div>
+
+    <div class="dashboard-card" style="margin-top:20px;">
+      <h2>Location Summary</h2>
+
+      <div id="locationSummary"></div>
+    </div>
+
+    <div class="dashboard-card" style="margin-top:20px;">
+      <h2>Appointment History</h2>
+
+      <div
+        style="overflow-x:auto;"
+      >
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Coach</th>
+              <th>Program</th>
+              <th>Hours</th>
+              <th>Outcome</th>
+              <th>Reason</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+
+          <tbody id="attendanceTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="auth.js"></script>
+<script src="attendance-analytics.js?v=1"></script>
+
+</body>
+</html>
