@@ -704,7 +704,6 @@ function addManualGridRow(copyFromLast = true) {
       <option value="Student Absent">Student Absent</option>
       <option value="Student Cancelled">Student Cancelled</option>
       <option value="School Cancelled">School Cancelled</option>
-      <option value="Coach Cancelled">Coach Cancelled</option>
       <option value="School Closed">School Closed</option>
       <option value="Technical Issue">Technical Issue</option>
       <option value="Other">Other</option>
