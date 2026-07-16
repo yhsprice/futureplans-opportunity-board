@@ -28,10 +28,10 @@ function jsonp(url) {
       "&callback=" +
       encodeURIComponent(callbackName);
 
-    script.onerror = function(error) {
+    script.onerror = function(event) {
       delete window[callbackName];
       script.remove();
-      reject(error);
+      reject(event);
     };
 
     document.body.appendChild(script);
@@ -71,7 +71,8 @@ async function loadAttendanceAnalytics() {
     );
 
     analyticsMessage.textContent =
-      `Something went wrong: ${error.message}`;
+      `Something went wrong: ${error.message || "Unknown error"}`;
   }
 }
+
 loadAttendanceAnalytics();
