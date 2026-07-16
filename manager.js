@@ -763,6 +763,7 @@ outcome.addEventListener("change", updateOutcomeFields);
 updateOutcomeFields();
 
 body.appendChild(row);
+  }
 
 function clearManualGrid() {
   if (!confirm("Clear all manual payroll rows?")) return;
