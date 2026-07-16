@@ -798,16 +798,15 @@ function renderOutcomeBreakdown(rows) {
     groupByOutcome(rows);
 
   const outcomes = [
-    const outcomes = [
-  "Completed",
-  "Student Absent",
-  "Cancel-No Show",
-  "Student Cancelled",
-  "School Cancelled",
-  "School Closed",
-  "Technical Issue",
-  "Other"
-];
+    "Completed",
+    "Student Absent",
+    "Cancel-No Show",
+    "Student Cancelled",
+    "School Cancelled",
+    "School Closed",
+    "Technical Issue",
+    "Other"
+  ];
 
   outcomeBreakdown.innerHTML = `
     <table class="modern-table">
