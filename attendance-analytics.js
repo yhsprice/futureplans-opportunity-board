@@ -91,6 +91,24 @@ function cleanText(value) {
   return String(value || "").trim();
 }
 
+function getPopulation(row) {
+  const programType =
+    cleanText(row.ProgramType).toLowerCase();
+
+  if (programType.includes("adult")) {
+    return "Adult";
+  }
+
+  if (
+    programType.includes("youth") ||
+    programType.includes("student")
+  ) {
+    return "Youth";
+  }
+
+  return "";
+}
+
 function normalizeText(value) {
   return cleanText(value)
     .toLowerCase()
@@ -466,7 +484,7 @@ function populateRegionFilter() {
 
   if (selectedPopulation) {
     rows = rows.filter(row =>
-      cleanText(row.ProgramType) === selectedPopulation
+      getPopulation(row) === selectedPopulation
     );
   }
 
@@ -504,7 +522,7 @@ function populateCountyFilter() {
 
   if (selectedPopulation) {
     rows = rows.filter(row =>
-      cleanText(row.ProgramType) === selectedPopulation
+      getPopulation(row) === selectedPopulation
     );
   }
 
@@ -551,7 +569,7 @@ function populateLocationFilter() {
 
   if (selectedPopulation) {
     rows = rows.filter(row =>
-      cleanText(row.ProgramType) === selectedPopulation
+      getPopulation(row) === selectedPopulation
     );
   }
 
@@ -659,66 +677,73 @@ function countOutcome(rows, outcome) {
   ).length;
 }
 
+function countAnyOutcome(rows, outcomes) {
+  return rows.filter(row =>
+    outcomes.includes(getOutcome(row))
+  ).length;
+}
+
 function getSummary(rows) {
   const totalAppointments =
     rows.length;
 
-  const cancelNoShow =
-  countOutcome(
-    rows,
-    "Cancel-No Show"
-  );
-
   const completed =
-    countOutcome(
-      rows,
+    countAnyOutcome(rows, [
       "Completed"
-    );
+    ]);
 
-  const studentAbsent =
-    countOutcome(
-      rows,
-      "Student Absent"
-    );
+  const participantAbsent =
+    countAnyOutcome(rows, [
+      "Student Absent",
+      "Participant Absent",
+      "Adult Absent"
+    ]);
 
-  const studentCancelled =
-    countOutcome(
-      rows,
-      "Student Cancelled"
-    );
+  const cancelNoShow =
+    countAnyOutcome(rows, [
+      "Cancel-No Show",
+      "No Show"
+    ]);
 
-  const schoolCancelled =
-    countOutcome(
-      rows,
-      "School Cancelled"
-    );
+  const participantCancelled =
+    countAnyOutcome(rows, [
+      "Student Cancelled",
+      "Participant Cancelled",
+      "Adult Cancelled"
+    ]);
 
-  const schoolClosed =
-    countOutcome(
-      rows,
-      "School Closed"
-    );
+  const locationCancelled =
+    countAnyOutcome(rows, [
+      "School Cancelled",
+      "Location Cancelled",
+      "Agency Cancelled"
+    ]);
+
+  const locationClosed =
+    countAnyOutcome(rows, [
+      "School Closed",
+      "Location Closed",
+      "Agency Closed"
+    ]);
 
   const technicalIssue =
-    countOutcome(
-      rows,
+    countAnyOutcome(rows, [
       "Technical Issue"
-    );
+    ]);
 
   const other =
-    countOutcome(
-      rows,
+    countAnyOutcome(rows, [
       "Other"
-    );
+    ]);
 
- const cancellationTotal =
-  cancelNoShow +
-  studentCancelled +
-  schoolCancelled;
+  const cancellationTotal =
+    cancelNoShow +
+    participantCancelled +
+    locationCancelled;
 
   const attendanceIssues =
-  totalAppointments -
-  completed;
+    totalAppointments -
+    completed;
 
   const totalHours =
     rows.reduce(
@@ -730,15 +755,14 @@ function getSummary(rows) {
   return {
     totalAppointments,
     completed,
-    studentAbsent,
+    attendanceIssues,
+    participantAbsent,
     cancelNoShow,
-    studentCancelled,
-    schoolCancelled,
-    schoolClosed,
+    participantCancelled,
+    locationCancelled,
+    locationClosed,
     technicalIssue,
     other,
-    cancellationTotal,
-    attendanceIssues,
     totalHours,
 
     completionRate:
@@ -749,7 +773,7 @@ function getSummary(rows) {
 
     absenceRate:
       formatPercent(
-        studentAbsent,
+        participantAbsent,
         totalAppointments
       ),
 
@@ -786,28 +810,28 @@ function renderSummaryCards(rows) {
     </div>
 
     <div class="dashboard-card">
-      <h3>Student Absent</h3>
-      <h1>${summary.studentAbsent}</h1>
+      <h3>Participant Absent</h3>
+      <h1>${summary.participantAbsent}</h1>
     </div>
 
     <div class="dashboard-card">
-      <h3>Cancel-No Show</h3>
+      <h3>No Show</h3>
       <h1>${summary.cancelNoShow}</h1>
     </div>
 
     <div class="dashboard-card">
-      <h3>Student Cancelled</h3>
-      <h1>${summary.studentCancelled}</h1>
+      <h3>Participant Cancelled</h3>
+      <h1>${summary.participantCancelled}</h1>
     </div>
 
     <div class="dashboard-card">
-      <h3>School Cancelled</h3>
-      <h1>${summary.schoolCancelled}</h1>
+      <h3>Location Cancelled</h3>
+      <h1>${summary.locationCancelled}</h1>
     </div>
 
     <div class="dashboard-card">
-      <h3>School Closed</h3>
-      <h1>${summary.schoolClosed}</h1>
+      <h3>Location Closed</h3>
+      <h1>${summary.locationClosed}</h1>
     </div>
 
     <div class="dashboard-card">
