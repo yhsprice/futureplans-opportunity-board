@@ -41,6 +41,12 @@ const attendanceTableBody =
 const populationFilter =
   document.getElementById("populationFilter");
 
+const locationPerformanceBody =
+  document.getElementById("locationPerformanceBody");
+
+const minimumAppointmentsFilter =
+  document.getElementById("minimumAppointmentsFilter");
+
 /* =========================================================
    STORED PAGE DATA
 ========================================================= */
@@ -1285,6 +1291,136 @@ function renderQuickInsights(rows) {
   `;
 }
 
+function renderLocationPerformance(rows) {
+  const minimumAppointments =
+    Number(minimumAppointmentsFilter.value || 1);
+
+  const locationGroups = {};
+
+  rows.forEach(row => {
+    const location =
+      cleanText(row.ReportLocation) ||
+      "Unmapped Location";
+
+    if (!locationGroups[location]) {
+      locationGroups[location] = [];
+    }
+
+    locationGroups[location].push(row);
+  });
+
+  const locationResults =
+    Object.entries(locationGroups)
+      .map(([location, locationRows]) => {
+        const summary =
+          getSummary(locationRows);
+
+        const populations =
+          uniqueSorted(
+            locationRows
+              .map(row => getPopulation(row))
+              .filter(Boolean)
+          );
+
+        let populationLabel = "Unknown";
+
+        if (
+          populations.includes("Youth") &&
+          populations.includes("Adult")
+        ) {
+          populationLabel = "Both";
+        } else if (populations.length === 1) {
+          populationLabel = populations[0];
+        }
+
+        return {
+          location,
+          populationLabel,
+          ...summary,
+          issueRate:
+            formatPercent(
+              summary.attendanceIssues,
+              summary.totalAppointments
+            )
+        };
+      })
+      .filter(result =>
+        result.totalAppointments >= minimumAppointments
+      )
+      .sort((a, b) => {
+        if (b.attendanceIssues !== a.attendanceIssues) {
+          return b.attendanceIssues - a.attendanceIssues;
+        }
+
+        return b.totalAppointments - a.totalAppointments;
+      });
+
+  if (!locationResults.length) {
+    locationPerformanceBody.innerHTML = `
+      <tr>
+        <td colspan="12">
+          No locations meet the selected minimum appointment count.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  locationPerformanceBody.innerHTML =
+    locationResults.map(result => `
+      <tr>
+        <td>
+          ${escapeHtml(result.location)}
+        </td>
+
+        <td>
+          ${escapeHtml(result.populationLabel)}
+        </td>
+
+        <td>
+          ${result.totalAppointments}
+        </td>
+
+        <td>
+          ${result.completed}
+        </td>
+
+        <td>
+          ${result.cancelNoShow}
+        </td>
+
+        <td>
+          ${result.participantAbsent}
+        </td>
+
+        <td>
+          ${result.participantCancelled}
+        </td>
+
+        <td>
+          ${result.locationCancelled}
+        </td>
+
+        <td>
+          ${result.attendanceIssues}
+        </td>
+
+        <td>
+          ${result.completionRate}
+        </td>
+
+        <td>
+          ${result.issueRate}
+        </td>
+
+        <td>
+          ${result.totalHours.toFixed(2)}
+        </td>
+      </tr>
+    `).join("");
+}
+
 function renderDashboard() {
   const rows =
     getFilteredRows();
@@ -1295,6 +1431,7 @@ function renderDashboard() {
   renderReasonBreakdown(rows);
   renderLocationSummary(rows);
   renderAppointmentHistory(rows);
+  renderLocationPerformance(rows);
 }
 
 /* =========================================================
@@ -1339,6 +1476,11 @@ countyFilter.addEventListener(
 );
 
 locationFilter.addEventListener(
+  "change",
+  renderDashboard
+);
+
+minimumAppointmentsFilter.addEventListener(
   "change",
   renderDashboard
 );
