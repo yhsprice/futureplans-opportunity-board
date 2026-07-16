@@ -7,6 +7,9 @@ showManagerLinksOnly();
 const analyticsMessage =
   document.getElementById("analyticsMessage");
 
+const summaryCards =
+  document.getElementById("summaryCards");
+
 function jsonp(url) {
   return new Promise((resolve, reject) => {
     const callbackName =
@@ -38,7 +41,14 @@ function jsonp(url) {
   });
 }
 
+function countOutcome(rows, outcome) {
+  return rows.filter(row =>
+    String(row.AppointmentOutcome || "").trim() === outcome
+  ).length;
+}
+
 async function loadAttendanceAnalytics() {
+  analyticsMessage.style.display = "block";
   analyticsMessage.textContent =
     "Loading attendance data...";
 
@@ -46,41 +56,6 @@ async function loadAttendanceAnalytics() {
     const rows = await jsonp(
       `${API_URL}?action=getAttendanceAnalytics`
     );
-
-    const completed =
-  rows.filter(r =>
-    (r.AppointmentOutcome || "") === "Completed"
-  ).length;
-
-const absent =
-  rows.filter(r =>
-    (r.AppointmentOutcome || "") === "Student Absent"
-  ).length;
-
-const studentCancelled =
-  rows.filter(r =>
-    (r.AppointmentOutcome || "") === "Student Cancelled"
-  ).length;
-
-const schoolCancelled =
-  rows.filter(r =>
-    (r.AppointmentOutcome || "") === "School Cancelled"
-  ).length;
-
-const schoolClosed =
-  rows.filter(r =>
-    (r.AppointmentOutcome || "") === "School Closed"
-  ).length;
-
-const technical =
-  rows.filter(r =>
-    (r.AppointmentOutcome || "") === "Technical Issue"
-  ).length;
-
-const other =
-  rows.filter(r =>
-    (r.AppointmentOutcome || "") === "Other"
-  ).length;
 
     console.log("Attendance analytics rows:", rows);
 
@@ -96,47 +71,107 @@ const other =
       );
     }
 
+    const fiscalYear =
+      document.getElementById("fiscalYearFilter").value;
+
+    /*
+      Fiscal-year filtering will be added next.
+      For now, all returned rows are included.
+    */
+    const filteredRows = [...rows];
+
+    const totalAppointments = filteredRows.length;
+
+    const completed =
+      countOutcome(filteredRows, "Completed");
+
+    const absent =
+      countOutcome(filteredRows, "Student Absent");
+
+    const studentCancelled =
+      countOutcome(filteredRows, "Student Cancelled");
+
+    const schoolCancelled =
+      countOutcome(filteredRows, "School Cancelled");
+
+    const schoolClosed =
+      countOutcome(filteredRows, "School Closed");
+
+    const technical =
+      countOutcome(filteredRows, "Technical Issue");
+
+    const other =
+      countOutcome(filteredRows, "Other");
+
+    const completionRate =
+      totalAppointments === 0
+        ? "0.0"
+        : (
+            (completed / totalAppointments) *
+            100
+          ).toFixed(1);
+
+    const absenceRate =
+      totalAppointments === 0
+        ? "0.0"
+        : (
+            (absent / totalAppointments) *
+            100
+          ).toFixed(1);
+
     analyticsMessage.style.display = "none";
 
-    const cards =
-  document.getElementById("summaryCards");
+    summaryCards.innerHTML = `
+      <div class="dashboard-card">
+        <h3>Total Appointments</h3>
+        <h1>${totalAppointments}</h1>
+      </div>
 
-cards.innerHTML = `
-<div class="dashboard-card">
-  <h3>Completed</h3>
-  <h1>${completed}</h1>
-</div>
+      <div class="dashboard-card">
+        <h3>Completed</h3>
+        <h1>${completed}</h1>
+      </div>
 
-<div class="dashboard-card">
-  <h3>Student Absent</h3>
-  <h1>${absent}</h1>
-</div>
+      <div class="dashboard-card">
+        <h3>Student Absent</h3>
+        <h1>${absent}</h1>
+      </div>
 
-<div class="dashboard-card">
-  <h3>Student Cancelled</h3>
-  <h1>${studentCancelled}</h1>
-</div>
+      <div class="dashboard-card">
+        <h3>Student Cancelled</h3>
+        <h1>${studentCancelled}</h1>
+      </div>
 
-<div class="dashboard-card">
-  <h3>School Cancelled</h3>
-  <h1>${schoolCancelled}</h1>
-</div>
+      <div class="dashboard-card">
+        <h3>School Cancelled</h3>
+        <h1>${schoolCancelled}</h1>
+      </div>
 
-<div class="dashboard-card">
-  <h3>School Closed</h3>
-  <h1>${schoolClosed}</h1>
-</div>
+      <div class="dashboard-card">
+        <h3>School Closed</h3>
+        <h1>${schoolClosed}</h1>
+      </div>
 
-<div class="dashboard-card">
-  <h3>Technical</h3>
-  <h1>${technical}</h1>
-</div>
+      <div class="dashboard-card">
+        <h3>Technical</h3>
+        <h1>${technical}</h1>
+      </div>
 
-<div class="dashboard-card">
-  <h3>Other</h3>
-  <h1>${other}</h1>
-</div>
-`;
+      <div class="dashboard-card">
+        <h3>Other</h3>
+        <h1>${other}</h1>
+      </div>
+
+      <div class="dashboard-card">
+        <h3>Completion Rate</h3>
+        <h1>${completionRate}%</h1>
+      </div>
+
+      <div class="dashboard-card">
+        <h3>Absence Rate</h3>
+        <h1>${absenceRate}%</h1>
+      </div>
+    `;
 
   } catch (error) {
     console.error(
@@ -144,8 +179,11 @@ cards.innerHTML = `
       error
     );
 
+    analyticsMessage.style.display = "block";
     analyticsMessage.textContent =
-      `Something went wrong: ${error.message || "Unknown error"}`;
+      `Something went wrong: ${
+        error.message || "Unknown error"
+      }`;
   }
 }
 
