@@ -794,120 +794,63 @@ function getSummary(rows) {
 ========================================================= */
 
 function renderSummaryCards(rows) {
-  const summary =
-    getSummary(rows);
+  const summary = getSummary(rows);
+  const selectedPopulation = populationFilter.value;
 
-  const selectedPopulation =
-    populationFilter.value;
-
-  let absentLabel =
-    "Participant Absent";
-
-  let cancelledLabel =
-    "Participant Cancelled";
-
-  let locationCancelledLabel =
-    "Location Cancelled";
-
-  let locationClosedLabel =
-    "Location Closed";
+  let absentLabel = "Participant Absent";
+  let cancelledLabel = "Participant Cancelled";
+  let locationCancelledLabel = "Location Cancelled";
 
   if (selectedPopulation === "Youth") {
-    absentLabel =
-      "Student Absent";
-
-    cancelledLabel =
-      "Student Cancelled";
-
-    locationCancelledLabel =
-      "School Cancelled";
-
-    locationClosedLabel =
-      "School Closed";
+    absentLabel = "Student Absent";
+    cancelledLabel = "Student Cancelled";
+    locationCancelledLabel = "School Cancelled";
   }
 
   if (selectedPopulation === "Adult") {
-    absentLabel =
-      "Adult Absent";
-
-    cancelledLabel =
-      "Adult Cancelled";
-
-    locationCancelledLabel =
-      "Agency Cancelled";
-
-    locationClosedLabel =
-      "Agency Closed";
+    absentLabel = "Adult Absent";
+    cancelledLabel = "Adult Cancelled";
+    locationCancelledLabel = "Agency Cancelled";
   }
 
   summaryCards.innerHTML = `
-    <div class="dashboard-card">
+    <div class="dashboard-card attendance-kpi neutral-kpi">
       <h3>Total Appointments</h3>
       <h1>${summary.totalAppointments}</h1>
     </div>
 
-    <div class="dashboard-card">
+    <div class="dashboard-card attendance-kpi positive-kpi">
       <h3>Completed</h3>
       <h1>${summary.completed}</h1>
     </div>
 
-    <div class="dashboard-card">
-      <h3>Attendance Issues</h3>
-      <h1>${summary.attendanceIssues}</h1>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>${absentLabel}</h3>
-      <h1>${summary.participantAbsent}</h1>
-    </div>
-
-    <div class="dashboard-card">
+    <div class="dashboard-card attendance-kpi warning-kpi">
       <h3>No Show</h3>
       <h1>${summary.cancelNoShow}</h1>
     </div>
 
-    <div class="dashboard-card">
+    <div class="dashboard-card attendance-kpi warning-kpi">
+      <h3>${absentLabel}</h3>
+      <h1>${summary.participantAbsent}</h1>
+    </div>
+
+    <div class="dashboard-card attendance-kpi negative-kpi">
       <h3>${cancelledLabel}</h3>
       <h1>${summary.participantCancelled}</h1>
     </div>
 
-    <div class="dashboard-card">
+    <div class="dashboard-card attendance-kpi negative-kpi">
       <h3>${locationCancelledLabel}</h3>
       <h1>${summary.locationCancelled}</h1>
     </div>
 
-    <div class="dashboard-card">
-      <h3>${locationClosedLabel}</h3>
-      <h1>${summary.locationClosed}</h1>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>Technical Issue</h3>
-      <h1>${summary.technicalIssue}</h1>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>Other</h3>
-      <h1>${summary.other}</h1>
-    </div>
-
-    <div class="dashboard-card">
+    <div class="dashboard-card attendance-kpi positive-kpi">
       <h3>Completion Rate</h3>
       <h1>${summary.completionRate}</h1>
     </div>
 
-    <div class="dashboard-card">
-      <h3>Absence Rate</h3>
-      <h1>${summary.absenceRate}</h1>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>Cancellation Rate</h3>
-      <h1>${summary.cancellationRate}</h1>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>Total Hours</h3>
+    <div class="dashboard-card attendance-kpi neutral-kpi">
+      <h3>Total Paid Hours</h3>
       <h1>${summary.totalHours.toFixed(2)}</h1>
     </div>
   `;
