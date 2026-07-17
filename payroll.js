@@ -287,72 +287,109 @@ function loadSummaryCards(payroll) {
 }
 
 function loadGrantTotals(payroll) {
-  const body = document.getElementById("grantTotalsBody");
 
-  const grants = {};
+    const body = document.getElementById("grantTotalsBody");
 
-  payroll.forEach(session => {
-    const grant = session.Fund || "Unassigned";
+    body.innerHTML = "";
 
-    if (!grants[grant]) {
-      grants[grant] = {
-        sessions: 0,
-        hours: 0,
-        payroll: 0
-      };
+    if (!payroll.length) {
+
+        body.innerHTML = `
+        <tr>
+            <td colspan="6">No payroll records found.</td>
+        </tr>`;
+
+        return;
     }
 
-    grants[grant].sessions += 1;
-    grants[grant].hours += Number(session.PayHours || 0);
-    grants[grant].payroll += Number(session.PayAmount || 0);
-  });
+    const grants = {};
 
-  body.innerHTML = "";
+    let grandPayroll = 0;
 
-  const grantNames = Object.keys(grants).sort();
+    payroll.forEach(session => {
 
-  if (grantNames.length === 0) {
-    body.innerHTML = `
-      <tr>
-        <td colspan="4">No payroll records found.</td>
-      </tr>
-    `;
-    return;
-  }
+        const grant = session.Fund || "Unassigned";
 
-  let totalSessions = 0;
-  let totalHours = 0;
-  let totalPayroll = 0;
+        if (!grants[grant]) {
 
-  grantNames.forEach(grant => {
-    const values = grants[grant];
+            grants[grant] = {
+                coaches: new Set(),
+                sessions: 0,
+                hours: 0,
+                payroll: 0
+            };
 
-    totalSessions += values.sessions;
-    totalHours += values.hours;
-    totalPayroll += values.payroll;
+        }
 
-    const row = document.createElement("tr");
+        grants[grant].coaches.add(session.CoachName);
 
-    row.innerHTML = `
-      <td>${grant}</td>
-      <td>${values.sessions}</td>
-      <td>${values.hours.toFixed(2)}</td>
-      <td>$${values.payroll.toFixed(2)}</td>
-    `;
+        grants[grant].sessions++;
 
-    body.appendChild(row);
-  });
+        grants[grant].hours += Number(session.PayHours || 0);
 
-  const totalRow = document.createElement("tr");
+        grants[grant].payroll += Number(session.PayAmount || 0);
 
-  totalRow.innerHTML = `
-    <td><strong>TOTAL</strong></td>
-    <td><strong>${totalSessions}</strong></td>
-    <td><strong>${totalHours.toFixed(2)}</strong></td>
-    <td><strong>$${totalPayroll.toFixed(2)}</strong></td>
-  `;
+        grandPayroll += Number(session.PayAmount || 0);
 
-  body.appendChild(totalRow);
+    });
+
+    let totalCoaches = new Set();
+
+    let totalSessions = 0;
+    let totalHours = 0;
+    let totalPayroll = 0;
+
+    Object.keys(grants)
+        .sort()
+        .forEach(grant => {
+
+            const g = grants[grant];
+
+            g.coaches.forEach(c => totalCoaches.add(c));
+
+            totalSessions += g.sessions;
+            totalHours += g.hours;
+            totalPayroll += g.payroll;
+
+            const percent =
+                grandPayroll === 0
+                ? 0
+                : (g.payroll / grandPayroll) * 100;
+
+            body.innerHTML += `
+            <tr>
+
+                <td>${grant}</td>
+
+                <td>${g.coaches.size}</td>
+
+                <td>${g.sessions}</td>
+
+                <td>${g.hours.toFixed(2)}</td>
+
+                <td>$${g.payroll.toFixed(2)}</td>
+
+                <td>${percent.toFixed(1)}%</td>
+
+            </tr>`;
+        });
+
+    body.innerHTML += `
+    <tr class="table-total">
+
+        <td><strong>TOTAL</strong></td>
+
+        <td><strong>${totalCoaches.size}</strong></td>
+
+        <td><strong>${totalSessions}</strong></td>
+
+        <td><strong>${totalHours.toFixed(2)}</strong></td>
+
+        <td><strong>$${totalPayroll.toFixed(2)}</strong></td>
+
+        <td><strong>100%</strong></td>
+
+    </tr>`;
 }
 
 function loadCoachTotals(payroll) {
