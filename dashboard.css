@@ -807,3 +807,44 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .attendance-minimum-filter select {
   width: 100%;
 }
+
+/* Coach payroll totals */
+
+#coachTotals {
+  margin-top: 18px;
+  overflow-x: auto;
+}
+
+#coachTotals .batch-table {
+  width: 100%;
+  min-width: 650px;
+  border-collapse: collapse;
+}
+
+#coachTotals .batch-table th,
+#coachTotals .batch-table td {
+  padding: 14px 18px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+#coachTotals .batch-table th {
+  white-space: nowrap;
+}
+
+#coachTotals .batch-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#coachTotals .coach-subtotal-row td {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-top: 2px solid rgba(255, 255, 255, 0.25);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+#coachTotals .table-total td {
+  padding-top: 18px;
+  padding-bottom: 18px;
+  font-size: 16px;
+}
