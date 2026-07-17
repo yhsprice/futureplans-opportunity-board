@@ -102,7 +102,7 @@ async function loadPayroll() {
 
   const statusFilter = String(
     document.getElementById("payrollStatusFilter")?.value ||
-    "all"
+    "All"
   ).trim();
 
   const grantFilterElement =
