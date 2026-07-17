@@ -84,6 +84,17 @@ async function loadPayPeriods() {
   }
 }
 
+function isDeniedPayrollStatus(status) {
+  const normalizedStatus = String(status || "")
+    .trim()
+    .toLowerCase();
+
+  return (
+    normalizedStatus === "denied" ||
+    normalizedStatus.includes("denied")
+  );
+}
+
 async function loadPayroll() {
   const selectedPayPeriod = String(
     payPeriodSelect?.value || ""
@@ -127,9 +138,18 @@ async function loadPayroll() {
       selected grant.
     */
     const payPeriodSessions = sessions.filter(session => {
-      const sessionPayPeriod = String(
-        session.PayPeriodID || ""
-      ).trim();
+  const sessionPayPeriod = String(
+    session.PayPeriodID || ""
+  ).trim();
+
+  const belongsToPayPeriod =
+    sessionPayPeriod === selectedPayPeriod;
+
+  const isDenied =
+    isDeniedPayrollStatus(session.Status);
+
+  return belongsToPayPeriod && !isDenied;
+});
 
       return sessionPayPeriod === selectedPayPeriod;
     });
