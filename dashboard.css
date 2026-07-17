@@ -848,3 +848,91 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding-bottom: 18px;
   font-size: 16px;
 }
+
+/* ==============================
+   Payroll Dashboard Tables
+============================== */
+
+#grantTotalsBody td,
+#grantTotalsBody th,
+#payrollDetailTable th,
+#payrollDetailTable td,
+#coachTotals th,
+#coachTotals td {
+    padding: 12px 16px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#grantTotalsBody td:first-child,
+#coachTotals td:first-child,
+#payrollDetailTable td:first-child {
+    text-align: left;
+}
+
+#grantTotalsBody tr:hover,
+#payrollDetailTable tbody tr:hover,
+#coachTotals tbody tr:hover {
+    background: rgba(124, 58, 237, .08);
+}
+
+#grantTotalsBody .table-total,
+#coachTotals .table-total,
+.coach-subtotal-row {
+    font-weight: 700;
+    background: rgba(124,58,237,.15);
+}
+
+#payrollDetailTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#payrollDetailTable th {
+    background: #0d1739;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+#payrollDetailTable td {
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.dashboard-card {
+    overflow-x: auto;
+}
+
+/* ---------- Payroll Tables ---------- */
+
+.batch-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.batch-table th,
+.batch-table td {
+    padding: 12px 18px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.batch-table th {
+    background: #111b45;
+}
+
+.batch-table td:first-child,
+.batch-table th:first-child {
+    text-align: left;
+}
+
+.table-total,
+.coach-subtotal-row {
+    font-weight: bold;
+    background: rgba(124,58,237,.15);
+}
+
+.dashboard-card {
+    overflow-x: auto;
+}
