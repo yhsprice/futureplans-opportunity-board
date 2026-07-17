@@ -57,23 +57,41 @@ if (
   const userRole = String(currentUser.Role || "").trim();
   const userTier = Number(currentUser.Tier || 2);
 
-  if (userRole === "Manager" || userTier === 0) {
-    return true;
-  }
+  if (userRole === "Manager") {
+  return true;
+}
 
-  if (userTier === 1) {
-    return true;
-  }
-
-  if (userTier === 2) {
-    const postedDate = new Date(opportunity.DatePosted);
-    const now = new Date();
-    const hoursSincePosted = (now - postedDate) / (1000 * 60 * 60);
-
-    return hoursSincePosted >= 8;
-  }
-
+// Tier 0 = Inactive
+if (userTier === 0) {
   return false;
+}
+
+const postedDate = new Date(opportunity.DatePosted);
+const now = new Date();
+const hoursSincePosted =
+  (now - postedDate) / (1000 * 60 * 60);
+
+// Tier 4 = Immediate
+if (userTier === 4) {
+  return true;
+}
+
+// Tier 3 = 4 hours
+if (userTier === 3) {
+  return hoursSincePosted >= 4;
+}
+
+// Tier 2 = 6 hours
+if (userTier === 2) {
+  return hoursSincePosted >= 6;
+}
+
+// Tier 1 = 8 hours
+if (userTier === 1) {
+  return hoursSincePosted >= 8;
+}
+
+return false;
 }
 
 async function loadOpportunities() {
