@@ -76,44 +76,183 @@ async function loadPayPeriods() {
 }
 
 async function loadPayroll() {
+  const selectedPayPeriod = String(
+    payPeriodSelect?.value || ""
+  ).trim();
 
-  const selectedPayPeriod = payPeriodSelect.value;
+  const statusFilter = String(
+    document.getElementById("payrollStatusFilter")?.value ||
+    "Approved for Pay"
+  ).trim();
 
-  if (!selectedPayPeriod) return;
+  const grantFilterElement =
+    document.getElementById("grantFilter");
 
-  const sessions = await jsonp(
-    `${API_URL}?action=getCompletedSessions`
-  );
+  const selectedGrant = String(
+    grantFilterElement?.value || "all"
+  ).trim();
 
-  const statusFilter =
-    document.getElementById("payrollStatusFilter")?.value || "Approved for Pay";
+  if (!selectedPayPeriod) {
+    clearPayrollDashboard(
+      "Please select a pay period."
+    );
+    return;
+  }
 
-  const grantFilter =
-    document.getElementById("grantFilter")?.value || "all";
+  try {
+    clearPayrollDashboard("Loading payroll...");
 
-  let payroll = sessions.filter(session => {
+    const response = await jsonp(
+      `${API_URL}?action=getCompletedSessions`
+    );
 
-    if (session.PayPeriodID !== selectedPayPeriod)
-      return false;
+    const sessions = Array.isArray(response)
+      ? response
+      : [];
 
-    if (statusFilter !== "all" &&
-        session.Status !== statusFilter)
-      return false;
+    /*
+      First filter only by pay period.
 
-    if (grantFilter !== "all" &&
-        session.Fund !== grantFilter)
-      return false;
+      Grant choices must be built from every record in
+      the selected pay period—not only from the currently
+      selected grant.
+    */
+    const payPeriodSessions = sessions.filter(session => {
+      const sessionPayPeriod = String(
+        session.PayPeriodID || ""
+      ).trim();
 
-    return true;
+      return sessionPayPeriod === selectedPayPeriod;
+    });
+
+    updateGrantFilter(
+      payPeriodSessions,
+      selectedGrant
+    );
+
+    const activeGrant = String(
+      grantFilterElement?.value || "all"
+    ).trim();
+
+    /*
+      Apply status and grant filters after the pay-period
+      records have been identified.
+    */
+    const payroll = payPeriodSessions.filter(session => {
+      const sessionStatus = String(
+        session.Status || ""
+      ).trim();
+
+      const sessionFund = String(
+        session.Fund || "Unassigned"
+      ).trim();
+
+      if (
+        statusFilter !== "all" &&
+        sessionStatus !== statusFilter
+      ) {
+        return false;
+      }
+
+      if (
+        activeGrant !== "all" &&
+        sessionFund !== activeGrant
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+    console.log({
+      selectedPayPeriod,
+      statusFilter,
+      activeGrant,
+      payPeriodRecordCount: payPeriodSessions.length,
+      displayedRecordCount: payroll.length
+    });
+
+    loadSummaryCards(payroll);
+    loadGrantTotals(payroll);
+    loadCoachTotals(payroll);
+    loadPayrollTable(payroll);
+
+  } catch (error) {
+    console.error("Payroll loading error:", error);
+
+    clearPayrollDashboard(
+      "Payroll could not be loaded. Check the browser console for details."
+    );
+  }
+}
+
+function updateGrantFilter(
+  payPeriodSessions,
+  previousSelection = "all"
+) {
+  const grantSelect =
+    document.getElementById("grantFilter");
+
+  if (!grantSelect) {
+    return;
+  }
+
+  const grants = [
+    ...new Set(
+      payPeriodSessions
+        .map(session =>
+          String(
+            session.Fund || "Unassigned"
+          ).trim()
+        )
+        .filter(Boolean)
+    )
+  ].sort((a, b) => a.localeCompare(b));
+
+  grantSelect.innerHTML = `
+    <option value="all">All Grants</option>
+  `;
+
+  grants.forEach(grant => {
+    const option = document.createElement("option");
+
+    option.value = grant;
+    option.textContent = grant;
+
+    grantSelect.appendChild(option);
   });
 
-  console.log("Payroll loaded:", payroll);
+  const selectionStillExists =
+    previousSelection === "all" ||
+    grants.includes(previousSelection);
 
-  loadSummaryCards(payroll);
-  loadGrantTotals(payroll);
-  loadCoachTotals(payroll);
-  loadPayrollTable(payroll);
+  grantSelect.value = selectionStillExists
+    ? previousSelection
+    : "all";
+}
 
+
+function clearPayrollDashboard(message) {
+  document.getElementById("totalCoaches").textContent = "--";
+  document.getElementById("totalSessions").textContent = "--";
+  document.getElementById("totalHours").textContent = "--";
+  document.getElementById("totalPayroll").textContent = "--";
+
+  document.getElementById("grantTotalsBody").innerHTML = `
+    <tr>
+      <td colspan="4">${message}</td>
+    </tr>
+  `;
+
+  document.getElementById("payrollDetailBody").innerHTML = `
+    <tr>
+      <td colspan="14">${message}</td>
+    </tr>
+  `;
+
+  document.getElementById("coachTotals").innerHTML = `
+    <p>${message}</p>
+  `;
 }
 
 function loadSummaryCards(payroll) {
@@ -344,7 +483,7 @@ function loadPayrollTable(payroll) {
       <td>${session.PayRule || ""}</td>
       <td>${session.School || ""}</td>
       <td>${session.AppointmentOutcome || "Completed"}</td>
-      <td>${session.OutcomeReason || ""}</td>
+      <td>${session.CancellationReason || ""}</td>
       <td>${session.OutcomeDetails || ""}</td>
       <td>${Number(session.PayHours || 0).toFixed(2)}</td>
       <td>$${Number(session.PayRate || 0).toFixed(2)}</td>
