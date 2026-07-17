@@ -32,6 +32,15 @@ const sortBy = document.getElementById("sortBy");
 
 showUserBanner();
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 async function loadPayPeriods() {
   try {
     const payPeriods = await jsonp(
@@ -393,41 +402,63 @@ function loadGrantTotals(payroll) {
 }
 
 function loadCoachTotals(payroll) {
-
   const container = document.getElementById("coachTotals");
+
+  if (!payroll.length) {
+    container.innerHTML = "<p>No payroll records found.</p>";
+    return;
+  }
 
   const coaches = {};
 
   payroll.forEach(session => {
+    const coach = String(
+      session.CoachName || "Unknown Coach"
+    ).trim();
 
-    const coach = session.CoachName || "Unknown Coach";
+    const grant = String(
+      session.Fund || "Unassigned"
+    ).trim();
 
     if (!coaches[coach]) {
       coaches[coach] = {
+        grants: {},
         sessions: 0,
         hours: 0,
         payroll: 0
       };
     }
 
-    coaches[coach].sessions++;
-    coaches[coach].hours += Number(session.PayHours || 0);
-    coaches[coach].payroll += Number(session.PayAmount || 0);
+    if (!coaches[coach].grants[grant]) {
+      coaches[coach].grants[grant] = {
+        sessions: 0,
+        hours: 0,
+        payroll: 0
+      };
+    }
 
+    const hours = Number(session.PayHours || 0);
+    const pay = Number(session.PayAmount || 0);
+
+    coaches[coach].grants[grant].sessions += 1;
+    coaches[coach].grants[grant].hours += hours;
+    coaches[coach].grants[grant].payroll += pay;
+
+    coaches[coach].sessions += 1;
+    coaches[coach].hours += hours;
+    coaches[coach].payroll += pay;
   });
 
-  const coachNames = Object.keys(coaches).sort();
-
-  if (coachNames.length === 0) {
-    container.innerHTML = "<p>No payroll records found.</p>";
-    return;
-  }
+  const coachNames = Object.keys(coaches).sort(
+    (a, b) => a.localeCompare(b)
+  );
 
   let html = `
     <table class="batch-table">
       <thead>
         <tr>
           <th>Coach</th>
+          <th>Grant</th>
           <th>Sessions</th>
           <th>Hours</th>
           <th>Payroll</th>
@@ -436,41 +467,87 @@ function loadCoachTotals(payroll) {
       <tbody>
   `;
 
-  let totalSessions = 0;
-  let totalHours = 0;
-  let totalPayroll = 0;
+  let grandSessions = 0;
+  let grandHours = 0;
+  let grandPayroll = 0;
 
   coachNames.forEach(coach => {
+    const coachData = coaches[coach];
 
-    const c = coaches[coach];
+    const grantNames = Object.keys(
+      coachData.grants
+    ).sort((a, b) => a.localeCompare(b));
 
-    totalSessions += c.sessions;
-    totalHours += c.hours;
-    totalPayroll += c.payroll;
+    grantNames.forEach((grant, index) => {
+      const grantData = coachData.grants[grant];
+
+      html += `
+        <tr>
+          <td>
+            ${index === 0
+              ? `<strong>${escapeHtml(coach)}</strong>`
+              : ""}
+          </td>
+
+          <td>${escapeHtml(grant)}</td>
+
+          <td>${grantData.sessions}</td>
+
+          <td>${grantData.hours.toFixed(2)}</td>
+
+          <td>$${grantData.payroll.toFixed(2)}</td>
+        </tr>
+      `;
+    });
 
     html += `
-      <tr>
-        <td>${coach}</td>
-        <td>${c.sessions}</td>
-        <td>${c.hours.toFixed(2)}</td>
-        <td>$${c.payroll.toFixed(2)}</td>
+      <tr class="coach-subtotal-row">
+        <td colspan="2">
+          <strong>${escapeHtml(coach)} Total</strong>
+        </td>
+
+        <td>
+          <strong>${coachData.sessions}</strong>
+        </td>
+
+        <td>
+          <strong>${coachData.hours.toFixed(2)}</strong>
+        </td>
+
+        <td>
+          <strong>$${coachData.payroll.toFixed(2)}</strong>
+        </td>
       </tr>
     `;
+
+    grandSessions += coachData.sessions;
+    grandHours += coachData.hours;
+    grandPayroll += coachData.payroll;
   });
 
   html += `
-      <tr>
-        <td><strong>TOTAL</strong></td>
-        <td><strong>${totalSessions}</strong></td>
-        <td><strong>${totalHours.toFixed(2)}</strong></td>
-        <td><strong>$${totalPayroll.toFixed(2)}</strong></td>
+      <tr class="table-total">
+        <td colspan="2">
+          <strong>PAYROLL TOTAL</strong>
+        </td>
+
+        <td>
+          <strong>${grandSessions}</strong>
+        </td>
+
+        <td>
+          <strong>${grandHours.toFixed(2)}</strong>
+        </td>
+
+        <td>
+          <strong>$${grandPayroll.toFixed(2)}</strong>
+        </td>
       </tr>
-      </tbody>
-    </table>
+    </tbody>
+  </table>
   `;
 
   container.innerHTML = html;
-
 }
 
 function loadPayrollTable(payroll) {
