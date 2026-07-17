@@ -102,7 +102,7 @@ async function loadPayroll() {
 
   const statusFilter = String(
     document.getElementById("payrollStatusFilter")?.value ||
-    "Approved for Pay"
+    "all"
   ).trim();
 
   const grantFilterElement =
@@ -151,10 +151,7 @@ async function loadPayroll() {
   return belongsToPayPeriod && !isDenied;
 });
 
-      return sessionPayPeriod === selectedPayPeriod;
-    });
-
-    updateGrantFilter(
+      updateGrantFilter(
       payPeriodSessions,
       selectedGrant
     );
