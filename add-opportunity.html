@@ -60,22 +60,18 @@
     </div>
 
     <div class="dashboard-card">
-      <p><strong>School / Location</strong></p>
-      <input id="school" placeholder="School or location name">
 
-      <p><strong>Date</strong></p>
+  <h2>Shared Opportunity Information</h2>
+
+  <div class="opportunity-shared-grid">
+
+    <div class="form-field">
+      <label for="date"><strong>Date</strong></label>
       <input id="date" type="date">
+    </div>
 
-      <p><strong>Start Time</strong></p>
-      <input id="startTime" type="time">
-
-      <p><strong>End Time</strong></p>
-      <input id="endTime" type="time">
-
-      <p><strong>Coaches Needed</strong></p>
-      <input id="coachesNeeded" type="number" min="1">
-
-      <p><strong>Program Type</strong></p>
+    <div class="form-field">
+      <label for="programType"><strong>Program Type</strong></label>
       <select id="programType">
         <option value="">Select Program Type</option>
         <option value="Youth">Youth</option>
@@ -85,39 +81,110 @@
         <option value="Meeting">Meeting</option>
         <option value="Other">Other</option>
       </select>
+    </div>
 
-      <p><strong>Fund</strong></p>
+    <div class="form-field">
+      <label for="fund"><strong>Fund</strong></label>
       <select id="fund">
         <option value="">Select Fund</option>
         <option value="Grit">Grit</option>
         <option value="NW OH">NW OH</option>
         <option value="SW OH">SW OH</option>
       </select>
-
-     <p><strong>COP</strong></p>
-
-<div class="autocomplete">
-  <input
-    id="cop"
-    type="text"
-    placeholder="Start typing COP name..."
-    autocomplete="off">
-
-  <div id="copSuggestions" class="autocomplete-items"></div>
-</div>
-      
-      <p><strong>Notes</strong></p>
-      <textarea id="notes" placeholder="Optional notes"></textarea>
-
-      <br><br>
-
-      <button onclick="addOpportunity()">Add Opportunity</button>
     </div>
 
-  </main>
+    <div class="form-field">
+      <label for="cop"><strong>COP</strong></label>
+
+      <div class="autocomplete">
+        <input
+          id="cop"
+          type="text"
+          placeholder="Start typing COP name..."
+          autocomplete="off">
+
+        <div
+          id="copSuggestions"
+          class="autocomplete-items">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="form-field notes-field">
+    <label for="notes"><strong>Shared Notes</strong></label>
+    <textarea
+      id="notes"
+      placeholder="Optional notes that apply to all rows"></textarea>
+  </div>
+
+  <hr class="batch-divider">
+
+  <div class="batch-header">
+    <div>
+      <h2>Locations and Times</h2>
+      <p>
+        Add one row for each location or time block.
+      </p>
+    </div>
+
+    <div class="batch-header-buttons">
+      <button
+        type="button"
+        class="secondary-button"
+        onclick="addOpportunityRow()">
+        + Add Row
+      </button>
+
+      <button
+        type="button"
+        class="secondary-button"
+        onclick="copyPreviousRow()">
+        Copy Previous Row
+      </button>
+    </div>
+  </div>
+
+  <div class="opportunity-table-wrapper">
+    <table class="opportunity-entry-table">
+      <thead>
+        <tr>
+          <th>School / Location</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Coaches</th>
+          <th>Status</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+
+      <tbody id="opportunityRows"></tbody>
+    </table>
+  </div>
+
+  <div class="batch-footer">
+    <div id="batchMessage" class="batch-message"></div>
+
+    <div class="batch-footer-buttons">
+      <button
+        type="button"
+        class="secondary-button"
+        onclick="clearOpportunityRows()">
+        Clear Rows
+      </button>
+
+      <button
+        type="button"
+        id="submitAllButton"
+        onclick="submitAllOpportunities()">
+        Submit All Opportunities
+      </button>
+    </div>
+  </div>
 
 </div>
-
+    
 <script src="auth.js"></script>
 <script src="add-opportunity.js"></script>
 
