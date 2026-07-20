@@ -68,8 +68,10 @@ body {
 }
 
 .main-content {
-  flex: 1;
-  padding: 40px;
+    flex: 1;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 24px;
 }
 
 .top-bar {
