@@ -84,6 +84,122 @@ async function loadPayPeriods() {
   }
 }
 
+async function loadCoachApprovalStatus(selectedPayPeriod) {
+  const container = document.getElementById("coachApprovalStatus");
+
+  if (!container) return;
+
+  if (!selectedPayPeriod) {
+    container.innerHTML = "<p>Select a pay period to view coach approvals.</p>";
+    return;
+  }
+
+  container.innerHTML = "<p>Loading coach approvals...</p>";
+
+  try {
+    const [approvalsResponse, sessionsResponse] = await Promise.all([
+      fetch(`${API_URL}?action=getCoachPayrollApprovals`),
+      fetch(`${API_URL}?action=getCompletedSessions`)
+    ]);
+
+    const approvals = await approvalsResponse.json();
+    const sessions = await sessionsResponse.json();
+
+    const periodSessions = sessions.filter(session =>
+      String(session.PayPeriodID || "").trim() ===
+      String(selectedPayPeriod).trim()
+    );
+
+    const coachNames = [...new Set(
+      periodSessions
+        .map(session => String(session.CoachName || "").trim())
+        .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b));
+
+    const periodApprovals = Array.isArray(approvals)
+      ? approvals.filter(approval =>
+          String(approval.PayPeriodID || "").trim() ===
+          String(selectedPayPeriod).trim()
+        )
+      : [];
+
+    if (coachNames.length === 0) {
+      container.innerHTML =
+        "<p>No coaches have payroll records in this pay period.</p>";
+      return;
+    }
+
+    let approvedCount = 0;
+
+    let html = `
+      <div class="table-wrapper">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Coach</th>
+              <th>Approval Status</th>
+              <th>Approved At</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    coachNames.forEach(coachName => {
+      const approval = periodApprovals.find(item =>
+        String(item.CoachName || "").trim().toLowerCase() ===
+        coachName.toLowerCase()
+      );
+
+      const isApproved =
+        String(approval?.Status || "").trim() === "Coach Approved";
+
+      if (isApproved) approvedCount++;
+
+      html += `
+        <tr>
+          <td>${escapeHtml(coachName)}</td>
+
+          <td>
+            ${
+              isApproved
+                ? `<strong class="approval-approved">✓ Approved</strong>`
+                : `<strong class="approval-pending">Pending</strong>`
+            }
+          </td>
+
+          <td>
+            ${
+              isApproved && approval.ApprovedAt
+                ? formatDateTime(approval.ApprovedAt)
+                : "—"
+            }
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>${approvedCount}</strong> of
+        <strong>${coachNames.length}</strong>
+        coaches have approved this pay period.
+      </p>
+    `;
+
+    container.innerHTML = html;
+
+  } catch (error) {
+    console.error("Coach approval status error:", error);
+
+    container.innerHTML =
+      "<p>Unable to load coach payroll approvals.</p>";
+  }
+}
+
 function isDeniedPayrollStatus(status) {
   const normalizedStatus = String(status || "")
     .trim()
