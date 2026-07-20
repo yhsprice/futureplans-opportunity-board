@@ -90,11 +90,11 @@ async function loadCoachApprovalStatus(selectedPayPeriod) {
   if (!container) return;
 
   if (!selectedPayPeriod) {
-    container.innerHTML = "<p>Select a pay period to view coach approvals.</p>";
+    container.innerHTML = "<p>Select a pay period to view pending approvals.</p>";
     return;
   }
 
-  container.innerHTML = "<p>Loading coach approvals...</p>";
+  container.innerHTML = "<p>Loading pending coach approvals...</p>";
 
   try {
     const [approvalsResponse, sessionsResponse] = await Promise.all([
@@ -110,70 +110,104 @@ async function loadCoachApprovalStatus(selectedPayPeriod) {
       String(selectedPayPeriod).trim()
     );
 
-    const coachNames = [...new Set(
-      periodSessions
-        .map(session => String(session.CoachName || "").trim())
-        .filter(Boolean)
-    )].sort((a, b) => a.localeCompare(b));
+    const coachSummary = {};
+
+    periodSessions.forEach(session => {
+      const coachName = String(session.CoachName || "").trim();
+
+      if (!coachName) return;
+
+      if (!coachSummary[coachName]) {
+        coachSummary[coachName] = {
+          sessions: 0,
+          hours: 0,
+          pay: 0
+        };
+      }
+
+      coachSummary[coachName].sessions += 1;
+      coachSummary[coachName].hours += Number(session.PayHours || 0);
+      coachSummary[coachName].pay += Number(session.PayAmount || 0);
+    });
 
     const periodApprovals = Array.isArray(approvals)
       ? approvals.filter(approval =>
           String(approval.PayPeriodID || "").trim() ===
-          String(selectedPayPeriod).trim()
+          String(selectedPayPeriod).trim() &&
+          String(approval.Status || "").trim() === "Coach Approved"
         )
       : [];
 
-    if (coachNames.length === 0) {
+    const approvedCoachNames = new Set(
+      periodApprovals
+        .map(approval =>
+          String(approval.CoachName || "").trim().toLowerCase()
+        )
+        .filter(Boolean)
+    );
+
+    const allCoachNames = Object.keys(coachSummary).sort((a, b) =>
+      a.localeCompare(b)
+    );
+
+    const pendingCoachNames = allCoachNames.filter(coachName =>
+      !approvedCoachNames.has(coachName.toLowerCase())
+    );
+
+    const approvedCount = allCoachNames.length - pendingCoachNames.length;
+
+    if (allCoachNames.length === 0) {
       container.innerHTML =
         "<p>No coaches have payroll records in this pay period.</p>";
       return;
     }
 
-    let approvedCount = 0;
+    if (pendingCoachNames.length === 0) {
+      container.innerHTML = `
+        <div class="approval-complete-message">
+          <h3>✓ Everyone has approved payroll.</h3>
+          <p>
+            ${approvedCount} of ${allCoachNames.length} coaches have approved.
+          </p>
+        </div>
+      `;
+      return;
+    }
 
     let html = `
+      <p>
+        <strong>${approvedCount}</strong> of
+        <strong>${allCoachNames.length}</strong> coaches have approved.
+      </p>
+
+      <p>
+        <strong>${pendingCoachNames.length}</strong>
+        coach${pendingCoachNames.length === 1 ? "" : "es"}
+        still need${pendingCoachNames.length === 1 ? "s" : ""} to approve.
+      </p>
+
       <div class="table-wrapper">
-        <table class="modern-table">
+        <table class="batch-table">
           <thead>
             <tr>
               <th>Coach</th>
-              <th>Approval Status</th>
-              <th>Approved At</th>
+              <th>Sessions</th>
+              <th>Hours</th>
+              <th>Payroll</th>
             </tr>
           </thead>
           <tbody>
     `;
 
-    coachNames.forEach(coachName => {
-      const approval = periodApprovals.find(item =>
-        String(item.CoachName || "").trim().toLowerCase() ===
-        coachName.toLowerCase()
-      );
-
-      const isApproved =
-        String(approval?.Status || "").trim() === "Coach Approved";
-
-      if (isApproved) approvedCount++;
+    pendingCoachNames.forEach(coachName => {
+      const totals = coachSummary[coachName];
 
       html += `
         <tr>
-          <td>${escapeHtml(coachName)}</td>
-
-          <td>
-            ${
-              isApproved
-                ? `<strong class="approval-approved">✓ Approved</strong>`
-                : `<strong class="approval-pending">Pending</strong>`
-            }
-          </td>
-
-          <td>
-            ${
-              isApproved && approval.ApprovedAt
-                ? formatDateTime(approval.ApprovedAt)
-                : "—"
-            }
-          </td>
+          <td><strong>${escapeHtml(coachName)}</strong></td>
+          <td>${totals.sessions}</td>
+          <td>${totals.hours.toFixed(2)}</td>
+          <td>$${totals.pay.toFixed(2)}</td>
         </tr>
       `;
     });
@@ -182,12 +216,6 @@ async function loadCoachApprovalStatus(selectedPayPeriod) {
           </tbody>
         </table>
       </div>
-
-      <p>
-        <strong>${approvedCount}</strong> of
-        <strong>${coachNames.length}</strong>
-        coaches have approved this pay period.
-      </p>
     `;
 
     container.innerHTML = html;
@@ -196,7 +224,7 @@ async function loadCoachApprovalStatus(selectedPayPeriod) {
     console.error("Coach approval status error:", error);
 
     container.innerHTML =
-      "<p>Unable to load coach payroll approvals.</p>";
+      "<p>Unable to load pending coach approvals.</p>";
   }
 }
 
@@ -215,6 +243,7 @@ async function loadPayroll() {
   const selectedPayPeriod = String(
     payPeriodSelect?.value || ""
   ).trim();
+  loadCoachApprovalStatus(selectedPayPeriod);
 
   const statusFilter = String(
     document.getElementById("payrollStatusFilter")?.value ||
