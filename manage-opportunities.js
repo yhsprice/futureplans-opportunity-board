@@ -17,6 +17,63 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function formatDisplayDateTime(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (isNaN(date)) {
+    return value;
+  }
+
+  return date.toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+
+function toDateTimeLocalValue(value) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+
+  const parts = formatter.formatToParts(date);
+
+  const values = {};
+
+  parts.forEach(part => {
+    if (part.type !== "literal") {
+      values[part.type] = part.value;
+    }
+  });
+
+  return (
+    `${values.year}-${values.month}-${values.day}` +
+    `T${values.hour}:${values.minute}`
+  );
+}
+
 function isYes(value) {
   const normalized = String(value || "")
     .trim()
@@ -226,7 +283,7 @@ if (status === "Cancelled") {
           margin-top:4px;
         ">
           Releases:<br>
-          ${escapeHtml(opportunity.PublishAt)}
+          ${escapeHtml(formatDisplayDateTime(opportunity.PublishAt))}
         </div>
       `
       : opportunity.PublishedAt
@@ -238,7 +295,7 @@ if (status === "Cancelled") {
             margin-top:4px;
           ">
             Published:<br>
-            ${escapeHtml(opportunity.PublishedAt)}
+            ${escapeHtml(formatDisplayDateTime(opportunity.PublishedAt))}
           </div>
         `
         : ""
