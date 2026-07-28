@@ -10,197 +10,285 @@
 <div class="app-layout">
 
   <aside class="sidebar">
+
     <div class="logo" style="text-align:center;">
-      <img src="Future Plans.png" alt="Future Plans" style="max-width:220px; width:100%;">
+      <img
+        src="Future Plans.png"
+        alt="Future Plans"
+        style="max-width:220px; width:100%;">
     </div>
 
     <div class="nav-section-title">Manager</div>
 
-    <a class="nav-link" href="manager.html">Dashboard</a>
-    <a class="nav-link" href="index.html">Opportunity Board</a>
-    <a class="nav-link active" href="add-opportunity.html">Add Opportunity</a>
-    <a class="nav-link" href="manage-opportunities.html">Manage Opportunities</a>
-   <a class="nav-link" href="payroll.html">Payroll Dashboard</a>
-<a class="nav-link" href="meeting-attendance.html">Meeting Attendance</a>
-<a class="nav-link" href="utilization.html">Coach Utilization</a>
+    <a class="nav-link" href="manager.html">
+      Dashboard
+    </a>
+
+    <a class="nav-link" href="index.html">
+      Opportunity Board
+    </a>
+
+    <a class="nav-link active" href="add-opportunity.html">
+      Add Opportunity
+    </a>
+
+    <a class="nav-link" href="manage-opportunities.html">
+      Manage Opportunities
+    </a>
+
+    <a class="nav-link" href="payroll.html">
+      Payroll Dashboard
+    </a>
+
+    <a class="nav-link" href="meeting-attendance.html">
+      Meeting Attendance
+    </a>
+
+    <a class="nav-link" href="utilization.html">
+      Coach Utilization
+    </a>
+
     <div class="nav-section-title">Resources</div>
 
-<a class="nav-link" target="_blank"
-   href="https://engage.cloud.microsoft/main/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiIxNzgzOTI0ODE3OTIifQ/new">
-   Viva Engage
-</a>
+    <a
+      class="nav-link"
+      target="_blank"
+      href="https://engage.cloud.microsoft/main/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiIxNzgzOTI0ODE3OTIifQ/new">
+      Viva Engage
+    </a>
 
-<a class="nav-link" target="_blank"
-   href="https://futureplans4u.github.io/Main-Page-Career-Games/">
-   Coaching Games
-</a>
+    <a
+      class="nav-link"
+      target="_blank"
+      href="https://futureplans4u.github.io/Main-Page-Career-Games/">
+      Coaching Games
+    </a>
 
-<a class="nav-link" target="_blank"
-   href="https://futureplans4u.github.io/Main-Page-Career-Games/coaching.html">
-   Coaching Tools
-</a>
-    
-      <div class="sidebar-image">
-      <img src="lita-yvonne.png" alt="Career Coaching and Assessment Coordinators">
+    <a
+      class="nav-link"
+      target="_blank"
+      href="https://futureplans4u.github.io/Main-Page-Career-Games/coaching.html">
+      Coaching Tools
+    </a>
+
+    <div class="sidebar-image">
+      <img
+        src="lita-yvonne.png"
+        alt="Career Coaching and Assessment Coordinators">
+
       <div style="text-align:center; margin-top:10px;">
-        <strong>Career Coaching & Assessment Coordinators</strong>
+        <strong>
+          Career Coaching &amp; Assessment Coordinators
+        </strong>
       </div>
     </div>
+
   </aside>
 
   <main class="main-content">
 
     <div class="top-bar">
+
       <div>
         <h1>Add Opportunity</h1>
-        <p>Create a new coaching opportunity for coaches to request.</p>
+
+        <p>
+          Create new coaching opportunities and choose when they become
+          visible to coaches.
+        </p>
       </div>
 
       <div id="userBanner" class="welcome-pill"></div>
+
     </div>
 
     <div class="dashboard-card">
 
-  <h2>Shared Opportunity Information</h2>
+      <h2>Shared Opportunity Information</h2>
 
-  <div class="opportunity-shared-grid">
+      <div class="opportunity-shared-grid">
 
-    <div class="form-field">
-      <label for="date"><strong>Date</strong></label>
-      <input id="date" type="date">
-    </div>
+        <div class="form-field">
+          <label for="date">
+            <strong>Opportunity Date</strong>
+          </label>
 
-    <div class="form-field">
-      <label for="programType"><strong>Program Type</strong></label>
-      <select id="programType">
-        <option value="">Select Program Type</option>
-        <option value="Youth">Youth</option>
-        <option value="Adult">Adult</option>
-        <option value="Summer Program">Summer Program</option>
-        <option value="Professional Development">Professional Development</option>
-        <option value="Meeting">Meeting</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
+          <input
+            id="date"
+            type="date">
+        </div>
 
-    <div class="form-field">
-      <label for="fund"><strong>Fund</strong></label>
-      <select id="fund">
-        <option value="">Select Fund</option>
-        <option value="Grit">Grit</option>
-        <option value="NW OH">NW OH</option>
-        <option value="SW OH">SW OH</option>
-      </select>
-    </div>
+        <div class="form-field">
+          <label for="publishAt">
+            <strong>Post for Coaches On</strong>
+          </label>
 
-    <div class="form-field">
-      <label for="cop"><strong>COP</strong></label>
+          <input
+            id="publishAt"
+            name="publishAt"
+            type="datetime-local"
+            required>
 
-      <div class="autocomplete">
-        <input
-          id="cop"
-          type="text"
-          placeholder="Start typing COP name..."
-          autocomplete="off">
+          <small>
+            The opportunity will remain hidden until this date and time.
+            Notification emails will begin when it becomes visible.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="programType">
+            <strong>Program Type</strong>
+          </label>
+
+          <select id="programType">
+            <option value="">Select Program Type</option>
+            <option value="Youth">Youth</option>
+            <option value="Adult">Adult</option>
+            <option value="Summer Program">Summer Program</option>
+            <option value="Professional Development">
+              Professional Development
+            </option>
+            <option value="Meeting">Meeting</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="fund">
+            <strong>Fund</strong>
+          </label>
+
+          <select id="fund">
+            <option value="">Select Fund</option>
+            <option value="Grit">Grit</option>
+            <option value="NW OH">NW OH</option>
+            <option value="SW OH">SW OH</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="cop">
+            <strong>COP</strong>
+          </label>
+
+          <div class="autocomplete">
+
+            <input
+              id="cop"
+              type="text"
+              placeholder="Start typing COP name..."
+              autocomplete="off">
+
+            <div
+              id="copSuggestions"
+              class="autocomplete-items">
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-field notes-field">
+
+        <label for="notes">
+          <strong>Shared Notes</strong>
+        </label>
+
+        <textarea
+          id="notes"
+          placeholder="Optional notes that apply to all rows"></textarea>
+
+      </div>
+
+      <hr class="batch-divider">
+
+      <div class="batch-header">
+
+        <div>
+          <h2>Locations and Times</h2>
+
+          <p>
+            Add one row for each location or time block.
+          </p>
+        </div>
+
+        <div class="batch-header-buttons">
+
+          <button
+            type="button"
+            class="secondary-button"
+            onclick="addOpportunityRow()">
+            + Add Row
+          </button>
+
+          <button
+            type="button"
+            class="secondary-button"
+            onclick="copyPreviousRow()">
+            Copy Previous Row
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="opportunity-table-wrapper">
+
+        <table class="opportunity-entry-table">
+
+          <thead>
+            <tr>
+              <th>School / Location</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Coaches</th>
+              <th>Status</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+
+          <tbody id="opportunityRows"></tbody>
+
+        </table>
+
+      </div>
+
+      <div class="batch-footer">
 
         <div
-          id="copSuggestions"
-          class="autocomplete-items">
+          id="batchMessage"
+          class="batch-message">
         </div>
+
+        <div class="batch-footer-buttons">
+
+          <button
+            type="button"
+            class="secondary-button"
+            onclick="clearOpportunityRows()">
+            Clear Rows
+          </button>
+
+          <button
+            type="button"
+            id="submitAllButton"
+            onclick="submitAllOpportunities()">
+            Submit All Opportunities
+          </button>
+
+        </div>
+
       </div>
+
     </div>
 
-  </div>
-
-  <div class="form-field notes-field">
-    <label for="notes"><strong>Shared Notes</strong></label>
-    <textarea
-      id="notes"
-      placeholder="Optional notes that apply to all rows"></textarea>
-  </div>
-
-  <hr class="batch-divider">
-
-  <div class="batch-header">
-    <div>
-      <h2>Locations and Times</h2>
-      <p>
-        Add one row for each location or time block.
-      </p>
-    </div>
-
-    <div class="batch-header-buttons">
-      <button
-        type="button"
-        class="secondary-button"
-        onclick="addOpportunityRow()">
-        + Add Row
-      </button>
-
-      <button
-        type="button"
-        class="secondary-button"
-        onclick="copyPreviousRow()">
-        Copy Previous Row
-      </button>
-    </div>
-  </div>
-
-  <div class="opportunity-table-wrapper">
-    <table class="opportunity-entry-table">
-      <thead>
-        <tr>
-          <th>School / Location</th>
-          <th>Start Time</th>
-          <th>End Time</th>
-          <th>Coaches</th>
-          <th>Status</th>
-          <th>Remove</th>
-        </tr>
-      </thead>
-
-      <tbody id="opportunityRows"></tbody>
-    </table>
-  </div>
-
-  <div class="batch-footer">
-    <div id="batchMessage" class="batch-message"></div>
-
-    <div class="batch-footer-buttons">
-      <button
-        type="button"
-        class="secondary-button"
-        onclick="clearOpportunityRows()">
-        Clear Rows
-      </button>
-
-      <button
-        type="button"
-        id="submitAllButton"
-        onclick="submitAllOpportunities()">
-        Submit All Opportunities
-      </button>
-    </div>
-  </div>
-
-   <label for="publishAt">Post for Coaches On</label>
-
-<input
-  type="datetime-local"
-  id="publishAt"
-  name="publishAt"
-  required
->
-    
-      <small>
-  The opportunity will remain hidden until this date and time.
-  Notification emails will begin when it becomes visible.
-</small>  
+  </main>
 
 </div>
-    
+
 <script src="auth.js"></script>
-<script src="add-opportunity.js"></script>
+<script src="add-opportunity.js?v=2"></script>
 
 </body>
 </html>
