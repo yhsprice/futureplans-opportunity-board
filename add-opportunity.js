@@ -508,37 +508,71 @@ async function submitAllOpportunities() {
 }
 
 function submitOpportunity(data) {
-  const url =
-    `${API_URL}?action=addOpportunity`
-    + `&school=${encodeURIComponent(data.school)}`
-    + `&date=${encodeURIComponent(data.date)}`
-    + `&startTime=${encodeURIComponent(data.startTime)}`
-    + `&publishAt=${encodeURIComponent(data.publishAt)}`
-    + `&endTime=${encodeURIComponent(data.endTime)}`
-    + `&coachesNeeded=${encodeURIComponent(data.coachesNeeded)}`
-    + `&programType=${encodeURIComponent(data.programType)}`
-    + `&fund=${encodeURIComponent(data.fund)}`
-    + `&cop=${encodeURIComponent(data.cop)}`
-    + `&notes=${encodeURIComponent(data.notes)}`;
-    + `&publishAt=${encodeURIComponent(data.publishAt)}`
+  return new Promise((resolve, reject) => {
+    const callbackName =
+      `addOpportunityCallback_${Date.now()}_${Math.floor(
+        Math.random() * 100000
+      )}`;
 
-  return fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(
-          `Server returned status ${response.status}`
-        );
+    const script = document.createElement("script");
+
+    const cleanup = () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
       }
 
-      return response.json();
-    });
-}
+      try {
+        delete window[callbackName];
+      } catch (error) {
+        window[callbackName] = undefined;
+      }
+    };
 
-/*
---------------------------------------------------
-HELPERS
---------------------------------------------------
-*/
+    const timeout = setTimeout(() => {
+      cleanup();
+
+      reject(
+        new Error(
+          "The server did not respond. Please try again."
+        )
+      );
+    }, 30000);
+
+    window[callbackName] = result => {
+      clearTimeout(timeout);
+      cleanup();
+      resolve(result);
+    };
+
+    script.onerror = () => {
+      clearTimeout(timeout);
+      cleanup();
+
+      reject(
+        new Error(
+          "The Opportunity Board could not connect to the server."
+        )
+      );
+    };
+
+    const url =
+      `${API_URL}?action=addOpportunity`
+      + `&school=${encodeURIComponent(data.school)}`
+      + `&date=${encodeURIComponent(data.date)}`
+      + `&startTime=${encodeURIComponent(data.startTime)}`
+      + `&endTime=${encodeURIComponent(data.endTime)}`
+      + `&coachesNeeded=${encodeURIComponent(data.coachesNeeded)}`
+      + `&programType=${encodeURIComponent(data.programType)}`
+      + `&fund=${encodeURIComponent(data.fund)}`
+      + `&cop=${encodeURIComponent(data.cop || "")}`
+      + `&notes=${encodeURIComponent(data.notes || "")}`
+      + `&publishAt=${encodeURIComponent(data.publishAt)}`
+      + `&callback=${encodeURIComponent(callbackName)}`;
+
+    script.src = url;
+    document.body.appendChild(script);
+  });
+}
 
 function escapeHtml(value) {
   return String(value)
