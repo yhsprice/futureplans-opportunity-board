@@ -193,23 +193,58 @@ async function loadOpportunities() {
         remainingOpenings > 0;
 
       let statusColor = "#28a745";
-      let rowBackground = "";
+let rowBackground = "";
 
-      if (status === "Closed") {
-        statusColor = "#f0ad4e";
-        rowBackground = "background:#fff8e1;";
-      }
+if (status === "Scheduled") {
+  statusColor = "#0d6efd";
+  rowBackground = "background:#eaf4ff;";
+}
 
-      if (status === "Cancelled") {
-        statusColor = "#dc3545";
-        rowBackground = "background:#f2f2f2;";
-      }
+if (status === "Closed") {
+  statusColor = "#f0ad4e";
+  rowBackground = "background:#fff8e1;";
+}
+
+if (status === "Cancelled") {
+  statusColor = "#dc3545";
+  rowBackground = "background:#f2f2f2;";
+}
 
       html += `
         <tr style="${rowBackground}">
           <td style="padding:8px; color:${statusColor}; font-weight:bold;">
-            ${escapeHtml(status || "Open")}
-          </td>
+
+  ${escapeHtml(status || "Open")}
+
+  ${
+    status === "Scheduled" && opportunity.PublishAt
+      ? `
+        <div style="
+          font-size:11px;
+          color:#555;
+          font-weight:normal;
+          margin-top:4px;
+        ">
+          Releases:<br>
+          ${escapeHtml(opportunity.PublishAt)}
+        </div>
+      `
+      : opportunity.PublishedAt
+        ? `
+          <div style="
+            font-size:11px;
+            color:#555;
+            font-weight:normal;
+            margin-top:4px;
+          ">
+            Published:<br>
+            ${escapeHtml(opportunity.PublishedAt)}
+          </div>
+        `
+        : ""
+  }
+
+</td>
 
           <td style="padding:8px; white-space:nowrap;">
             ${escapeHtml(opportunity.Date)}
