@@ -412,14 +412,15 @@ async function submitAllOpportunities() {
     return !isBlankRow(getRowData(row));
   });
 
-  const sharedData = {
-    date: document.getElementById("date").value,
-    programType:
-      document.getElementById("programType").value,
-    fund: document.getElementById("fund").value,
-    cop: document.getElementById("cop").value.trim(),
-    notes: document.getElementById("notes").value.trim()
-  };
+ const sharedData = {
+  date: document.getElementById("date").value,
+  publishAt: document.getElementById("publishAt").value,
+  programType:
+    document.getElementById("programType").value,
+  fund: document.getElementById("fund").value,
+  cop: document.getElementById("cop").value.trim(),
+  notes: document.getElementById("notes").value.trim()
+};
 
   submitAllButton.disabled = true;
   submitAllButton.textContent = "Submitting...";
@@ -512,12 +513,14 @@ function submitOpportunity(data) {
     + `&school=${encodeURIComponent(data.school)}`
     + `&date=${encodeURIComponent(data.date)}`
     + `&startTime=${encodeURIComponent(data.startTime)}`
+    + `&publishAt=${encodeURIComponent(data.publishAt)}`
     + `&endTime=${encodeURIComponent(data.endTime)}`
     + `&coachesNeeded=${encodeURIComponent(data.coachesNeeded)}`
     + `&programType=${encodeURIComponent(data.programType)}`
     + `&fund=${encodeURIComponent(data.fund)}`
     + `&cop=${encodeURIComponent(data.cop)}`
     + `&notes=${encodeURIComponent(data.notes)}`;
+    + `&publishAt=${encodeURIComponent(data.publishAt)}`
 
   return fetch(url)
     .then(response => {
