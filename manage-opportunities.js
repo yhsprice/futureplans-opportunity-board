@@ -386,10 +386,10 @@ if (status === "Cancelled") {
               </button>
 
               <button
-                onclick="setOpportunityStatus('${opportunityID}', 'Cancelled')"
-              >
-                Cancel
-              </button>
+  onclick="openCancellationForm('${opportunityID}')"
+>
+  Cancel
+</button>
 
             </div>
           </td>
