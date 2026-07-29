@@ -1081,18 +1081,32 @@ function closeCancellationForm() {
 
 async function submitOpportunityCancellation() {
   const opportunityID =
-    document.getElementById("cancelOpportunityID").value.trim();
+    document
+      .getElementById("cancelOpportunityID")
+      .value
+      .trim();
 
   const reason =
-    document.getElementById("cancellationReason").value.trim();
+    document
+      .getElementById("cancellationReason")
+      .value
+      .trim();
 
   const details =
-    document.getElementById("cancellationDetails").value.trim();
+    document
+      .getElementById("cancellationDetails")
+      .value
+      .trim();
 
   if (!reason) {
     alert("Please select a cancellation reason.");
     return;
   }
+
+  const cancelledBy =
+    currentUser.Name ||
+    currentUser.Email ||
+    "Manager";
 
   const confirmed = confirm(
     "Cancel this opportunity and notify all assigned coaches?"
@@ -1103,25 +1117,29 @@ async function submitOpportunityCancellation() {
   }
 
   try {
-    const response = await fetch(
-      `${API_URL}` +
-      `?action=cancelOpportunity` +
-      `&opportunityID=${encodeURIComponent(opportunityID)}` +
-      `&reason=${encodeURIComponent(reason)}` +
-      `&details=${encodeURIComponent(details)}`
-    );
+    const url =
+      `${API_URL}?action=setOpportunityStatus`
+      + `&opportunityID=${encodeURIComponent(opportunityID)}`
+      + `&status=${encodeURIComponent("Cancelled")}`
+      + `&reason=${encodeURIComponent(reason)}`
+      + `&details=${encodeURIComponent(details)}`
+      + `&cancelledBy=${encodeURIComponent(cancelledBy)}`;
 
+    const response = await fetch(url);
     const result = await response.json();
 
     if (!result.success) {
       throw new Error(
-        result.message || "The opportunity could not be cancelled."
+        result.message ||
+        "The opportunity could not be cancelled."
       );
     }
 
     alert(
-      `Opportunity cancelled. ` +
-      `${result.coachesNotified || 0} assigned coach(es) were notified.`
+      `Opportunity cancelled successfully.\n\n`
+      + `Assigned coaches: ${result.coachesAssigned || 0}\n`
+      + `Coaches emailed: ${result.coachesNotified || 0}\n`
+      + `Attendance records added: ${result.analyticsRecordsAdded || 0}`
     );
 
     closeCancellationForm();
