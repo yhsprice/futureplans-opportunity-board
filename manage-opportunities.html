@@ -70,6 +70,76 @@
 
   </main>
 
+  <div
+  id="cancellationModal"
+  class="dashboard-card"
+  style="
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    z-index:1000;
+    width:min(500px, 90%);
+    box-shadow:0 8px 30px rgba(0,0,0,.25);
+  "
+>
+  <h2>Cancel Opportunity</h2>
+
+  <input id="cancelOpportunityID" type="hidden">
+
+  <label for="cancellationReason">
+    <strong>Cancellation Reason</strong>
+  </label>
+
+  <select id="cancellationReason">
+    <option value="">Select a reason</option>
+    <option value="Weather">Weather</option>
+    <option value="School Event">School Event</option>
+    <option value="State Testing">State Testing</option>
+    <option value="Scheduling Conflict">Scheduling Conflict</option>
+    <option value="School Closed">School Closed</option>
+    <option value="Agency Closed">Agency Closed</option>
+    <option value="Staffing Issue">Staffing Issue</option>
+    <option value="Technical Issue">Technical Issue</option>
+    <option value="Program Change">Program Change</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <br><br>
+
+  <label for="cancellationDetails">
+    <strong>Additional Details</strong>
+  </label>
+
+  <textarea
+    id="cancellationDetails"
+    placeholder="Explain the cancellation..."
+  ></textarea>
+
+  <br><br>
+
+  <button type="button" onclick="submitOpportunityCancellation()">
+    Confirm Cancellation
+  </button>
+
+  <button type="button" onclick="closeCancellationForm()">
+    Keep Opportunity
+  </button>
+</div>
+
+<div
+  id="cancellationOverlay"
+  onclick="closeCancellationForm()"
+  style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:999;
+  "
+></div>
+
 </div>
 
 <script src="auth.js"></script>
