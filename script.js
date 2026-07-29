@@ -99,10 +99,43 @@ async function loadOpportunities() {
 
   try {
     const response = await fetch(API_URL);
-    const opportunities = await response.json();
+const opportunities = await response.json();
 
-    const openOpportunities = opportunities
-      .filter(canUserSeeOpportunity)
+/*
+  Load this coach's existing requests so opportunities they
+  already selected do not continue showing on their board.
+*/
+const requestResponse = await fetch(
+  `${API_URL}?action=getRequests`
+  + `&personID=${encodeURIComponent(currentUser.PersonID)}`
+);
+
+const coachRequests = await requestResponse.json();
+
+const alreadyRequestedIDs = new Set(
+  coachRequests
+    .filter(request => {
+      const status = String(request.Status || "")
+        .trim()
+        .toLowerCase();
+
+      return (
+        status === "pending approval" ||
+        status === "approved"
+      );
+    })
+    .map(request =>
+      String(request.OpportunityID || "")
+    )
+);
+
+const openOpportunities = opportunities
+  .filter(canUserSeeOpportunity)
+  .filter(opportunity =>
+    !alreadyRequestedIDs.has(
+      String(opportunity.OpportunityID || "")
+    )
+  )
       .sort((a, b) => {
         const replacementA = String(a.ReplacementNeeded || "").trim() === "Yes" ? 0 : 1;
         const replacementB = String(b.ReplacementNeeded || "").trim() === "Yes" ? 0 : 1;
