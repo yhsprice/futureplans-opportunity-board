@@ -1057,4 +1057,84 @@ function toInputTime(value) {
   return date.toTimeString().slice(0, 5);
 }
 
+function openCancellationForm(opportunityID) {
+  document.getElementById("cancelOpportunityID").value =
+    opportunityID;
+
+  document.getElementById("cancellationReason").value = "";
+  document.getElementById("cancellationDetails").value = "";
+
+  document.getElementById("cancellationModal").style.display =
+    "block";
+
+  document.getElementById("cancellationOverlay").style.display =
+    "block";
+}
+
+function closeCancellationForm() {
+  document.getElementById("cancellationModal").style.display =
+    "none";
+
+  document.getElementById("cancellationOverlay").style.display =
+    "none";
+}
+
+async function submitOpportunityCancellation() {
+  const opportunityID =
+    document.getElementById("cancelOpportunityID").value.trim();
+
+  const reason =
+    document.getElementById("cancellationReason").value.trim();
+
+  const details =
+    document.getElementById("cancellationDetails").value.trim();
+
+  if (!reason) {
+    alert("Please select a cancellation reason.");
+    return;
+  }
+
+  const confirmed = confirm(
+    "Cancel this opportunity and notify all assigned coaches?"
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_URL}` +
+      `?action=cancelOpportunity` +
+      `&opportunityID=${encodeURIComponent(opportunityID)}` +
+      `&reason=${encodeURIComponent(reason)}` +
+      `&details=${encodeURIComponent(details)}`
+    );
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(
+        result.message || "The opportunity could not be cancelled."
+      );
+    }
+
+    alert(
+      `Opportunity cancelled. ` +
+      `${result.coachesNotified || 0} assigned coach(es) were notified.`
+    );
+
+    closeCancellationForm();
+    loadOpportunities();
+
+  } catch (error) {
+    console.error("Cancellation error:", error);
+
+    alert(
+      error.message ||
+      "Something went wrong while cancelling the opportunity."
+    );
+  }
+}
+
 loadOpportunities();
