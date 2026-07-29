@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Submit Time</title>
+  <title>Coach Utilization</title>
 
   <link rel="stylesheet" href="dashboard.css">
 </head>
@@ -57,7 +58,7 @@
     </a>
 
     <a
-      class="nav-link active"
+      class="nav-link"
       href="submit-session.html"
     >
       Submit Time
@@ -102,12 +103,15 @@
       Payroll Dashboard
     </a>
 
-    <a class="nav-link" href="attendance-analytics.html">
-  Attendance Analytics
-</a>
-
     <a
       class="nav-link manager-only"
+      href="attendance-analytics.html"
+    >
+      Attendance Analytics
+    </a>
+
+    <a
+      class="nav-link manager-only active"
       href="utilization.html"
     >
       Coach Utilization
@@ -142,6 +146,7 @@
     </a>
 
     <div class="sidebar-image">
+
       <img
         src="lita-yvonne.png"
         alt="Career Coaching and Assessment Coordinators"
@@ -152,6 +157,7 @@
           Career Coaching &amp; Assessment Coordinators
         </strong>
       </div>
+
     </div>
 
   </aside>
@@ -161,11 +167,11 @@
     <div class="top-bar">
 
       <div>
-        <h1>Submit Time</h1>
+        <h1>Coach Utilization</h1>
 
         <p>
-          Submit completed coaching, training, meeting,
-          or other approved service time.
+          Review approved coaching sessions, hours,
+          payroll totals, and current coach usage.
         </p>
       </div>
 
@@ -176,206 +182,11 @@
 
     </div>
 
-    <div class="dashboard-card">
+    <div id="utilizationReport">
 
-      <input
-        id="personID"
-        type="hidden"
-      >
-
-      <p>
-        <strong>School / Agency</strong>
-      </p>
-
-      <input
-        id="school"
-        type="text"
-        placeholder="Optional school or agency"
-      >
-
-      <p>
-        <strong>Date</strong>
-      </p>
-
-      <input
-        id="date"
-        type="date"
-      >
-
-      <p>
-        <strong>Program Type</strong>
-      </p>
-
-      <select id="programType">
-        <option value="">Program Type</option>
-        <option value="Youth">Youth</option>
-        <option value="Adult">Adult</option>
-        <option value="Summer Program">
-          Summer Program
-        </option>
-        <option value="Professional Development">
-          Professional Development
-        </option>
-        <option value="Meeting">Meeting</option>
-        <option value="Other">Other</option>
-      </select>
-
-      <p>
-        <strong>Fund</strong>
-      </p>
-
-      <select id="fund">
-        <option value="">Fund</option>
-        <option value="Grit">Grit</option>
-        <option value="NW OH">NW OH</option>
-        <option value="SW OH">SW OH</option>
-      </select>
-
-      <p>
-        <strong>Service Type</strong>
-      </p>
-
-      <select id="payRule">
-        <option value="">Service Type</option>
-        <option value="Regular Coaching">
-          Coaching
-        </option>
-        <option value="Prof Development">
-          Professional Development / Training
-        </option>
-        <option value="Revolution Group">
-          Revolution
-        </option>
-        <option value="Meeting">
-          Meeting
-        </option>
-        <option value="Administrative">
-          Administrative
-        </option>
-        <option value="Other">
-          Other
-        </option>
-      </select>
-
-      <p>
-        <strong>Hours</strong>
-      </p>
-
-      <select id="revolutionTier">
-        <option value="">Hours</option>
-        <option value="3.50">3.50</option>
-        <option value="2.00">2.00</option>
-        <option value="1.75">1.75</option>
-        <option value="1.50">1.50</option>
-        <option value="1.25">1.25</option>
-        <option value="1.00">1.00</option>
-        <option value="0.75">0.75</option>
-        <option value="0.50">0.50</option>
-        <option value="0.25">0.25</option>
-      </select>
-
-      <p>
-        <strong>Appointment Outcome</strong>
-      </p>
-
-      <select id="appointmentOutcome">
-        <option value="">Select Outcome</option>
-        <option value="Completed">
-          Completed
-        </option>
-        <option value="Student Absent">
-          Student Absent
-        </option>
-        <option value="Student Cancelled">
-          Student Cancelled
-        </option>
-        <option value="School Cancelled">
-          School Cancelled
-        </option>
-        <option value="School Closed">
-          School Closed
-        </option>
-        <option value="Technical Issue">
-          Technical Issue
-        </option>
-        <option value="Other">
-          Other
-        </option>
-      </select>
-
-      <div
-        id="outcomeSection"
-        style="display:none;"
-      >
-
-        <p>
-          <strong>Reason</strong>
-        </p>
-
-        <select id="outcomeReason">
-          <option value="">Select Reason</option>
-          <option value="Weather">Weather</option>
-          <option value="Student Illness">
-            Student Illness
-          </option>
-          <option value="School Event">
-            School Event
-          </option>
-          <option value="State Testing">
-            State Testing
-          </option>
-          <option value="Transportation">
-            Transportation
-          </option>
-          <option value="Behavior">
-            Behavior
-          </option>
-          <option value="Parent Request">
-            Parent Request
-          </option>
-          <option value="Scheduling Conflict">
-            Scheduling Conflict
-          </option>
-          <option value="Technical Issue">
-            Technical Issue
-          </option>
-          <option value="Unknown">
-            Unknown
-          </option>
-          <option value="Other">
-            Other
-          </option>
-        </select>
-
-        <p>
-          <strong>Details</strong>
-        </p>
-
-        <textarea
-          id="outcomeDetails"
-          placeholder="Optional details..."
-        ></textarea>
-
+      <div class="dashboard-card">
+        <p>Loading utilization...</p>
       </div>
-
-      <p>
-        <strong>Notes</strong>
-      </p>
-
-      <textarea
-        id="notes"
-        placeholder="Optional notes"
-      ></textarea>
-
-      <br><br>
-
-      <button
-        id="submitButton"
-        type="button"
-        onclick="submitSession()"
-      >
-        Submit Time
-      </button>
 
     </div>
 
@@ -384,7 +195,7 @@
 </div>
 
 <script src="auth.js"></script>
-<script src="submit-session.js?v=3"></script>
+<script src="utilization.js?v=1"></script>
 
 </body>
 </html>
