@@ -9,12 +9,13 @@ async function loadCoaches() {
   const response = await fetch(`${API_URL}?action=getPeople`);
   const people = await response.json();
 
-  activeCoaches = people
-    .filter(person =>
-      person.Name &&
-      String(person.Role || "").trim() !== "Manager"
-    )
-    .sort((a, b) => a.Name.localeCompare(b.Name));
+ activeCoaches = people
+  .filter(person =>
+    person.Name &&
+    String(person.Role || "").trim().toLowerCase() === "coach" &&
+    String(person.Active || "").trim().toLowerCase() === "yes"
+  )
+  .sort((a, b) => a.Name.localeCompare(b.Name));
 }
 
 async function createMeeting() {
