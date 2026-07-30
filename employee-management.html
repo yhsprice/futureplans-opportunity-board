@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Employee Management</title>
+
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+  <aside class="sidebar">
+
+    <div class="logo" style="text-align:center;">
+      <img
+        src="Future Plans.png"
+        alt="Future Plans"
+        style="max-width:220px; width:100%;"
+      >
+    </div>
+
+    <div class="nav-section-title">Coach</div>
+
+    <a class="nav-link" href="coach-dashboard.html">
+      Coach Dashboard
+    </a>
+
+    <a class="nav-link" href="index.html">
+      Available Opportunities
+    </a>
+
+    <a class="nav-link" href="my-requests.html">
+      My Requests
+    </a>
+
+    <a class="nav-link" href="my-schedule.html">
+      My Schedule
+    </a>
+
+    <a class="nav-link" href="submit-session.html">
+      Submit Time
+    </a>
+
+    <a class="nav-link" href="my-payroll.html">
+      My Payroll
+    </a>
+
+    <div class="nav-section-title manager-only">
+      Manager
+    </div>
+
+    <a
+      class="nav-link manager-only"
+      href="manager.html"
+    >
+      Manager Dashboard
+    </a>
+
+    <a
+      class="nav-link manager-only"
+      href="add-opportunity.html"
+    >
+      Add Opportunity
+    </a>
+
+    <a
+      class="nav-link manager-only"
+      href="manage-opportunities.html"
+    >
+      Manage Opportunities
+    </a>
+
+    <a
+      class="nav-link manager-only"
+      href="payroll.html"
+    >
+      Payroll Dashboard
+    </a>
+
+    <a
+      class="nav-link manager-only"
+      href="attendance-analytics.html"
+    >
+      Attendance Analytics
+    </a>
+
+    <a
+      class="nav-link manager-only"
+      href="utilization.html"
+    >
+      Coach Utilization
+    </a>
+
+    <a
+      class="nav-link manager-only active"
+      href="employee-management.html"
+    >
+      Employee Management
+    </a>
+
+  </aside>
+
+  <main class="main-content">
+
+    <div class="top-bar">
+
+      <div>
+        <h1>Employee Management</h1>
+
+        <p>
+          Add and update managers, coaches, staff, and COPs.
+        </p>
+      </div>
+
+      <div
+        id="userBanner"
+        class="welcome-pill"
+      ></div>
+
+    </div>
+
+    <div
+      class="dashboard-card"
+      style="margin-bottom:20px;"
+    >
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        gap:15px;
+        flex-wrap:wrap;
+        align-items:center;
+      ">
+
+        <input
+          id="employeeSearch"
+          type="search"
+          placeholder="Search by name or email"
+          oninput="renderPeopleTable()"
+          style="
+            min-width:280px;
+            padding:10px;
+          "
+        >
+
+        <button onclick="openAddPersonForm()">
+          + Add Employee or COP
+        </button>
+
+      </div>
+
+    </div>
+
+    <div id="employeeFormContainer"></div>
+
+    <div id="employeeTableContainer">
+
+      <div class="dashboard-card">
+        <p>Loading employees...</p>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script src="auth.js"></script>
+<script src="employee-management.js?v=1"></script>
+
+</body>
+</html>
