@@ -109,18 +109,27 @@ function getSelectedPayPeriodID() {
 }
 
 function renderUtilization(payPeriodID) {
-  const approvedSessions = allSessions.filter(session => {
-    const status =
-      String(session.Status || "").trim();
+  const selectedPayPeriodID =
+  String(payPeriodID || "").trim();
 
-    const sessionPeriodID =
-      String(session.PayPeriodID || "").trim();
+const approvedSessions = allSessions.filter(session => {
+  const status =
+    String(session.Status || "")
+      .trim()
+      .toLowerCase();
 
-    return (
-      status === "Approved for Pay" &&
-      sessionPeriodID === payPeriodID
-    );
-  });
+  const sessionPeriodID =
+    String(session.PayPeriodID || "")
+      .trim();
+
+  return (
+    (
+      status === "approved for pay" ||
+      status === "paid"
+    ) &&
+    sessionPeriodID === selectedPayPeriodID
+  );
+});
 
   /*
     Summarize payroll by PersonID first.
@@ -206,8 +215,9 @@ function renderUtilization(payPeriodID) {
 
         <div>
           <h2 style="margin-bottom:6px;">
-            Coach Utilization
-          </h2>
+  Coach Utilization:
+  ${escapeHtml(selectedPayPeriodID)}
+</h2>
 
           <p style="margin:0;">
             Review payroll activity and coach readiness.
@@ -227,8 +237,8 @@ function renderUtilization(payPeriodID) {
           </label>
 
           <select
-            id="payPeriodSelect"
-            onchange="changePayPeriod()"
+  id="payPeriodSelect"
+  onchange="changePayPeriod(this.value)"
             style="
               width:100%;
               padding:10px;
@@ -383,11 +393,11 @@ function renderUtilization(payPeriodID) {
   container.innerHTML = html;
 }
 
-function changePayPeriod() {
-  const payPeriodID =
-    getSelectedPayPeriodID();
+function changePayPeriod(payPeriodID) {
+  const selectedPayPeriodID =
+    String(payPeriodID || "").trim();
 
-  renderUtilization(payPeriodID);
+  renderUtilization(selectedPayPeriodID);
 }
 
 async function saveCoachDetails(personID) {
