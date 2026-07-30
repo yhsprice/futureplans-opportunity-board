@@ -18,34 +18,90 @@ async function loadCoaches() {
 }
 
 async function createMeeting() {
-  const meetingName = document.getElementById("meetingName").value.trim();
-  const meetingDate = document.getElementById("meetingDate").value;
-  const payPeriodID = document.getElementById("payPeriodID").value;
-  const programType = document.getElementById("programType").value;
-  const payRule = document.getElementById("payRule").value;
-  const hours = document.getElementById("hours").value;
-  const fund = document.getElementById("fund").value;
-  const notes = document.getElementById("meetingNotes").value.trim();
-  const message = document.getElementById("meetingMessage");
+  const meetingName = document
+    .getElementById("meetingName")
+    .value
+    .trim();
 
-  if (!meetingName || !meetingDate || !programType || !payRule || !hours || !fund) {
-    message.textContent = "Please complete all meeting fields.";
+  const meetingDate =
+    document.getElementById("meetingDate").value;
+
+  const programType =
+    document.getElementById("programType").value;
+
+  const payRule =
+    document.getElementById("payRule").value;
+
+  const hours =
+    document.getElementById("hours").value;
+
+  const fund =
+    document.getElementById("fund").value;
+
+  const notes = document
+    .getElementById("meetingNotes")
+    .value
+    .trim();
+
+  const message =
+    document.getElementById("meetingMessage");
+
+  if (
+    !meetingName ||
+    !meetingDate ||
+    !programType ||
+    !payRule ||
+    !hours ||
+    !fund
+  ) {
+    message.textContent =
+      "Please complete all meeting fields.";
     return;
   }
 
-  const url = `${API_URL}?action=addMeeting`
-    + `&meetingName=${encodeURIComponent(meetingName)}`
-    + `&meetingDate=${encodeURIComponent(meetingDate)}`
-    + `&programType=${encodeURIComponent(programType)}`
-    + `&payRule=${encodeURIComponent(payRule)}`
-    + `&hours=${encodeURIComponent(hours)}`
-    + `&fund=${encodeURIComponent(fund)}`
-    + `&notes=${encodeURIComponent(notes)}`;
+  message.textContent = "Creating meeting...";
 
-  const response = await fetch(url);
-  const result = await response.json();
+  const params = new URLSearchParams({
+    action: "addMeeting",
+    meetingName: meetingName,
+    meetingDate: meetingDate,
+    programType: programType,
+    payRule: payRule,
+    hours: hours,
+    fund: fund,
+    notes: notes
+  });
 
-  if (result.success) {
+  try {
+    const response = await fetch(
+      `${API_URL}?${params.toString()}`
+    );
+
+    const responseText = await response.text();
+
+    console.log(
+      "Create meeting response:",
+      responseText
+    );
+
+    let result;
+
+    try {
+      result = JSON.parse(responseText);
+    } catch (error) {
+      throw new Error(
+        "Apps Script returned an invalid response. " +
+        "Check Apps Script Executions for the error."
+      );
+    }
+
+    if (!result.success) {
+      throw new Error(
+        result.message ||
+        "Unable to create meeting."
+      );
+    }
+
     message.textContent = "Meeting created.";
 
     document.getElementById("meetingName").value = "";
@@ -56,9 +112,14 @@ async function createMeeting() {
     document.getElementById("fund").value = "";
     document.getElementById("meetingNotes").value = "";
 
-    loadMeetings();
-  } else {
-    message.textContent = result.message || "Unable to create meeting.";
+    await loadMeetings();
+
+  } catch (error) {
+    console.error("Create meeting error:", error);
+
+    message.textContent =
+      error.message ||
+      "Something went wrong creating the meeting.";
   }
 }
 
