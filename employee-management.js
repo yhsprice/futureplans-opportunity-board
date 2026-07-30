@@ -91,9 +91,26 @@ async function loadPeople() {
 
   try {
     const response = await fetch(
-      `${API_URL}?action=getPeopleForManagement`
-      + managerParameters()
-    );
+  `${API_URL}?${params.toString()}`
+);
+
+const responseText = await response.text();
+
+console.log(
+  "Save employee response:",
+  responseText
+);
+
+let result;
+
+try {
+  result = JSON.parse(responseText);
+} catch (error) {
+  throw new Error(
+    "Apps Script returned an error page while saving. " +
+    "Open Apps Script and check Executions for the exact error."
+  );
+}
 
     const result = await response.json();
 
