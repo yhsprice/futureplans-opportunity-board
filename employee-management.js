@@ -90,29 +90,34 @@ async function loadPeople() {
   `;
 
   try {
+    const currentUser = getCurrentUser();
+
+    const params = new URLSearchParams({
+      action: "getPeopleForManagement",
+      managerEmail: currentUser?.Email || ""
+    });
+
     const response = await fetch(
-  `${API_URL}?${params.toString()}`
-);
+      `${API_URL}?${params.toString()}`
+    );
 
-const responseText = await response.text();
+    const responseText = await response.text();
 
-console.log(
-  "Save employee response:",
-  responseText
-);
+    console.log(
+      "Load employees response:",
+      responseText
+    );
 
-let result;
+    let result;
 
-try {
-  result = JSON.parse(responseText);
-} catch (error) {
-  throw new Error(
-    "Apps Script returned an error page while saving. " +
-    "Open Apps Script and check Executions for the exact error."
-  );
-}
-
-    const result = await response.json();
+    try {
+      result = JSON.parse(responseText);
+    } catch (error) {
+      throw new Error(
+        "Apps Script returned an invalid response. " +
+        "Open Apps Script and check Executions for the exact error."
+      );
+    }
 
     if (!result.success) {
       throw new Error(
