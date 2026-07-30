@@ -19,12 +19,6 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
-function isYes(value) {
-  return String(value || "")
-    .trim()
-    .toLowerCase() === "yes";
-}
-
 function isActiveCoach(person) {
   const role = String(person.Role || "")
     .trim()
@@ -43,14 +37,6 @@ function isActiveCoach(person) {
   return (
     (role === "coach" || type === "coach") &&
     active === "yes"
-  );
-}
-
-function getTier(person) {
-  return Number(
-    person.Tiers ??
-    person.Tier ??
-    0
   );
 }
 
@@ -84,57 +70,29 @@ function buildPayPeriodOptions(selectedID) {
     .join("");
 }
 
-function buildTierOptions(currentTier) {
-  const tiers = [0, 1, 2, 3, 4];
-
-  return tiers
-    .map(tier => `
-      <option
-        value="${tier}"
-        ${Number(currentTier) === tier ? "selected" : ""}
-      >
-        Tier ${tier}
-      </option>
-    `)
-    .join("");
-}
-
-function getSelectedPayPeriodID() {
-  const select =
-    document.getElementById("payPeriodSelect");
-
-  return select
-    ? select.value
-    : "";
-}
-
 function renderUtilization(payPeriodID) {
   const selectedPayPeriodID =
-  String(payPeriodID || "").trim();
+    String(payPeriodID || "").trim();
 
-const approvedSessions = allSessions.filter(session => {
-  const status =
-    String(session.Status || "")
-      .trim()
-      .toLowerCase();
+  const approvedSessions = allSessions.filter(session => {
+    const status =
+      String(session.Status || "")
+        .trim()
+        .toLowerCase();
 
-  const sessionPeriodID =
-    String(session.PayPeriodID || "")
-      .trim();
+    const sessionPeriodID =
+      String(session.PayPeriodID || "")
+        .trim();
 
-  return (
-    (
-      status === "approved for pay" ||
-      status === "paid"
-    ) &&
-    sessionPeriodID === selectedPayPeriodID
-  );
-});
+    return (
+      (
+        status === "approved for pay" ||
+        status === "paid"
+      ) &&
+      sessionPeriodID === selectedPayPeriodID
+    );
+  });
 
-  /*
-    Summarize payroll by PersonID first.
-    CoachName is used as a fallback for older records.
-  */
   const summaryByPersonID = {};
   const summaryByCoachName = {};
 
@@ -145,11 +103,11 @@ const approvedSessions = allSessions.filter(session => {
     const coachName =
       String(session.CoachName || "").trim();
 
-    const record = {
-      sessions: 1,
-      hours: Number(session.PayHours || 0),
-      pay: Number(session.PayAmount || 0)
-    };
+    const hours =
+      Number(session.PayHours || 0);
+
+    const pay =
+      Number(session.PayAmount || 0);
 
     if (personID) {
       if (!summaryByPersonID[personID]) {
@@ -160,14 +118,9 @@ const approvedSessions = allSessions.filter(session => {
         };
       }
 
-      summaryByPersonID[personID].sessions +=
-        record.sessions;
-
-      summaryByPersonID[personID].hours +=
-        record.hours;
-
-      summaryByPersonID[personID].pay +=
-        record.pay;
+      summaryByPersonID[personID].sessions += 1;
+      summaryByPersonID[personID].hours += hours;
+      summaryByPersonID[personID].pay += pay;
     }
 
     if (coachName) {
@@ -182,14 +135,9 @@ const approvedSessions = allSessions.filter(session => {
         };
       }
 
-      summaryByCoachName[normalizedName].sessions +=
-        record.sessions;
-
-      summaryByCoachName[normalizedName].hours +=
-        record.hours;
-
-      summaryByCoachName[normalizedName].pay +=
-        record.pay;
+      summaryByCoachName[normalizedName].sessions += 1;
+      summaryByCoachName[normalizedName].hours += hours;
+      summaryByCoachName[normalizedName].pay += pay;
     }
   });
 
@@ -215,12 +163,13 @@ const approvedSessions = allSessions.filter(session => {
 
         <div>
           <h2 style="margin-bottom:6px;">
-  Coach Utilization:
-  ${escapeHtml(selectedPayPeriodID)}
-</h2>
+            Coach Utilization:
+            ${escapeHtml(selectedPayPeriodID)}
+          </h2>
 
           <p style="margin:0;">
-            Review payroll activity and coach readiness.
+            Review approved sessions, hours,
+            payroll totals, and coach usage.
           </p>
         </div>
 
@@ -237,14 +186,14 @@ const approvedSessions = allSessions.filter(session => {
           </label>
 
           <select
-  id="payPeriodSelect"
-  onchange="changePayPeriod(this.value)"
+            id="payPeriodSelect"
+            onchange="changePayPeriod(this.value)"
             style="
               width:100%;
               padding:10px;
             "
           >
-            ${buildPayPeriodOptions(payPeriodID)}
+            ${buildPayPeriodOptions(selectedPayPeriodID)}
           </select>
         </div>
 
@@ -252,17 +201,14 @@ const approvedSessions = allSessions.filter(session => {
 
       <div style="overflow-x:auto;">
         <table class="modern-table">
+
           <thead>
             <tr>
               <th>Coach</th>
-              <th>Tier</th>
-              <th>Shadowed</th>
-              <th>Shadowed By</th>
               <th>Sessions</th>
               <th>Hours</th>
               <th>Pay</th>
               <th>Usage</th>
-              <th>Save</th>
             </tr>
           </thead>
 
@@ -276,12 +222,11 @@ const approvedSessions = allSessions.filter(session => {
     const coachName =
       String(coach.Name || "").trim();
 
-    const normalizedName =
-      coachName.toLowerCase();
-
     const totals =
       summaryByPersonID[personID] ||
-      summaryByCoachName[normalizedName] ||
+      summaryByCoachName[
+        coachName.toLowerCase()
+      ] ||
       {
         sessions: 0,
         hours: 0,
@@ -301,15 +246,6 @@ const approvedSessions = allSessions.filter(session => {
       usageStatus = "High Usage";
     }
 
-    const tier =
-      getTier(coach);
-
-    const shadowed =
-      isYes(coach.Shadowed);
-
-    const shadowedBy =
-      String(coach.ShadowedBy || "");
-
     html += `
       <tr>
 
@@ -328,33 +264,6 @@ const approvedSessions = allSessions.filter(session => {
         </td>
 
         <td>
-          <select
-            id="tier-${escapeHtml(personID)}"
-            style="min-width:100px;"
-          >
-            ${buildTierOptions(tier)}
-          </select>
-        </td>
-
-        <td style="text-align:center;">
-          <input
-            id="shadowed-${escapeHtml(personID)}"
-            type="checkbox"
-            ${shadowed ? "checked" : ""}
-          >
-        </td>
-
-        <td>
-          <input
-            id="shadowedBy-${escapeHtml(personID)}"
-            type="text"
-            value="${escapeHtml(shadowedBy)}"
-            placeholder="Type supervisor name"
-            style="min-width:180px;"
-          >
-        </td>
-
-        <td>
           ${totals.sessions}
         </td>
 
@@ -370,18 +279,19 @@ const approvedSessions = allSessions.filter(session => {
           ${escapeHtml(usageStatus)}
         </td>
 
-        <td>
-          <button
-            id="save-${escapeHtml(personID)}"
-            onclick="saveCoachDetails('${escapeHtml(personID)}')"
-          >
-            Save
-          </button>
-        </td>
-
       </tr>
     `;
   });
+
+  if (coaches.length === 0) {
+    html += `
+      <tr>
+        <td colspan="5">
+          No active coaches were found.
+        </td>
+      </tr>
+    `;
+  }
 
   html += `
           </tbody>
@@ -394,112 +304,12 @@ const approvedSessions = allSessions.filter(session => {
 }
 
 function changePayPeriod(payPeriodID) {
-  const selectedPayPeriodID =
-    String(payPeriodID || "").trim();
-
-  renderUtilization(selectedPayPeriodID);
-}
-
-async function saveCoachDetails(personID) {
-  const tierElement =
-    document.getElementById(
-      `tier-${personID}`
-    );
-
-  const shadowedElement =
-    document.getElementById(
-      `shadowed-${personID}`
-    );
-
-  const shadowedByElement =
-    document.getElementById(
-      `shadowedBy-${personID}`
-    );
-
-  const saveButton =
-    document.getElementById(
-      `save-${personID}`
-    );
-
-  const tier =
-    tierElement.value;
-
-  const shadowed =
-    shadowedElement.checked
-      ? "Yes"
-      : "No";
-
-  const shadowedBy =
-    shadowedByElement.value.trim();
-
-  if (shadowed === "Yes" && !shadowedBy) {
-    alert(
-      "Please enter who supervised the shadowing."
-    );
-
-    shadowedByElement.focus();
-    return;
-  }
-
-  const confirmed = confirm(
-    `Save Tier ${tier} and shadowing information for this coach?`
+  renderUtilization(
+    String(payPeriodID || "").trim()
   );
-
-  if (!confirmed) {
-    return;
-  }
-
-  saveButton.disabled = true;
-  saveButton.textContent = "Saving...";
-
-  const url =
-    `${API_URL}?action=updateCoachUtilizationDetails`
-    + `&personID=${encodeURIComponent(personID)}`
-    + `&tier=${encodeURIComponent(tier)}`
-    + `&shadowed=${encodeURIComponent(shadowed)}`
-    + `&shadowedBy=${encodeURIComponent(shadowedBy)}`;
-
-  try {
-    const response =
-      await fetch(url);
-
-    const result =
-      await response.json();
-
-    if (!result.success) {
-      throw new Error(
-        result.message ||
-        "The coach information could not be saved."
-      );
-    }
-
-    alert(
-      "Coach tier and shadowing information saved."
-    );
-
-    await loadUtilization(
-      getSelectedPayPeriodID()
-    );
-
-  } catch (error) {
-    console.error(
-      "Coach utilization save error:",
-      error
-    );
-
-    alert(
-      error.message ||
-      "Something went wrong saving the coach information."
-    );
-
-    saveButton.disabled = false;
-    saveButton.textContent = "Save";
-  }
 }
 
-async function loadUtilization(
-  preferredPayPeriodID = ""
-) {
+async function loadUtilization() {
   container.innerHTML = `
     <div class="dashboard-card">
       <p>Loading utilization...</p>
@@ -554,22 +364,17 @@ async function loadUtilization(
       return;
     }
 
-    let selectedPayPeriodID =
-      preferredPayPeriodID;
+    const currentPeriod =
+      allPayPeriods.find(period =>
+        String(period.Status || "")
+          .trim()
+          .toLowerCase() === "current"
+      );
 
-    if (!selectedPayPeriodID) {
-      const currentPeriod =
-        allPayPeriods.find(period =>
-          String(period.Status || "")
-            .trim()
-            .toLowerCase() === "current"
-        );
-
-      selectedPayPeriodID =
-        currentPeriod
-          ? currentPeriod.PayPeriodID
-          : allPayPeriods[0].PayPeriodID;
-    }
+    const selectedPayPeriodID =
+      currentPeriod
+        ? currentPeriod.PayPeriodID
+        : allPayPeriods[0].PayPeriodID;
 
     renderUtilization(
       String(selectedPayPeriodID || "")
