@@ -1,5 +1,23 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbztmN1-FfXwhUsmmRqseDW2rr8-DIUYUUENM5J7kJBZN0xrSIkfTTbZqXAFhh5qO0Xv/exec";
 
+const currentUser = getCurrentUser();
+
+showUserBanner();
+showManagerLinksOnly();
+
+const managerWelcome =
+  document.getElementById("managerWelcome");
+
+if (managerWelcome && currentUser) {
+  const firstName =
+    String(currentUser.Name || "Manager")
+      .trim()
+      .split(/\s+/)[0];
+
+  managerWelcome.textContent =
+    `Welcome back, ${firstName}!`;
+}
+
 const releaseRequestList = document.getElementById("releaseRequestList");
 
 const requestList = document.getElementById("requestList");
