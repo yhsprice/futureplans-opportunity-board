@@ -272,6 +272,7 @@ opportunities.forEach(opportunity => {
 
   html += `
     <tr style="${rowBackground}">
+
       <td
         style="
           padding:8px;
@@ -280,136 +281,153 @@ opportunities.forEach(opportunity => {
         "
       >
         ${escapeHtml(status || "Open")}
+
+        ${
+          status === "Scheduled" &&
+          opportunity.PublishAt
+            ? `
+              <div style="
+                font-size:11px;
+                color:#555;
+                font-weight:normal;
+                margin-top:4px;
+              ">
+                Releases:<br>
+                ${escapeHtml(
+                  formatDisplayDateTime(
+                    opportunity.PublishAt
+                  )
+                )}
+              </div>
+            `
+            : opportunity.PublishedAt
+              ? `
+                <div style="
+                  font-size:11px;
+                  color:#555;
+                  font-weight:normal;
+                  margin-top:4px;
+                ">
+                  Published:<br>
+                  ${escapeHtml(
+                    formatDisplayDateTime(
+                      opportunity.PublishedAt
+                    )
+                  )}
+                </div>
+              `
+              : ""
+        }
       </td>
 
-      <!-- the rest of your cells stay here -->
+      <td style="padding:8px; white-space:nowrap;">
+        ${escapeHtml(opportunity.Date)}
+      </td>
+
+      <td style="padding:8px; white-space:nowrap;">
+        ${escapeHtml(opportunity.StartTime)}
+      </td>
+
+      <td style="padding:8px; white-space:nowrap;">
+        ${escapeHtml(opportunity.EndTime)}
+      </td>
+
+      <td style="padding:8px; min-width:180px;">
+        ${escapeHtml(opportunity.School)}
+      </td>
+
+      <td style="padding:8px;">
+        ${escapeHtml(opportunity.CoachesNeeded)}
+      </td>
+
+      <td style="padding:8px;">
+        ${escapeHtml(
+          opportunity.ApprovedCount || 0
+        )}
+      </td>
+
+      <td style="padding:8px;">
+        ${escapeHtml(remainingOpenings)}
+      </td>
+
+      <td style="padding:8px;">
+        ${escapeHtml(opportunity.ProgramType)}
+      </td>
+
+      <td style="padding:8px;">
+        ${escapeHtml(opportunity.Fund || "")}
+      </td>
+
+      <td style="padding:8px;">
+        ${
+          opportunity.MeetingLink
+            ? `
+              <a
+                href="${escapeHtml(
+                  opportunity.MeetingLink
+                )}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ${escapeHtml(
+                  opportunity.MeetingPlatform ||
+                  "Meeting"
+                )}
+              </a>
+            `
+            : "Not added"
+        }
+      </td>
+
+      <td style="padding:8px; min-width:300px;">
+        <div style="
+          display:flex;
+          gap:5px;
+          flex-wrap:wrap;
+        ">
+
+          <button
+            onclick="showEditForm('${opportunityID}')"
+          >
+            Edit
+          </button>
+
+          ${
+            canAssign
+              ? `
+                <button
+                  onclick="showAssignmentForm('${opportunityID}')"
+                >
+                  Assign Coach
+                </button>
+              `
+              : ""
+          }
+
+          <button
+            onclick="setOpportunityStatus(
+              '${opportunityID}',
+              'Closed'
+            )"
+          >
+            Close
+          </button>
+
+          <button
+            onclick="openCancellationForm(
+              '${opportunityID}'
+            )"
+          >
+            Cancel
+          </button>
+
+        </div>
+      </td>
 
     </tr>
   `;
-});
 
-  ${
-    status === "Scheduled" && opportunity.PublishAt
-      ? `
-        <div style="
-          font-size:11px;
-          color:#555;
-          font-weight:normal;
-          margin-top:4px;
-        ">
-          Releases:<br>
-          ${escapeHtml(formatDisplayDateTime(opportunity.PublishAt))}
-        </div>
-      `
-      : opportunity.PublishedAt
-        ? `
-          <div style="
-            font-size:11px;
-            color:#555;
-            font-weight:normal;
-            margin-top:4px;
-          ">
-            Published:<br>
-            ${escapeHtml(formatDisplayDateTime(opportunity.PublishedAt))}
-          </div>
-        `
-        : ""
-  }
-
-</td>
-
-          <td style="padding:8px; white-space:nowrap;">
-            ${escapeHtml(opportunity.Date)}
-          </td>
-
-          <td style="padding:8px; white-space:nowrap;">
-            ${escapeHtml(opportunity.StartTime)}
-          </td>
-
-          <td style="padding:8px; white-space:nowrap;">
-            ${escapeHtml(opportunity.EndTime)}
-          </td>
-
-          <td style="padding:8px; min-width:180px;">
-            ${escapeHtml(opportunity.School)}
-          </td>
-
-          <td style="padding:8px;">
-            ${escapeHtml(opportunity.CoachesNeeded)}
-          </td>
-
-          <td style="padding:8px;">
-            ${escapeHtml(opportunity.ApprovedCount || 0)}
-          </td>
-
-          <td style="padding:8px;">
-            ${escapeHtml(remainingOpenings)}
-          </td>
-
-          <td style="padding:8px;">
-            ${escapeHtml(opportunity.ProgramType)}
-          </td>
-
-          <td style="padding:8px;">
-            ${escapeHtml(opportunity.Fund || "")}
-          </td>
-
-          <td style="padding:8px;">
-            ${
-              opportunity.MeetingLink
-                ? `
-                  <a
-                    href="${escapeHtml(opportunity.MeetingLink)}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    ${escapeHtml(
-                      opportunity.MeetingPlatform ||
-                      "Meeting"
-                    )}
-                  </a>
-                `
-                : "Not added"
-            }
-          </td>
-
-          <td style="padding:8px; min-width:300px;">
-            <div style="display:flex; gap:5px; flex-wrap:wrap;">
-
-              <button
-                onclick="showEditForm('${opportunityID}')"
-              >
-                Edit
-              </button>
-
-              ${
-                canAssign
-                  ? `
-                    <button
-                      onclick="showAssignmentForm('${opportunityID}')"
-                    >
-                      Assign Coach
-                    </button>
-                  `
-                  : ""
-              }
-
-              <button
-                onclick="setOpportunityStatus('${opportunityID}', 'Closed')"
-              >
-                Close
-              </button>
-
-              <button
-  onclick="openCancellationForm('${opportunityID}')"
->
-  Cancel
-</button>
-
-            </div>
-          </td>
-        </tr>
-
+  html += `
         <tr
           id="assignment-row-${opportunityID}"
           style="display:none;"
