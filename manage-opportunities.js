@@ -233,41 +233,60 @@ async function loadOpportunities() {
           <tbody>
     `;
 
-    opportunities.forEach(opportunity => {
-      const opportunityID =
-        String(opportunity.OpportunityID || "");
+opportunities.forEach(opportunity => {
+  const opportunityID =
+    String(opportunity.OpportunityID || "");
 
-      const status = String(
-        opportunity.OpportunityStatus || "Open"
-      ).trim();
+  const status = String(
+    opportunity.OpportunityStatus || "Open"
+  ).trim();
 
-      const remainingOpenings = Number(
-        opportunity.RemainingOpenings || 0
-      );
+  const remainingOpenings = Number(
+    opportunity.RemainingOpenings || 0
+  );
 
-      const canAssign =
-        status === "Open" &&
-        remainingOpenings > 0;
+  const canAssign =
+    status === "Open" &&
+    remainingOpenings > 0;
 
-      let statusColor = "#28a745";
-let rowBackground = "";
+  let statusColor = "#28a745";
+  let rowBackground = "";
 
-if (status === "Scheduled") {
-  statusColor = "#0d6efd";
-  rowBackground = "background:#eaf4ff; color:#222;";
-}
+  if (status === "Scheduled") {
+    statusColor = "#0d6efd";
+    rowBackground =
+      "background:#eaf4ff; color:#222;";
+  }
 
-if (status === "Closed") {
-  statusColor = "#f0ad4e";
-  rowBackground = "background:#fff8e1; color:#222;";
-}
+  if (status === "Closed") {
+    statusColor = "#f0ad4e";
+    rowBackground =
+      "background:#fff8e1; color:#222;";
+  }
 
-if (status === "Cancelled") {
-  statusColor = "#dc3545";
-  rowBackground = "background:#f2f2f2; color:#222;";
-}
+  if (status === "Cancelled") {
+    statusColor = "#dc3545";
+    rowBackground =
+      "background:#f2f2f2; color:#222;";
+  }
 
-  ${escapeHtml(status || "Open")}
+  html += `
+    <tr style="${rowBackground}">
+      <td
+        style="
+          padding:8px;
+          color:${statusColor};
+          font-weight:bold;
+        "
+      >
+        ${escapeHtml(status || "Open")}
+      </td>
+
+      <!-- the rest of your cells stay here -->
+
+    </tr>
+  `;
+});
 
   ${
     status === "Scheduled" && opportunity.PublishAt
