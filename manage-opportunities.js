@@ -254,22 +254,18 @@ let rowBackground = "";
 
 if (status === "Scheduled") {
   statusColor = "#0d6efd";
-  rowBackground = "background:#eaf4ff;";
+  rowBackground = "background:#eaf4ff; color:#222;";
 }
 
 if (status === "Closed") {
   statusColor = "#f0ad4e";
-  rowBackground = "background:#fff8e1;";
+  rowBackground = "background:#fff8e1; color:#222;";
 }
 
 if (status === "Cancelled") {
   statusColor = "#dc3545";
-  rowBackground = "background:#f2f2f2;";
+  rowBackground = "background:#f2f2f2; color:#222;";
 }
-
-      html += `
-        <tr style="${rowBackground}">
-          <td style="padding:8px; color:${statusColor}; font-weight:bold;">
 
   ${escapeHtml(status || "Open")}
 
