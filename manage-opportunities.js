@@ -537,6 +537,20 @@ opportunities.forEach(opportunity => {
                 value="${toInputDate(opportunity.Date)}"
               >
 
+              <p><strong>Release Date and Time</strong></p>
+
+<input
+  id="publishAt-${opportunityID}"
+  type="datetime-local"
+  value="${escapeHtml(
+    toDateTimeLocalValue(opportunity.PublishAt || "")
+  )}"
+>
+
+<small>
+  This controls when the opportunity becomes visible to coaches.
+</small>
+
               <p><strong>Start Time</strong></p>
 
               <input
@@ -639,6 +653,16 @@ opportunities.forEach(opportunity => {
                 </option>
               </select>
 
+              <p><strong>COP</strong></p>
+
+<input
+  id="cop-${opportunityID}"
+  value="${escapeHtml(
+    opportunity.COP || ""
+  )}"
+  placeholder="COP name"
+>
+
               <p><strong>Fund</strong></p>
 
               <select id="fund-${opportunityID}">
@@ -675,6 +699,31 @@ opportunities.forEach(opportunity => {
                   SW OH
                 </option>
               </select>
+
+              <p><strong>Opportunity Status</strong></p>
+
+<select id="status-${opportunityID}">
+  <option
+    value="Open"
+    ${opportunity.OpportunityStatus === "Open" ? "selected" : ""}
+  >
+    Open
+  </option>
+
+  <option
+    value="Scheduled"
+    ${opportunity.OpportunityStatus === "Scheduled" ? "selected" : ""}
+  >
+    Scheduled
+  </option>
+
+  <option
+    value="Closed"
+    ${opportunity.OpportunityStatus === "Closed" ? "selected" : ""}
+  >
+    Closed
+  </option>
+</select>
 
               <p><strong>Notes</strong></p>
 
@@ -936,6 +985,10 @@ function updateOpportunity(opportunityID) {
     `date-${opportunityID}`
   ).value;
 
+  const publishAt = document.getElementById(
+  `publishAt-${opportunityID}`
+).value;
+
   const startTime = document.getElementById(
     `start-${opportunityID}`
   ).value;
@@ -955,6 +1008,15 @@ function updateOpportunity(opportunityID) {
   const fund = document.getElementById(
     `fund-${opportunityID}`
   ).value;
+
+  const cop = document
+  .getElementById(`cop-${opportunityID}`)
+  .value
+  .trim();
+
+const opportunityStatus = document.getElementById(
+  `status-${opportunityID}`
+).value;
 
   const notes = document
     .getElementById(`notes-${opportunityID}`)
@@ -986,20 +1048,26 @@ function updateOpportunity(opportunityID) {
     .trim();
 
   const url =
-    `${API_URL}?action=updateOpportunity`
-    + `&opportunityID=${encodeURIComponent(opportunityID)}`
-    + `&school=${encodeURIComponent(school)}`
-    + `&date=${encodeURIComponent(date)}`
-    + `&startTime=${encodeURIComponent(startTime)}`
-    + `&endTime=${encodeURIComponent(endTime)}`
-    + `&coachesNeeded=${encodeURIComponent(coachesNeeded)}`
-    + `&programType=${encodeURIComponent(programType)}`
-    + `&fund=${encodeURIComponent(fund)}`
-    + `&notes=${encodeURIComponent(notes)}`
-    + `&contact=${encodeURIComponent(contact)}`
-    + `&meetingPlatform=${encodeURIComponent(meetingPlatform)}`
-    + `&meetingLink=${encodeURIComponent(meetingLink)}`
-    + `&meetingNotes=${encodeURIComponent(meetingNotes)}`;
+  `${API_URL}?action=updateOpportunity`
+  + `&opportunityID=${encodeURIComponent(opportunityID)}`
+  + `&school=${encodeURIComponent(school)}`
+  + `&date=${encodeURIComponent(date)}`
+  + `&publishAt=${encodeURIComponent(publishAt)}`
+  + `&startTime=${encodeURIComponent(startTime)}`
+  + `&endTime=${encodeURIComponent(endTime)}`
+  + `&coachesNeeded=${encodeURIComponent(coachesNeeded)}`
+  + `&programType=${encodeURIComponent(programType)}`
+  + `&fund=${encodeURIComponent(fund)}`
+  + `&cop=${encodeURIComponent(cop)}`
+  + `&opportunityStatus=${encodeURIComponent(opportunityStatus)}`
+  + `&notes=${encodeURIComponent(notes)}`
+  + `&contact=${encodeURIComponent(contact)}`
+  + `&meetingPlatform=${encodeURIComponent(meetingPlatform)}`
+  + `&meetingLink=${encodeURIComponent(meetingLink)}`
+  + `&meetingNotes=${encodeURIComponent(meetingNotes)}`
+  + `&updatedByPersonID=${encodeURIComponent(
+    currentUser.PersonID || ""
+  )}`;
 
   fetch(url)
     .then(response => response.json())
