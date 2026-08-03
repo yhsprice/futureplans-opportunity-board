@@ -209,9 +209,7 @@ function clearOpportunityRows() {
   opportunityRowNumber = 0;
 
   addOpportunityRow();
-  addOpportunityRow();
-  addOpportunityRow();
-
+  
   batchMessage.textContent = "";
   batchMessage.className = "batch-message";
 }
