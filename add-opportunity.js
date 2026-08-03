@@ -590,5 +590,3 @@ INITIAL ROWS
 */
 
 addOpportunityRow();
-addOpportunityRow();
-addOpportunityRow();
