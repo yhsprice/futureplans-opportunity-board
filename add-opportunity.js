@@ -129,6 +129,36 @@ function addOpportunityRow(values = {}) {
     </td>
 
     <td>
+  <input
+    type="text"
+    class="row-contact"
+    placeholder="Contact">
+</td>
+
+<td>
+  <select class="row-meeting-platform">
+    <option value="">Select</option>
+    <option value="Google Meet">Google Meet</option>
+    <option value="Zoom">Zoom</option>
+    <option value="Microsoft Teams">Microsoft Teams</option>
+    <option value="Other">Other</option>
+  </select>
+</td>
+
+<td>
+  <input
+    type="url"
+    class="row-meeting-link"
+    placeholder="Paste meeting link">
+</td>
+
+<td>
+  <textarea
+    class="row-meeting-notes"
+    placeholder="Passcode, waiting room, etc."></textarea>
+</td>
+
+    <td>
       <span class="row-status">Not submitted</span>
     </td>
 
@@ -222,11 +252,29 @@ function getOpportunityRowElements() {
 
 function getRowData(row) {
   return {
-    school: row.querySelector(".row-school").value.trim(),
-    startTime: row.querySelector(".row-start-time").value,
-    endTime: row.querySelector(".row-end-time").value,
+    school:
+      row.querySelector(".row-school").value.trim(),
+
+    startTime:
+      row.querySelector(".row-start-time").value,
+
+    endTime:
+      row.querySelector(".row-end-time").value,
+
     coachesNeeded:
-      row.querySelector(".row-coaches-needed").value
+      row.querySelector(".row-coaches-needed").value,
+
+    contact:
+      row.querySelector(".row-contact").value.trim(),
+
+    meetingPlatform:
+      row.querySelector(".row-meeting-platform").value,
+
+    meetingLink:
+      row.querySelector(".row-meeting-link").value.trim(),
+
+    meetingNotes:
+      row.querySelector(".row-meeting-notes").value.trim()
   };
 }
 
@@ -565,6 +613,16 @@ function submitOpportunity(data) {
       + `&cop=${encodeURIComponent(data.cop || "")}`
       + `&notes=${encodeURIComponent(data.notes || "")}`
       + `&publishAt=${encodeURIComponent(data.publishAt)}`
+      + `&contact=${encodeURIComponent(data.contact || "")}`
+      + `&meetingPlatform=${encodeURIComponent(
+    data.meetingPlatform || ""
+  )}`
+      + `&meetingLink=${encodeURIComponent(
+    data.meetingLink || ""
+  )}`
+      + `&meetingNotes=${encodeURIComponent(
+    data.meetingNotes || ""
+  )}`
       + `&callback=${encodeURIComponent(callbackName)}`;
 
     script.src = url;
