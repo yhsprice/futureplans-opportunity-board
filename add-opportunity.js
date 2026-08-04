@@ -282,6 +282,13 @@ function clearOpportunityRows() {
   opportunityRowNumber = 0;
 
   addOpportunityRow();
+
+  document.getElementById("date").value = "";
+document.getElementById("publishAt").value = "";
+document.getElementById("programType").selectedIndex = 0;
+document.getElementById("fund").selectedIndex = 0;
+document.getElementById("cop").value = "";
+document.getElementById("notes").value = "";
   
   batchMessage.textContent = "";
   batchMessage.className = "batch-message";
