@@ -273,7 +273,8 @@ function clearOpportunityRows() {
 
   if (
     hasEnteredData &&
-    !confirm("Clear all location and time rows?")
+    !confirm(
+      "Reset the entire opportunity form?\n\nAll unsaved information will be lost.")
   ) {
     return;
   }
