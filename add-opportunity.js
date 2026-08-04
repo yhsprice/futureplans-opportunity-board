@@ -438,6 +438,19 @@ function validateOpportunityRows(rows) {
       return;
     }
 
+    if (
+  rowData.meetingLink &&
+  !rowData.meetingPlatform
+) {
+  markRowError(
+    row,
+    `Row ${index + 1}: Select a meeting platform.`
+  );
+
+  valid = false;
+  return;
+}
+    
     if (rowData.endTime <= rowData.startTime) {
       markRowError(
         row,
