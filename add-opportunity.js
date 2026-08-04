@@ -132,16 +132,41 @@ function addOpportunityRow(values = {}) {
   <input
     type="text"
     class="row-contact"
-    placeholder="Contact">
+    placeholder="Contact"
+    value="${escapeHtml(values.contact || "")}">
 </td>
 
 <td>
   <select class="row-meeting-platform">
-    <option value="">Select</option>
-    <option value="Google Meet">Google Meet</option>
-    <option value="Zoom">Zoom</option>
-    <option value="Microsoft Teams">Microsoft Teams</option>
-    <option value="Other">Other</option>
+    <option
+      value=""
+      ${!values.meetingPlatform ? "selected" : ""}>
+      Select
+    </option>
+
+    <option
+      value="Google Meet"
+      ${values.meetingPlatform === "Google Meet" ? "selected" : ""}>
+      Google Meet
+    </option>
+
+    <option
+      value="Zoom"
+      ${values.meetingPlatform === "Zoom" ? "selected" : ""}>
+      Zoom
+    </option>
+
+    <option
+      value="Microsoft Teams"
+      ${values.meetingPlatform === "Microsoft Teams" ? "selected" : ""}>
+      Microsoft Teams
+    </option>
+
+    <option
+      value="Other"
+      ${values.meetingPlatform === "Other" ? "selected" : ""}>
+      Other
+    </option>
   </select>
 </td>
 
@@ -149,13 +174,15 @@ function addOpportunityRow(values = {}) {
   <input
     type="url"
     class="row-meeting-link"
-    placeholder="Paste meeting link">
+    placeholder="Paste meeting link"
+    value="${escapeHtml(values.meetingLink || "")}">
 </td>
 
 <td>
   <textarea
     class="row-meeting-notes"
-    placeholder="Passcode, waiting room, etc."></textarea>
+    placeholder="Passcode, waiting room, etc."
+  >${escapeHtml(values.meetingNotes || "")}</textarea>
 </td>
 
     <td>
