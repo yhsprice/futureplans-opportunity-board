@@ -195,12 +195,30 @@ function copyPreviousRow() {
   const lastRow = rows[rows.length - 1];
 
   const values = {
-    school: lastRow.querySelector(".row-school").value.trim(),
-    startTime: lastRow.querySelector(".row-start-time").value,
-    endTime: lastRow.querySelector(".row-end-time").value,
-    coachesNeeded:
-      lastRow.querySelector(".row-coaches-needed").value || "1"
-  };
+  school:
+    lastRow.querySelector(".row-school").value.trim(),
+
+  startTime:
+    lastRow.querySelector(".row-start-time").value,
+
+  endTime:
+    lastRow.querySelector(".row-end-time").value,
+
+  coachesNeeded:
+    lastRow.querySelector(".row-coaches-needed").value || "1",
+
+  contact:
+    lastRow.querySelector(".row-contact").value.trim(),
+
+  meetingPlatform:
+    lastRow.querySelector(".row-meeting-platform").value,
+
+  meetingLink:
+    lastRow.querySelector(".row-meeting-link").value.trim(),
+
+  meetingNotes:
+    lastRow.querySelector(".row-meeting-notes").value.trim()
+};
 
   addOpportunityRow(values);
 }
