@@ -497,26 +497,83 @@ async function submitAllOpportunities() {
         ...rowData
       });
 
-      if (result.success) {
-        successCount++;
+      if (
+  result.requiresConfirmation &&
+  result.conflictType === "MeetingLinkOverlap"
+) {
+  const conflict = result.conflict || {};
 
-        row.classList.remove("row-has-error");
-        row.classList.add("row-submitted");
+  const continueAnyway = confirm(
+    "Meeting link conflict found.\n\n" +
+    `Existing school: ${conflict.school || "Unknown"}\n` +
+    `Date: ${conflict.date || ""}\n` +
+    `Time: ${conflict.startTime || ""} - ${conflict.endTime || ""}\n\n` +
+    `New school: ${rowData.school}\n` +
+    `Time: ${rowData.startTime} - ${rowData.endTime}\n\n` +
+    "Do you want to add this opportunity anyway?"
+  );
 
-        status.textContent = "Added";
-        status.className =
-          "row-status row-status-success";
-      } else {
-        failureCount++;
+  if (continueAnyway) {
+    const overrideResult = await submitOpportunity({
+      ...sharedData,
+      ...rowData,
+      allowMeetingConflict: "Yes"
+    });
 
-        row.classList.add("row-has-error");
+    if (overrideResult.success) {
+      successCount++;
 
-        status.textContent =
-          result.message || "Submission failed";
+      row.classList.remove("row-has-error");
+      row.classList.add("row-submitted");
 
-        status.className =
-          "row-status row-status-error";
-      }
+      status.textContent = "Added with conflict warning";
+      status.className =
+        "row-status row-status-success";
+    } else {
+      failureCount++;
+
+      row.classList.add("row-has-error");
+
+      status.textContent =
+        overrideResult.message || "Submission failed";
+
+      status.className =
+        "row-status row-status-error";
+    }
+  } else {
+    failureCount++;
+
+    row.classList.add("row-has-error");
+
+    status.textContent =
+      "Not added because of meeting link conflict";
+
+    status.className =
+      "row-status row-status-error";
+  }
+
+} else if (result.success) {
+  successCount++;
+
+  row.classList.remove("row-has-error");
+  row.classList.add("row-submitted");
+
+  status.textContent = "Added";
+  status.className =
+    "row-status row-status-success";
+
+} else {
+  failureCount++;
+
+  row.classList.add("row-has-error");
+
+  status.textContent =
+    result.message || "Submission failed";
+
+  status.className =
+    "row-status row-status-error";
+}
+      
     } catch (error) {
       failureCount++;
 
