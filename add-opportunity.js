@@ -327,7 +327,11 @@ function isBlankRow(rowData) {
   return (
     !rowData.school &&
     !rowData.startTime &&
-    !rowData.endTime
+    !rowData.endTime &&
+    !rowData.contact &&
+    !rowData.meetingPlatform &&
+    !rowData.meetingLink &&
+    !rowData.meetingNotes
   );
 }
 
