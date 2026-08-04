@@ -266,12 +266,10 @@ function removeOpportunityRow(button) {
 
 function clearOpportunityRows() {
   const hasEnteredData = getOpportunityRowElements().some(row => {
-    const school = row.querySelector(".row-school").value.trim();
-    const startTime = row.querySelector(".row-start-time").value;
-    const endTime = row.querySelector(".row-end-time").value;
+  const rowData = getRowData(row);
 
-    return school || startTime || endTime;
-  });
+  return !isBlankRow(rowData);
+});
 
   if (
     hasEnteredData &&
