@@ -680,6 +680,9 @@ function submitOpportunity(data) {
       + `&meetingNotes=${encodeURIComponent(
     data.meetingNotes || ""
   )}`
+      + `&allowMeetingConflict=${encodeURIComponent(
+    data.allowMeetingConflict || "No"
+  )}`
       + `&callback=${encodeURIComponent(callbackName)}`;
 
     script.src = url;
