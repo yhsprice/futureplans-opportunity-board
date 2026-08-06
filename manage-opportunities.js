@@ -172,11 +172,12 @@ async function loadOpportunities() {
     "<p>Loading opportunities...</p>";
 
   try {
-    await loadCoaches();
+    const [_, response] = await Promise.all([
+    loadCoaches(),
+    fetch(`${API_URL}?action=getManageOpportunities&_=${Date.now()}`)
+]);
 
-    const response = await fetch(
-      `${API_URL}?action=getManageOpportunities`
-    );
+const opportunities = await response.json();
 
     const opportunities = await response.json();
 
