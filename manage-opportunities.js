@@ -167,17 +167,110 @@ function buildCoachOptions() {
     .join("");
 }
 
+function wait(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+async function fetchJsonWithRetry(
+  url,
+  maximumAttempts = 3,
+  timeoutMilliseconds = 15000
+) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= maximumAttempts; attempt++) {
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, timeoutMilliseconds);
+
+    try {
+      const separator = url.includes("?") ? "&" : "?";
+
+      const response = await fetch(
+        `${url}${separator}_=${Date.now()}`,
+        {
+          method: "GET",
+          cache: "no-store",
+          signal: controller.signal
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Server returned status ${response.status}`
+        );
+      }
+
+      const text = await response.text();
+
+      if (!text.trim()) {
+        throw new Error("The server returned an empty response.");
+      }
+
+      try {
+        return JSON.parse(text);
+      } catch (jsonError) {
+        console.error("Invalid server response:", text);
+        throw new Error(
+          "The server did not return valid information."
+        );
+      }
+
+    } catch (error) {
+      lastError = error;
+
+      console.error(
+        `Request attempt ${attempt} failed:`,
+        error
+      );
+
+      if (attempt < maximumAttempts) {
+        await wait(1500);
+      }
+
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  throw lastError || new Error("The request failed.");
+}
+
 async function loadOpportunities() {
   container.innerHTML =
     "<p>Loading opportunities...</p>";
 
   try {
-    const [_, response] = await Promise.all([
-    loadCoaches(),
-    fetch(`${API_URL}?action=getManageOpportunities&_=${Date.now()}`)
-]);
+    /*
+      Start loading the coaches immediately, but do not wait
+      before starting the opportunity request.
+    */
+    const coachesPromise = loadCoaches()
+      .catch(error => {
+        console.error("Could not load coaches:", error);
+        return false;
+      });
 
-const opportunities = await response.json();
+    /*
+      Load opportunities with timeout and automatic retries.
+    */
+    const opportunities = await fetchJsonWithRetry(
+      `${API_URL}?action=getManageOpportunities`
+    );
+
+    /*
+      Let the coach request finish before building the coach list.
+      It has already been running in the background.
+    */
+    await coachesPromise;
+
+    if (!Array.isArray(opportunities)) {
+      throw new Error(
+        "The opportunity information was not returned correctly."
+      );
+    }
 
     const opportunities = await response.json();
 
@@ -842,11 +935,21 @@ opportunities.forEach(opportunity => {
     container.innerHTML = html;
 
   } catch (error) {
-    container.innerHTML =
-      "<p>Something went wrong loading opportunities.</p>";
+  console.error("Opportunity loading failed:", error);
 
-    console.error(error);
-  }
+  container.innerHTML = `
+    <p>
+      The portal could not connect to the opportunity list.
+    </p>
+
+    <p>
+      This is a connection problem. Your information was not lost.
+    </p>
+
+    <button type="button" onclick="loadOpportunities()">
+      Try Again
+    </button>
+  `;
 }
 
 function showAssignmentForm(opportunityID) {
